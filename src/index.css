@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --editorial-navy-950: #0d1c30;
+  --editorial-navy-900: #152a44;
+  --editorial-navy-800: #16304f;
+  --editorial-navy-700: #1e3a5f;
+
+  --editorial-blue-600: #2c5788;
+  --editorial-blue-500: #3b6ea5;
+  --editorial-blue-400: #4a86c2;
+  --editorial-blue-300: #5a94ce;
+
+  --grad-topbar: linear-gradient(120deg, #16304f, #3b6ea5);
+  --grad-sidebar: linear-gradient(180deg, #152a44, #0d1c30);
+  --grad-active: linear-gradient(135deg, #4a86c2, #1e3a5f);
+  --grad-button: linear-gradient(135deg, #3b6ea5, #1e3a5f);
+  --grad-badge: linear-gradient(135deg, #5a94ce, #2c5788);
+}
+
+@layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color: #0f172a;
+    background-color: #f8fafc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+  }
+
+  /* 폼 요소 기본 폰트 상속 및 통일 */
+  input, textarea, select, button {
+    font-family: inherit;
+    letter-spacing: inherit;
+  }
+}
+
+/* 폰트 종류 표준화 클래스 */
+.font-sans,
+.font-editorial-sans {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+.font-serif,
+.font-editorial-serif {
+  font-family: 'Noto Serif KR', 'Batang', serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+/* ===== 새 본문 편집기(TipTap) 기본 모양 ===== */
+.body-editor .ProseMirror p {
+  margin: 0;
+  min-height: 1.85em;
+}
+.body-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.body-editor .ProseMirror .ProseMirror-selectednode {
+  outline: 2px solid #3b82f6;
+  border-radius: 0.5rem;
+}
+.body-editor .ProseMirror .ProseMirror-dropcursor {
+  background: #2563eb;
+}
+
+/* 사진을 끌 때 나오는 "여기에 놓입니다" 위치 표시선 */
+.body-drop-cursor {
+  border-radius: 2px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  z-index: 40;
+  overflow: visible;
+}
+.body-drop-cursor.prosemirror-dropcursor-block::after {
+  content: '여기에 놓입니다';
+  position: absolute;
+  left: 50%;
+  top: -11px;
+  transform: translateX(-50%);
+  padding: 1px 10px;
+  border-radius: 9999px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+/* 끌고 있는 사진은 살짝 흐리게 */
+.body-editor .ProseMirror .ProseMirror-selectednode[draggable="true"] {
+  cursor: grabbing;
+}
+
+/* 사진/영상을 끄는 동안: 놓을 수 있는 모든 자리(블록 사이)를 점선으로 표시 */
+.body-editor.is-dragging-media .ProseMirror > * {
+  position: relative;
+}
+.body-editor.is-dragging-media .ProseMirror > *::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 0;
+  border-top: 2px dashed rgba(59, 130, 246, 0.55);
+  pointer-events: none;
+}
+.body-editor.is-dragging-media .ProseMirror > *:last-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 0;
+  border-top: 2px dashed rgba(59, 130, 246, 0.55);
+  pointer-events: none;
+}

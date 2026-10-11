@@ -1,0 +1,6 @@
+{
+  "name": "PRESS-CMS",
+  "description": "PRESS-CMS - 언론사 데스크톱 기사 작성, 블록 편집, AI 보조 검토 및 기사 송고 시스템",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
