@@ -13,6 +13,7 @@ import {
   Move
 } from 'lucide-react';
 import { User, isHrAdmin } from '../../types';
+import { PasswordChangeBox } from './PasswordChangeBox';
 
 interface AccountSettingsProps {
   currentUser: User;
@@ -278,6 +279,9 @@ export const AccountSettings: React.FC<AccountSettingsProps> = ({ currentUser, o
           </button>
         </div>
       </form>
+
+      {/* 비밀번호 변경 */}
+      <PasswordChangeBox email={currentUser.email} />
 
       {/* 사진 위치 및 크기 조절 모달 */}
       {isAdjustModalOpen && rawUploadSrc && (

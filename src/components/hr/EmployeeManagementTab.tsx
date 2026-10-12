@@ -307,7 +307,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                   <th className="py-2.5 px-4">공식 직책 / 직급</th>
                   <th className="py-2.5 px-4">시스템 역할</th>
                   <th className="py-2.5 px-4">계정 등록일</th>
-                  <th className="py-2.5 px-4">관리</th>
+                  <th className="py-2.5 px-4 whitespace-nowrap">관리</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/60">
@@ -372,16 +372,16 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                     </td>
 
                     {/* 관리 */}
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       {emp.id === myId ? (
                         <span className="text-[11px] text-slate-500">본인</span>
                       ) : (
-                        <div className="flex items-center space-x-1.5">
+                        <div className="flex items-center space-x-1.5 flex-nowrap">
                           <button
                             type="button"
                             onClick={() => openEdit(emp)}
                             disabled={busyId === emp.id}
-                            className="inline-flex items-center space-x-1 px-2 py-1 rounded border border-slate-600 text-slate-200 hover:bg-slate-700 text-[11px] cursor-pointer"
+                            className="inline-flex items-center space-x-1 px-2 py-1 rounded border border-slate-600 text-slate-200 hover:bg-slate-700 text-[11px] cursor-pointer whitespace-nowrap shrink-0"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>수정</span>
@@ -390,7 +390,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                             type="button"
                             onClick={() => toggleActive(emp)}
                             disabled={busyId === emp.id}
-                            className={`inline-flex items-center space-x-1 px-2 py-1 rounded border text-[11px] cursor-pointer ${
+                            className={`inline-flex items-center space-x-1 px-2 py-1 rounded border text-[11px] cursor-pointer whitespace-nowrap shrink-0 ${
                               emp.isActive === false
                                 ? 'border-emerald-700 text-emerald-300 hover:bg-emerald-950/50'
                                 : 'border-rose-800 text-rose-300 hover:bg-rose-950/50'

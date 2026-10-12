@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MessageSquare, Sparkles, Loader2, Newspaper, AlertTriangle, WifiOff, FileText, BarChart3 } from 'lucide-react';
+import { MessageSquare, Sparkles, Loader2, Newspaper, AlertTriangle, WifiOff, FileText, BarChart3, Clock } from 'lucide-react';
 import { TopHeader } from './components/TopHeader';
 import { LeftSidebar } from './components/LeftSidebar';
 import { ArticleEditor } from './components/editor/ArticleEditor';
@@ -317,11 +317,21 @@ export default function App() {
 
   // 데스크 검토/읽기 전용 모드 판별
   // - 데스크가 다른 기자의 review, ready, published 기사를 조회할 때 편집 제한 (isDesk에 타인 기사 조건 포함됨)
+  // 인사부 승인 전 계정은 모든 기사를 읽기만 할 수 있다 (같은 읽기 전용 화면을 사용)
+  const isPendingApproval = Boolean(currentUser?.pendingApproval);
   const isManagerReviewMode = Boolean(
-    isDesk &&
-    article &&
-    (article.status === 'review' || article.status === 'ready' || article.status === 'published')
+    (isPendingApproval && article) ||
+    (isDesk &&
+      article &&
+      (article.status === 'review' || article.status === 'ready' || article.status === 'published'))
   );
+
+  // 승인 전 계정이 수정 기능을 누르면 막고 안내한다 (true면 막힘)
+  const blockIfPending = (): boolean => {
+    if (!currentUser?.pendingApproval) return false;
+    showToast('인사부 승인 전에는 읽기만 할 수 있습니다. 승인이 끝나면 사용할 수 있어요.');
+    return true;
+  };
 
   // ==========================================
   // 새 본문 편집기(워드/한글형, 시험 중) 저장 연결
@@ -554,6 +564,15 @@ export default function App() {
           return;
         }
 
+        // 승인 대기 여부는 서버가 정한 표식(app_metadata)으로 판단한다 (본인이 바꿀 수 없음)
+        let pendingApproval = false;
+        try {
+          const { data: authData } = await supabase.auth.getUser();
+          pendingApproval = (authData?.user?.app_metadata as Record<string, unknown> | undefined)?.approval === 'pending';
+        } catch {
+          pendingApproval = false;
+        }
+
         const mappedUser: User = {
           id: profile.id,
           name: profile.name,
@@ -567,6 +586,7 @@ export default function App() {
           email: email || '',
           avatar: profile.avatar_url || '',
           recoveryEmail: profile.recovery_email || '',
+          pendingApproval,
         };
 
         if (isMounted) {
@@ -635,6 +655,29 @@ export default function App() {
       subscription.unsubscribe();
     };
   }, [loadProjects, resetSessionUI]);
+
+  // 승인 대기 중인 계정: 인사부가 승인하면 새로고침 없이도 곧 모든 기능이 열리도록 주기적으로 확인한다
+  useEffect(() => {
+    if (!currentUser?.pendingApproval) return;
+    const check = async () => {
+      if (document.visibilityState !== 'visible') return;
+      try {
+        const { data } = await supabase.auth.getUser();
+        const mark = (data?.user?.app_metadata as Record<string, unknown> | undefined)?.approval;
+        if (data?.user && mark !== 'pending') {
+          window.location.reload();
+        }
+      } catch {
+        // 일시적인 연결 문제는 다음 확인 때 다시 시도
+      }
+    };
+    const timer = window.setInterval(check, 30000);
+    window.addEventListener('focus', check);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', check);
+    };
+  }, [currentUser?.pendingApproval]);
 
   // 다른 사람이 기사 상태를 바꿨을 때 새로고침 없이 반영: 대시보드를 보고 있는 동안 30초마다, 그리고 이 창으로 돌아왔을 때 조용히 다시 불러온다
   useEffect(() => {
@@ -1077,6 +1120,7 @@ export default function App() {
   // ==========================================
   // 새 프로젝트 생성 (create_project_with_initial_article RPC)
   const handleCreateProject = async (newProj: Partial<Project>) => {
+    if (blockIfPending()) return;
     try {
       const res = await projectService.createProject({
         name: newProj.name || '새 취재 기획',
@@ -1100,6 +1144,7 @@ export default function App() {
 
   // 프로젝트 이름/제목 변경
   const handleRenameProject = async (projectId: string, newName: string, newArticleTitle?: string) => {
+    if (blockIfPending()) return;
     try {
       await projectService.updateProject(projectId, {
         name: newName,
@@ -1127,6 +1172,7 @@ export default function App() {
 
   // 프로젝트 삭제
   const handleDeleteProject = async (projectId: string) => {
+    if (blockIfPending()) return;
     try {
       await projectService.deleteProject(projectId);
       await loadProjects();
@@ -1173,6 +1219,7 @@ export default function App() {
 
   // 프로젝트 공개 범위 3단계 변경 (visibility: 'private' | 'department' | 'shared')
   const handleUpdateProjectVisibility = async (projectId: string, nextVisibility: ProjectVisibility) => {
+    if (blockIfPending()) return;
     try {
       await projectService.toggleShareProject(projectId, nextVisibility);
       await loadProjects();
@@ -1194,6 +1241,7 @@ export default function App() {
 
   // 에디터에서 기사 상태 변경 시 DB 저장 및 projects 목록과 article 실시간 동기화
   const handleUpdateArticleStatus = async (newStatus: ArticleStatus) => {
+    if (blockIfPending()) return;
     if (!article) return;
     try {
       await articleService.updateArticleStatus(article.id, newStatus);
@@ -1210,6 +1258,7 @@ export default function App() {
 
   // 대시보드에서 프로젝트(기사) 상태 즉시 변경
   const handleUpdateProjectStatus = async (projectId: string, nextStatus: string) => {
+    if (blockIfPending()) return;
     try {
       await projectService.updateProjectStatus(projectId, nextStatus);
       setProjects(prev => prev.map(p => 
@@ -1228,6 +1277,7 @@ export default function App() {
 
   // 프로젝트 전체 공유 토글 (하위 호환)
   const handleToggleShareProject = async (projectId: string) => {
+    if (blockIfPending()) return;
     const target = projects.find(p => p.id === projectId);
     if (!target) return;
     const nextVisibility = target.visibility === 'shared' ? 'private' : 'shared';
@@ -1296,6 +1346,7 @@ export default function App() {
   // Publish Operation (Preflight & publish_article RPC)
   // ==========================================
   const handleOpenPublish = async () => {
+    if (blockIfPending()) return;
     if (!article) return;
     try {
       await flushPendingSaves();
@@ -1421,6 +1472,7 @@ export default function App() {
   };
 
   const handleAddFeedback = async (newFb: Omit<ArticleFeedback, 'id' | 'createdAt' | 'replies'>) => {
+    if (blockIfPending()) return;
     if (!article) return;
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -1457,6 +1509,7 @@ export default function App() {
   };
 
   const handleAddReply = (feedbackId: string, reply: Omit<FeedbackReply, 'id' | 'createdAt'>) => {
+    if (blockIfPending()) return;
     if (!article) return;
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -1473,6 +1526,7 @@ export default function App() {
   };
 
   const handleToggleResolveFeedback = async (feedbackId: string) => {
+    if (blockIfPending()) return;
     if (!article) return;
     let resolvedState = false;
     const updatedFeedbacks = (article.feedbacks || []).map(fb => {
@@ -1493,6 +1547,7 @@ export default function App() {
   };
 
   const handleEditFeedback = async (feedbackId: string, newContent: string) => {
+    if (blockIfPending()) return;
     if (!article) return;
     const updated = (article.feedbacks || []).map(fb => 
       fb.id === feedbackId ? { ...fb, content: newContent, updatedAt: new Date().toLocaleTimeString() } : fb
@@ -1508,6 +1563,7 @@ export default function App() {
   };
 
   const handleDeleteFeedback = async (feedbackId: string) => {
+    if (blockIfPending()) return;
     if (!article) return;
     const updated = (article.feedbacks || []).filter(fb => fb.id !== feedbackId);
     handleUpdateFeedbacks(updated);
@@ -1521,6 +1577,7 @@ export default function App() {
   };
 
   const handleToggleFeedbackReaction = (feedbackId: string, type: ReactionType) => {
+    if (blockIfPending()) return;
     if (!article || !currentUser) return;
     const updated = (article.feedbacks || []).map(fb => {
       if (fb.id === feedbackId) {
@@ -1545,6 +1602,7 @@ export default function App() {
   };
 
   const handleToggleReplyReaction = (feedbackId: string, replyId: string, type: ReactionType) => {
+    if (blockIfPending()) return;
     if (!article || !currentUser) return;
     const updated = (article.feedbacks || []).map(fb => {
       if (fb.id === feedbackId) {
@@ -1833,6 +1891,7 @@ export default function App() {
 
   // 기사 신규 버전 수동 저장
   const handleCreateVersion = async (summary?: string) => {
+    if (blockIfPending()) return;
     if (!article) return;
     try {
       setIsLoadingVersions(true);
@@ -1857,6 +1916,7 @@ export default function App() {
 
   // 과거 버전 복원 (원자적 RPC: 백업 -> 복원 -> 이력 기록)
   const handleRestoreSnapshot = async (snap: VersionSnapshot) => {
+    if (blockIfPending()) return;
     if (!article) return;
     try {
       setIsRestoringVersion(true);
@@ -1898,6 +1958,23 @@ export default function App() {
       showToast(`버전 복원 실패: ${err.message}`);
     } finally {
       setIsRestoringVersion(false);
+    }
+  };
+
+  // 수정이력(버전) 삭제
+  const handleDeleteSnapshot = async (snap: VersionSnapshot) => {
+    if (blockIfPending()) return;
+    if (!article) return;
+    try {
+      setIsLoadingVersions(true);
+      await articleVersionService.deleteVersion(snap.id);
+      await loadArticleVersions(article.id);
+      showToast(`수정이력 "v${snap.versionNumber ?? snap.timestamp}"을(를) 삭제했습니다.`);
+    } catch (err: any) {
+      console.error('[App.handleDeleteSnapshot] Error:', err);
+      showToast(`이력 삭제 실패: ${err.message}`);
+    } finally {
+      setIsLoadingVersions(false);
     }
   };
 
@@ -2221,6 +2298,14 @@ export default function App() {
         </div>
       )}
 
+      {/* 인사부 승인 대기 안내 (승인 전에는 읽기만 가능) */}
+      {currentUser.pendingApproval && (
+        <div className="bg-amber-400 text-slate-950 px-4 py-1.5 text-center text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs shrink-0 select-none">
+          <Clock className="w-3.5 h-3.5" />
+          <span>인사부 승인 대기 중 — 지금은 대시보드와 공유된 기사를 읽기만 할 수 있습니다. 승인되면 프로젝트 만들기 등 모든 기능이 열립니다. (비밀번호 변경은 환경 설정에서 할 수 있어요)</span>
+        </div>
+      )}
+
       {/* 1. TOP HEADER */}
       <TopHeader
         article={article || {
@@ -2527,7 +2612,7 @@ export default function App() {
                           currentProjectId={article?.projectId}
                           canInsert={!!article && !isManagerReviewMode}
                           projects={uploadableProjects}
-                          isReadOnly={isManagerReviewMode}
+                          isReadOnly={isManagerReviewMode || isPendingApproval}
                           onInsert={handleLibraryInsert}
                           onDragStartMedia={() => setIsDraggingLibraryMedia(true)}
                           onChanged={() => { if (article?.projectId) loadProjectMedia(article.projectId); }}
@@ -2588,7 +2673,7 @@ export default function App() {
               currentProjectId={hasSelectedArticle ? article?.projectId : null}
               canInsert={hasSelectedArticle && !!article && !isManagerReviewMode}
               projects={uploadableProjects}
-              isReadOnly={isHrAdmin(currentUser)}
+              isReadOnly={isHrAdmin(currentUser) || isPendingApproval}
               onInsert={handleLibraryInsert}
               onChanged={() => { if (article?.projectId) loadProjectMedia(article.projectId); }}
               showToast={showToast}
@@ -2606,6 +2691,7 @@ export default function App() {
           snapshots={snapshots}
           onRestoreSnapshot={handleRestoreSnapshot}
           onCreateVersion={handleCreateVersion}
+          onDeleteSnapshot={isManagerReviewMode ? undefined : handleDeleteSnapshot}
           isLoading={isLoadingVersions}
           isRestoring={isRestoringVersion}
           articleId={article?.id}

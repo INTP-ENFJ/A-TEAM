@@ -11,6 +11,7 @@ import {
   Shield,
   Briefcase
 } from 'lucide-react';
+import { TempPasswordDialog } from './TempPasswordDialog';
 import { supabase } from '../../lib/supabase';
 import { 
   Department, 
@@ -35,6 +36,8 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
 
   // 승인 검토 모달 상태
   const [selectedRequest, setSelectedRequest] = useState<SignupRequestItem | null>(null);
+  // 승인 직후 한 번만 보여 주는 임시 비밀번호
+  const [issuedPassword, setIssuedPassword] = useState<{ name: string; email: string; password: string } | null>(null);
   const [assignDeptId, setAssignDeptId] = useState<string>('');
   const [assignDeptName, setAssignDeptName] = useState<string>('');
   const [assignPosId, setAssignPosId] = useState<string>('');
@@ -152,16 +155,52 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
         throw new Error('배정 정보 저장에 실패했습니다: ' + updateErr.message);
       }
 
-      // 2. approve-signup Edge Function 호출
+      // 2. 신청 때 이미 계정을 받은 경우: 배정한 부서·직책·직급·역할을 계정에 먼저 반영 (변경 기록은 인사 기록에 남음)
+      if (selectedRequest.authUserId) {
+        const { error: assignErr } = await supabase.rpc('hr_update_employee', {
+          p_user_id: selectedRequest.authUserId,
+          p_department_id: assignDeptId,
+          p_position_title_id: assignPosId,
+          p_rank: assignRank,
+          p_role: assignRole,
+        });
+        if (assignErr) {
+          throw new Error('계정에 부서·직책을 반영하지 못했습니다: ' + assignErr.message);
+        }
+      }
+
+      // 3. approve-signup Edge Function 호출 (승인 표식을 바꿔 모든 기능을 열어 준다)
       const { data: funcData, error: funcErr } = await supabase.functions.invoke('approve-signup', {
         body: { signupRequestId: selectedRequest.id },
       });
 
       if (funcErr || funcData?.error) {
-        throw new Error(funcData?.error || funcErr?.message || '승인 처리 함수 호출에 실패했습니다.');
+        // 서버가 돌려준 실제 안내 문구를 읽어 보여 준다
+        let serverMsg: string | undefined = funcData?.error;
+        if (!serverMsg && funcErr) {
+          try {
+            const ctx = (funcErr as any).context;
+            if (ctx && typeof ctx.json === 'function') {
+              const body = await ctx.json();
+              serverMsg = body?.error || body?.message;
+            }
+          } catch {
+            // 본문을 읽지 못하면 기본 문구 사용
+          }
+        }
+        throw new Error(serverMsg || funcErr?.message || '승인 처리 함수 호출에 실패했습니다.');
       }
 
-      onShowToast(`"${selectedRequest.name}" 님의 가입 신청이 승인되었으며 초대장이 발송되었습니다.`);
+      if (funcData?.temporaryPassword) {
+        setIssuedPassword({
+          name: selectedRequest.name,
+          email: selectedRequest.email,
+          password: funcData.temporaryPassword,
+        });
+      }
+      onShowToast(funcData?.temporaryPassword
+        ? `"${selectedRequest.name}" 님의 가입 신청이 승인되었습니다. 임시 비밀번호를 직접 전달해 주세요.`
+        : `"${selectedRequest.name}" 님의 가입 신청이 승인되었습니다. 이제 모든 기능을 사용할 수 있습니다.`);
       setSelectedRequest(null);
       await loadData();
     } catch (err: any) {
@@ -191,6 +230,19 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
         .eq('status', 'pending');
 
       if (rejectErr) throw rejectErr;
+
+      // 신청 때 이미 계정을 받은 경우: 로그인할 수 없도록 계정을 사용 중지한다
+      if (req.authUserId) {
+        const { error: deactivateErr } = await supabase.rpc('hr_set_employee_active', {
+          p_user_id: req.authUserId,
+          p_active: false,
+        });
+        if (deactivateErr) {
+          onShowToast('반려는 처리했지만 계정 사용 중지에 실패했습니다. 직원 관리에서 직접 비활성화해 주세요.');
+          await loadData();
+          return;
+        }
+      }
 
       onShowToast(`"${req.name}" 님의 가입 신청이 반려 처리되었습니다.`);
       await loadData();
@@ -226,8 +278,8 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
               대기 {pendingRequests.length}건
             </span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            신규 가입 신청서를 검토하고 공식 부서, 직책, 직급 및 권한을 배정하여 승인합니다.
+          <p className="text-xs text-slate-400 mt-1 max-w-xl">
+            신청자는 승인 전까지 읽기만 가능합니다. 부서·직책·직급을 정해 승인하세요. 반려하면 계정이 사용 중지됩니다.
           </p>
         </div>
         <button
@@ -529,18 +581,28 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                    <span>승인 및 초대장 발송 중...</span>
+                    <span>승인 및 계정 생성 중...</span>
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
-                    <span>최종 승인 및 초대 발송</span>
+                    <span>최종 승인</span>
                   </>
                 )}
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {issuedPassword && (
+        <TempPasswordDialog
+          title="가입 승인 완료 · 임시 비밀번호"
+          name={issuedPassword.name}
+          email={issuedPassword.email}
+          password={issuedPassword.password}
+          onClose={() => setIssuedPassword(null)}
+        />
       )}
     </div>
   );

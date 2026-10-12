@@ -28,6 +28,8 @@ export interface User {
   avatar: string;
   recoveryEmail?: string;
   canManageSignups?: boolean;
+  /** 인사부 승인 전 계정: 화면을 읽기만 할 수 있다 (서버가 정한 표식이라 본인이 바꿀 수 없음) */
+  pendingApproval?: boolean;
 }
 
 export const isHrAdmin = (user: User | null | undefined): boolean => {
@@ -291,6 +293,12 @@ export const isDeskUser = (user: User | null | undefined): boolean => {
   );
 };
 
+// 부장 이상: 직급이 부장이거나 역할이 편집국장 ("출고 대기 검토"를 볼 수 있는 사람)
+export const isManagerOrAboveUser = (user: User | null | undefined): boolean => {
+  if (!user) return false;
+  return user.rank === 'manager' || user.role === 'editor_in_chief';
+};
+
 export type ArticleStatus = 
   | 'draft'              // 초안 작성중
   | 'review'             // 데스크 감수/검토중
@@ -533,7 +541,8 @@ export type AuditLogAction =
   | 'ARTICLE_APPROVED'
   | 'ARTICLE_PUBLISHED'
   | 'ARTICLE_ASSIGNED'
-  | 'DEADLINE_CHANGED';
+  | 'DEADLINE_CHANGED'
+  | 'VERSION_DELETED';
 
 export interface AuditLogItem {
   id: string;
@@ -560,6 +569,7 @@ export const AUDIT_LOG_ACTION_LABELS: Record<AuditLogAction, { label: string; co
   ARTICLE_PUBLISHED: { label: '출고 완료', color: 'purple', badgeColor: 'bg-purple-100 text-purple-800 border-purple-300' },
   ARTICLE_ASSIGNED: { label: '기자 배정', color: 'sky', badgeColor: 'bg-sky-100 text-sky-800 border-sky-300' },
   DEADLINE_CHANGED: { label: '마감 변경', color: 'amber', badgeColor: 'bg-amber-100 text-amber-800 border-amber-300' },
+  VERSION_DELETED: { label: '이력 삭제', color: 'slate', badgeColor: 'bg-slate-100 text-slate-700 border-slate-300' },
 };
 
 // 13. Publish Preflight (출고 전 최종 검증) 모델

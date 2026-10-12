@@ -22,7 +22,7 @@ import {
   FolderGit2,
   RotateCw
 } from 'lucide-react';
-import { Project, ProjectStatus, User, DashboardTaskItem, DashboardSummary, isDeskUser, ProjectVisibility } from '../../types';
+import { Project, ProjectStatus, User, DashboardTaskItem, DashboardSummary, isDeskUser, isManagerOrAboveUser, ProjectVisibility } from '../../types';
 import { ArticleStatusBadge } from '../common/ArticleStatusBadge';
 import { dashboardService } from '../../services/dashboardService';
 import { TaskDashboardView } from './TaskDashboardView';
@@ -200,8 +200,12 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     );
   };
 
+  // 인사부 승인 전 계정은 목록을 읽기만 할 수 있다
+  const isPending = Boolean(currentUser.pendingApproval);
+
   // 대시보드 인라인 기사 상태 선택
   const renderStatusSelector = (projectId: string, rawStatus: ProjectStatus) => {
+    if (isPending) return renderStatusBadge(rawStatus);
     const normalizedValue = rawStatus === 'Draft' ? 'draft' : (rawStatus === 'Ready' ? 'ready' : (rawStatus === 'Reviewing' ? 'review' : rawStatus));
     return (
       <div className="inline-flex items-center" onClick={(e) => e.stopPropagation()}>
@@ -227,6 +231,14 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
 
   // 대시보드 인라인 3단계 공개 범위 선택
   const renderVisibilitySelector = (projectId: string, visibility?: ProjectVisibility) => {
+    if (isPending) {
+      const label = visibility === 'shared' ? '전체 공유' : visibility === 'department' ? '같은 부서 공유' : '미공개';
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
+          {label}
+        </span>
+      );
+    }
     return (
       <VisibilityPicker
         compact
@@ -258,6 +270,14 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     }
 
     const isShared = visibility === 'shared';
+    if (isPending) {
+      return (
+        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
+          {isShared ? <Globe className="w-3 h-3 text-slate-500" /> : <Lock className="w-3 h-3 text-slate-400" />}
+          <span>{isShared ? '전체 공유' : '비공개'}</span>
+        </span>
+      );
+    }
     return (
       <button
         id={`btn-toggle-share-row-${projectId}`}
@@ -287,6 +307,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   // 4단계: 데스크 권한(부장, 차장, 데스크) 여부 및 검토 큐
   const isDesk = isDeskUser(currentUser);
   const isManager = currentUser.rank === 'manager';
+  // 출고 대기 검토는 부장 이상(부장 직급 또는 편집국장 역할)에게만 보인다
+  const canSeeReadyQueue = isManagerOrAboveUser(currentUser);
 
   // 출고 대기 검토 Queue: 기사 상태가 ready(출고 대기)인 프로젝트
   // (공유 설정과 분리: 미공개/같은 부서/전체 공유 및 작성자 본인 여부와 무관하게 ready 상태면 모두 검토 대상)
@@ -503,7 +525,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               <RotateCw className={`w-4 h-4 ${isLoadingTasks ? 'animate-spin text-blue-600' : ''}`} />
             </button>
 
-            {/* [+ 새 프로젝트] Button */}
+            {!isPending && (
+            <>
             <button
               id="btn-new-project-header"
               type="button"
@@ -519,6 +542,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>새 프로젝트</span>
             </button>
+            </>
+            )}
           </div>
         </div>
 
@@ -560,7 +585,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
             >
               전체 프로젝트 ({allProjectsCount})
             </button>
-            {isDesk && (
+            {canSeeReadyQueue && (
               <button
                 id="tab-review-queue"
                 type="button"
@@ -667,8 +692,9 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               아직 프로젝트가 없습니다.
             </h3>
             <p className="text-xs text-slate-600 mt-1 max-w-sm">
-              새 프로젝트를 만들어 기사를 작성해보세요.
+              {isPending ? '인사부 승인 후 프로젝트를 만들 수 있습니다.' : '새 프로젝트를 만들어 기사를 작성해보세요.'}
             </p>
+            {!isPending && (
             <button
               id="btn-create-first-project"
               type="button"
@@ -684,6 +710,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>첫 프로젝트 만들기</span>
             </button>
+            )}
           </div>
         ) : (
           /* PROJECT TABLE (Bright Frosted Glass) */
@@ -1125,6 +1152,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               <span>열기</span>
             </button>
 
+            {!isPending && (
+            <>
             {/* 전체 프로젝트에 공유 / 공유 취소 (draft 상태에서는 노출 금지) */}
             {onToggleShareProject && normalizeStatus(targetProj.status) !== 'draft' && (
               <button
@@ -1194,6 +1223,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               <Trash2 className="w-3.5 h-3.5 text-red-500" />
               <span>삭제</span>
             </button>
+            </>
+            )}
           </div>,
           document.body
         );

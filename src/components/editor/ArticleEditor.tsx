@@ -590,11 +590,13 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                 <span className="font-semibold">
-                  출고 대기 검토 모드: 본문은 고칠 수 없지만, 글을 드래그해서 피드백은 남길 수 있습니다.
+                  {currentUser?.pendingApproval
+                    ? '인사부 승인 대기 중: 읽기만 가능합니다. 승인되면 직접 쓰고 고칠 수 있어요.'
+                    : '출고 대기 검토 모드: 본문은 고칠 수 없지만, 글을 드래그해서 피드백은 남길 수 있습니다.'}
                 </span>
               </div>
               <span className="text-[11px] bg-amber-200/70 text-amber-900 px-2 py-0.5 rounded font-bold">
-                본문 수정 불가 · 피드백 가능
+                {currentUser?.pendingApproval ? '읽기 전용' : '본문 수정 불가 · 피드백 가능'}
               </span>
             </div>
           )}

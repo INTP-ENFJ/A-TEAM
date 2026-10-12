@@ -135,7 +135,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           {isManagerReviewMode ? (
             <div className="flex items-center space-x-2 text-xs bg-purple-900/60 text-purple-200 border border-purple-400/40 px-3 py-1 rounded-md shadow-xs select-none">
               <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-              <span className="font-bold">출고 검토 모드 · 읽기 전용</span>
+              <span className="font-bold">{currentUser.pendingApproval ? '승인 대기 · 읽기 전용' : '출고 검토 모드 · 읽기 전용'}</span>
             </div>
           ) : (
             <div className="flex items-center space-x-2 text-xs text-slate-200 bg-black/20 px-3 py-1 rounded-md border border-white/15">

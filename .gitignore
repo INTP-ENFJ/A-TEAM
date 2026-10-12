@@ -6,6 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# local backups, scratch files and test recordings (do not upload)
 _backup_*/
 scratch/
+public/_tmp_test_audio/
+
 supabase/.temp/

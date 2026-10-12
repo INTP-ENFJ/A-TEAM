@@ -467,7 +467,7 @@ export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
                 ]}
               />
               <Note kind="warn" title="직급과 역할은 권한과 연결됩니다">
-                직급이 <strong>부장·차장</strong>이거나 역할이 <strong>데스크·편집국장</strong>이면 <strong>같은 부서</strong> 기사를 검토·승인·배정할 수 있습니다. 부서를 옮기면 검토할 수 있는 기사도 바뀌니 신중히 바꿔 주세요.
+                직급이 <strong>부장·차장</strong>이거나 역할이 <strong>데스크·편집국장</strong>이면 <strong>같은 부서</strong> 기사를 검토·승인·배정할 수 있습니다. 부서를 옮기면 검토할 수 있는 기사도 바뀌니 신중히 바꿔 주세요. 단, <strong>출고 대기 검토</strong> 목록은 <strong>부장 이상</strong>(부장 직급 또는 편집국장 역할)에게만 보입니다.
               </Note>
               <Sub>계정 비활성화 / 다시 사용</Sub>
               <Bullets
@@ -484,10 +484,10 @@ export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
                 items={[
                   <>신규 입사자가 로그인 화면에서 가입을 신청하면 🔔에 <strong>&quot;가입 승인 요청&quot;</strong> 알림이 오고, <B>가입 승인 관리</B> 목록에 대기 건수가 나타납니다. 알림을 누르면 이 메뉴로 바로 이동합니다.</>,
                   <>신청자 정보를 확인하고 <strong>소속 부서</strong>와 <strong>공식 직책</strong>, 직급·시스템 역할을 고릅니다.</>,
-                  <><B>승인</B>을 누르면 계정이 만들어지고 초대 메일이 발송되어 로그인할 수 있게 됩니다. 승인하지 않을 신청은 <B>반려</B>합니다.</>,
+                  <>신청자는 가입하자마자 받은 임시 비밀번호로 로그인할 수 있지만, <B>승인 전에는 대시보드와 공유된 기사를 읽기만</B> 할 수 있습니다. 부서·직책·직급·역할을 정하고 <B>승인</B>을 누르면 프로젝트 만들기 등 모든 기능이 열립니다. 승인하지 않을 신청은 <B>반려</B>하며, 반려하면 그 계정은 사용이 중지됩니다.</>,
                 ]}
               />
-              <Note>가입은 회사 이메일 도메인으로만 신청할 수 있습니다.</Note>
+              <Note>가입은 회사 이메일 도메인으로만 신청할 수 있고, 임시 비밀번호는 신청 직후 신청자 화면에만 한 번 나옵니다. 잊어버렸다면 로그인 화면의 [비밀번호를 잃어버렸어요]로 신고하면 임시 비밀번호를 다시 발급받을 수 있습니다.</Note>
             </Section>
 
             <Section id="hr-reset" no={3} icon={<PhoneCall className="w-5 h-5" />} title="비밀번호 분실 신고" summary="시스템이 메일을 자동 발송하지 않습니다. 담당자가 직접 확인합니다.">

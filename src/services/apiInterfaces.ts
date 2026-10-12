@@ -148,6 +148,7 @@ export interface IArticleVersionService {
   getVersionDetail(versionId: string): Promise<VersionSnapshot>;
   createVersion(articleId: string, summary?: string): Promise<VersionSnapshot>;
   restoreVersion(versionId: string): Promise<{ success: boolean; articleId: string; restoredVersionNumber: number }>;
+  deleteVersion(versionId: string): Promise<void>;
 }
 
 export type IVersionService = IArticleVersionService;

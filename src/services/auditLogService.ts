@@ -92,6 +92,11 @@ function generateDescription(
       return `${actorName}님이 마감시간을 [${prev}]에서 [${next}]로 변경했습니다.`;
     }
 
+    case 'VERSION_DELETED': {
+      const vn = metadata.version_number ? ` v${metadata.version_number}` : '';
+      return `${actorName}님이 수정이력${vn}을(를) 삭제했습니다.`;
+    }
+
     default:
       return `${actorName}님이 업무를 수행했습니다.`;
   }

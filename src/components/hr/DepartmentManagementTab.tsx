@@ -43,7 +43,18 @@ export const DepartmentManagementTab: React.FC<DepartmentManagementTabProps> = (
         .order('sort_order');
 
       if (err) throw err;
-      setDepartments(data || []);
+      // DB 컬럼명(snake_case)을 화면에서 쓰는 이름(camelCase)으로 변환
+      setDepartments(
+        (data || []).map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          parentId: row.parent_id ?? null,
+          isActive: row.is_active !== false,
+          sortOrder: row.sort_order ?? 0,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+        }))
+      );
     } catch (err: any) {
       console.error('Failed to load departments:', err);
       setError('부서 목록을 불러오지 못했습니다.');

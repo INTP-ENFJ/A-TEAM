@@ -52,6 +52,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const [signupLoading, setSignupLoading] = useState(false);
   const [signupError, setSignupError] = useState<string | null>(null);
   const [photoNotice, setPhotoNotice] = useState(false);
+  // 가입 직후 한 번만 보여 주는 임시 비밀번호
+  const [issuedAccount, setIssuedAccount] = useState<{ email: string; password: string } | null>(null);
+  const [pwCopied, setPwCopied] = useState(false);
 
   // 부서 목록 로드 (활성화된 부서만 조회)
   React.useEffect(() => {
@@ -168,7 +171,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  // 회원가입 신청 제출 핸들러 (auth.signUp 미사용, signup_requests에만 anon INSERT)
+  // 회원가입 신청 제출 핸들러 (서버 기능이 승인 대기 계정과 임시 비밀번호를 만들어 준다)
   const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupError(null);
@@ -196,30 +199,34 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
     setSignupLoading(true);
     try {
-      // 2. public.signup_requests INSERT (photo_url은 항상 null, department와 department_id 동시 전달)
-      const { error: insertError } = await supabase
-        .from('signup_requests')
-        .insert({
+      // 2. 가입 접수 서버 기능 호출: 승인 대기 계정과 임시 비밀번호를 한 번에 받는다
+      const { data, error: fnError } = await supabase.functions.invoke('request-signup', {
+        body: {
           name: trimmedName,
-          department: signupDepartmentName,
-          department_id: signupDepartmentId,
-          email: fullEmail,
-          photo_url: null,
-          status: 'pending',
-          reviewed_by: null,
-          reviewed_at: null,
-        });
+          departmentId: signupDepartmentId,
+          loginId: idValidation.normalizedId,
+        },
+      });
 
-      if (insertError) {
-        // Postgres UNIQUE 제약 위반(23505) 식별 (안정적인 code 값으로만 판별)
-        if (insertError.code === '23505') {
-          setSignupError('이미 가입 신청이 접수된 이메일입니다.');
-        } else {
-          console.error('Signup request insert error:', insertError);
-          setSignupError('가입 신청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.');
+      if (fnError || !data?.success) {
+        let message = data?.error as string | undefined;
+        if (!message && fnError) {
+          try {
+            const ctx = (fnError as any).context;
+            if (ctx && typeof ctx.json === 'function') {
+              const body = await ctx.json();
+              if (body?.error) message = body.error;
+            }
+          } catch {
+            // 본문을 읽지 못하면 기본 안내를 보여준다
+          }
         }
+        setSignupError(message || '가입 신청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.');
         return;
       }
+
+      // 비밀번호는 이 화면에서만 보여 주고 저장하지 않는다
+      setIssuedAccount({ email: data.email || fullEmail, password: data.temporaryPassword });
 
       // 3. 성공 시 완료 화면으로 전환
       resetSignupForm();
@@ -578,16 +585,52 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <div>
               <h2 className="text-base font-bold text-white mb-1.5">가입 신청이 접수되었습니다</h2>
               <p className="text-xs text-slate-300 leading-relaxed">
-                신청하신 정보는 인사부 검토 및 권한 배정 후 최종 승인됩니다.<br />
-                승인 완료 시 등록하신 이메일로 비밀번호 설정 안내가 발송됩니다.
+                아래 임시 비밀번호로 바로 로그인할 수 있습니다.<br />
+                인사부가 승인하기 전에는 <strong className="text-white">대시보드와 공유된 기사를 읽기만</strong> 할 수 있고,
+                승인되면 프로젝트 만들기 등 모든 기능이 열립니다.
               </p>
             </div>
+
+            {issuedAccount && (
+              <div className="text-left p-3.5 bg-slate-950 border border-slate-700 rounded-lg space-y-2">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-400">로그인 아이디</span>
+                  <span className="font-mono text-slate-200">{issuedAccount.email.split('@')[0]}</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">임시 비밀번호</span>
+                  <span className="flex items-center space-x-2">
+                    <span className="font-mono text-sm font-bold text-emerald-300 select-all tracking-wide">{issuedAccount.password}</span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(issuedAccount.password);
+                          setPwCopied(true);
+                          window.setTimeout(() => setPwCopied(false), 2000);
+                        } catch {
+                          setPwCopied(false);
+                        }
+                      }}
+                      className="px-2 py-0.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[10px] font-semibold cursor-pointer"
+                    >
+                      {pwCopied ? '복사됨' : '복사'}
+                    </button>
+                  </span>
+                </div>
+                <p className="text-[10px] text-amber-300 leading-relaxed pt-1">
+                  이 화면을 닫으면 다시 볼 수 없으니 지금 적어 두거나 복사해 주세요. 로그인한 뒤 [환경 설정]에서 꼭 새 비밀번호로 바꿔 주세요.
+                </p>
+              </div>
+            )}
 
             <div className="pt-3">
               <button
                 type="button"
                 id="btn-success-to-login"
                 onClick={() => {
+                  setIssuedAccount(null);
+                  setPwCopied(false);
                   setErrorMessage(null);
                   setViewMode('login');
                 }}
@@ -745,7 +788,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <div>
               <h2 className="text-base font-bold text-white mb-1.5">비밀번호 분실 신고가 접수되었습니다</h2>
               <p className="text-xs text-slate-300 leading-relaxed">
-                인사부 담당자가 확인한 후, 직접 연락(전화, 사내 메신저 또는 복구용 이메일)을 드려 비밀번호 재설정을 안내해 드립니다.<br />
+                인사부 담당자가 본인 확인 후 임시 비밀번호를 직접(전화, 사내 메신저 등) 전달해 드립니다.<br />로그인 후 [환경설정]에서 새 비밀번호로 바꿔 주세요.<br />
                 잠시만 기다려 주시기 바랍니다.
               </p>
             </div>

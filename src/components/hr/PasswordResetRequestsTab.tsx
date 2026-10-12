@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { PasswordResetRequest } from '../../types';
+import { TempPasswordDialog } from './TempPasswordDialog';
 
 interface PasswordResetRequestsTabProps {
   onShowToast: (msg: string) => void;
@@ -35,6 +36,9 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
   const [resolvingItem, setResolvingItem] = useState<PasswordResetRequest | null>(null);
   const [resolveNote, setResolveNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 임시 비밀번호 발급 결과 (닫으면 다시 볼 수 없음)
+  const [issued, setIssued] = useState<{ name: string; email: string; password: string } | null>(null);
 
   // 목록 로드
   const loadRequests = async () => {
@@ -81,6 +85,50 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
   useEffect(() => {
     loadRequests();
   }, []);
+
+  // 임시 비밀번호 발급 (인사부 관리자만 가능, 서버 함수가 권한을 다시 확인)
+  const handleIssueTempPassword = async (item: PasswordResetRequest) => {
+    if (!window.confirm(`${item.name} 님의 본인 확인을 마치셨나요?\n새 임시 비밀번호를 발급하면 기존 비밀번호는 즉시 사용할 수 없게 됩니다.`)) return;
+    setProcessingId(item.id);
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('hr-reset-password', {
+        body: { requestId: item.id },
+      });
+      if (fnErr) {
+        let msg = fnErr.message;
+        try {
+          const ctx = (fnErr as any).context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) msg = body.error;
+          }
+        } catch { /* 본문을 읽지 못하면 기본 메시지 사용 */ }
+        throw new Error(msg);
+      }
+      if (!data?.temporaryPassword) throw new Error('임시 비밀번호를 받지 못했습니다.');
+
+      // 발급 기록을 남기고 신고를 처리 완료로 바꾼다 (비밀번호 자체는 저장하지 않음)
+      const note = '임시 비밀번호 발급 후 직접 전달';
+      const { error: rpcErr } = await supabase.rpc('resolve_password_reset_request', {
+        p_request_id: item.id,
+        p_notes: note,
+      });
+      if (rpcErr) {
+        await supabase
+          .from('password_reset_requests')
+          .update({ status: 'resolved', resolved_at: new Date().toISOString(), admin_notes: note })
+          .eq('id', item.id);
+      }
+
+      setIssued({ name: data.name || item.name, email: data.email || item.companyEmail || item.loginId, password: data.temporaryPassword });
+      await loadRequests();
+    } catch (err: any) {
+      console.error('Failed to issue temp password:', err?.message);
+      alert('임시 비밀번호를 발급하지 못했습니다: ' + (err?.message || '잠시 후 다시 시도해 주세요.'));
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   // 처리 완료 실행
   const handleResolveSubmit = async () => {
@@ -157,7 +205,7 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                 )}
               </h2>
               <p className="text-xs text-slate-400">
-                직원이 로그인 화면에서 접수한 분실 신고 내역입니다. 시스템 자동 메일이 발송되지 않으므로, 인사부에서 직접 전화나 메일로 연락해 안내해 주세요.
+                직원이 로그인 화면에서 접수한 분실 신고 내역입니다. 본인 확인 후 [임시 비밀번호 발급]을 누르면 새 비밀번호가 화면에 한 번만 나옵니다. 직원에게 직접 전달해 주세요. (자동 메일은 가지 않습니다)
               </p>
             </div>
           </div>
@@ -354,17 +402,29 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                       {/* 6. 인사부 조치 액션 버튼 */}
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
                         {item.status === 'pending' ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setResolvingItem(item);
-                              setResolveNote('');
-                            }}
-                            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow transition-colors cursor-pointer"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>처리 완료</span>
-                          </button>
+                          <div className="inline-flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => handleIssueTempPassword(item)}
+                              disabled={processingId === item.id}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                              {processingId === item.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <KeyRound className="w-3.5 h-3.5" />}
+                              <span>임시 비밀번호 발급</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setResolvingItem(item);
+                                setResolveNote('');
+                              }}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold shadow transition-colors cursor-pointer"
+                              title="다른 방법으로 이미 해결했을 때"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              <span>처리 완료</span>
+                            </button>
+                          </div>
                         ) : (
                           <div className="text-right">
                             <span className="text-[11px] text-slate-400 block">
@@ -386,6 +446,16 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
           </div>
         )}
       </div>
+
+      {issued && (
+        <TempPasswordDialog
+          title="임시 비밀번호 발급 완료"
+          name={issued.name}
+          email={issued.email}
+          password={issued.password}
+          onClose={() => setIssued(null)}
+        />
+      )}
 
       {/* 5. 처리 완료 확인 모달 */}
       {resolvingItem && (

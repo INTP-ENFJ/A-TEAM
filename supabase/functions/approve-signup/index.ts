@@ -1,14 +1,48 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 // 사내 고정 이메일 도메인 (Edge Function 전용 상수)
 const COMPANY_EMAIL_DOMAIN = "pressdesk.co.kr";
 
+// 임시 비밀번호 생성 (헷갈리는 글자 0/O/1/l/I 제외, 영문 대·소문자와 숫자를 반드시 포함, 12자)
+// 보안: 암호학적 난수만 사용하며, 비밀번호는 로그에 남기지 않는다.
+function randomIndex(max: number): number {
+  const limit = Math.floor(0x100000000 / max) * max;
+  const buf = new Uint32Array(1);
+  do {
+    crypto.getRandomValues(buf);
+  } while (buf[0] >= limit);
+  return buf[0] % max;
+}
+
+function generateTempPassword(): string {
+  const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const lower = "abcdefghijkmnopqrstuvwxyz";
+  const digits = "23456789";
+  const all = upper + lower + digits;
+  const chars = [
+    upper[randomIndex(upper.length)],
+    lower[randomIndex(lower.length)],
+    digits[randomIndex(digits.length)],
+  ];
+  while (chars.length < 12) {
+    chars.push(all[randomIndex(all.length)]);
+  }
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomIndex(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join("");
+}
+
 export default {
   fetch: withSupabase({ auth: "user" }, async (req, ctx) => {
     try {
+      // 서버 전용 관리자 연결 (이 프로젝트에 설정된 서비스 키를 직접 사용)
+      const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
       // 1. 호출자 인증 확인 (JWT 클레임에서 sub 추출)
-      const callerUserId = ctx.userClaims?.sub;
+      const callerUserId = (ctx.userClaims?.id ?? (ctx as any).jwtClaims?.sub);
       if (!callerUserId) {
         return Response.json(
           { error: "인증된 사용자 세션을 확인할 수 없습니다.", code: "UNAUTHORIZED" },
@@ -17,7 +51,7 @@ export default {
       }
 
       // 2. 호출자의 인사부 승인 권한 검증 (DB profiles 직접 조회)
-      const { data: callerProfile, error: profileError } = await ctx.supabaseAdmin
+      const { data: callerProfile, error: profileError } = await admin
         .from("profiles")
         .select("department, can_manage_signups")
         .eq("id", callerUserId)
@@ -59,7 +93,7 @@ export default {
       }
 
       // 4. 가입 신청 정보 DB 조회
-      const { data: signupRequest, error: requestError } = await ctx.supabaseAdmin
+      const { data: signupRequest, error: requestError } = await admin
         .from("signup_requests")
         .select("*")
         .eq("id", signupRequestId)
@@ -112,11 +146,15 @@ export default {
 
       let targetAuthUserId: string | null = null;
       let isRestoredFromPartialFailure = false;
+      // 승인 시 인사부에 한 번만 보여 주는 임시 비밀번호 (저장하지 않음)
+      const temporaryPassword = generateTempPassword();
+      // 신청 때 이미 비밀번호를 받은 계정이면 새 비밀번호를 만들지 않는다
+      let needTempPassword = true;
 
       // 7. Auth 사용자 처리
       if (signupRequest.auth_user_id) {
         // [Case A] 이전 승인 시도에서 Auth 계정 생성 후 연결 UUID가 이미 기록된 부분 실패 상태 복구
-        const { data: authUserData, error: getUserError } = await ctx.supabaseAdmin.auth.admin.getUserById(
+        const { data: authUserData, error: getUserError } = await admin.auth.admin.getUserById(
           signupRequest.auth_user_id
         );
 
@@ -142,10 +180,44 @@ export default {
           );
         }
 
+        const approvalMark = (authUserData.user.app_metadata as Record<string, unknown> | undefined)?.approval;
+        if (approvalMark === "pending" || approvalMark === "approved") {
+          // [신청 때 이미 계정과 비밀번호를 받은 경우] 비밀번호는 그대로 두고 승인 표식만 바꾼다
+          const { error: approveMarkError } = await admin.auth.admin.updateUserById(
+            authUserData.user.id,
+            { app_metadata: { ...(authUserData.user.app_metadata || {}), approval: "approved" } }
+          );
+          if (approveMarkError) {
+            console.error("Auth updateUserById (approval mark) error:", approveMarkError.message);
+            return Response.json(
+              { error: "계정을 승인 상태로 바꾸지 못했습니다. 잠시 후 다시 시도해 주세요.", code: "APPROVAL_MARK_FAILED" },
+              { status: 500 }
+            );
+          }
+          needTempPassword = false;
+        } else {
+          // [이전 방식으로 만든 계정] 이전에 만든 임시 비밀번호는 알 수 없으므로 새로 발급해 덮어쓴다
+          const { error: resetPwError } = await admin.auth.admin.updateUserById(
+            authUserData.user.id,
+            {
+              password: temporaryPassword,
+              user_metadata: { ...(authUserData.user.user_metadata || {}), must_change_password: true },
+            }
+          );
+          if (resetPwError) {
+            console.error("Auth updateUserById (temp password) error:", resetPwError.message);
+            return Response.json(
+              { error: "임시 비밀번호를 발급하지 못했습니다. 잠시 후 다시 시도해 주세요.", code: "TEMP_PASSWORD_FAILED" },
+              { status: 500 }
+            );
+          }
+        }
+
         targetAuthUserId = authUserData.user.id;
-        isRestoredFromPartialFailure = true;
+        isRestoredFromPartialFailure = needTempPassword;
       } else {
-        // [Case B] 신규 승인 흐름: inviteUserByEmail 실행
+        // [Case B] 신규 승인 흐름: 이메일을 보내지 않고 임시 비밀번호로 계정을 바로 만든다
+        // (사내 도메인 주소는 메일을 받을 수 없으므로 초대 메일 방식을 쓰지 않는다)
         const userMetadata = {
           name: signupRequest.name,
           department: signupRequest.department,
@@ -155,16 +227,20 @@ export default {
           role_title: signupRequest.assigned_role_title,
           position_title_id: signupRequest.assigned_position_title_id || null,
           avatar_url: signupRequest.photo_url || null,
+          must_change_password: true,
         };
 
-        const { data: inviteData, error: inviteError } = await ctx.supabaseAdmin.auth.admin.inviteUserByEmail(
-          signupRequest.email,
-          { data: userMetadata }
-        );
+        const { data: inviteData, error: inviteError } = await admin.auth.admin.createUser({
+          email: signupRequest.email,
+          password: temporaryPassword,
+          email_confirm: true,
+          user_metadata: userMetadata,
+        });
 
-        if (inviteError) {
-          console.error("Auth inviteUserByEmail error:", inviteError);
-          const isAlreadyRegistered = inviteError.message?.toLowerCase().includes("already registered");
+        if (inviteError || !inviteData?.user) {
+          console.error("Auth createUser error:", inviteError?.message);
+          const lowered = inviteError?.message?.toLowerCase() || "";
+          const isAlreadyRegistered = lowered.includes("already") && lowered.includes("registered");
           if (isAlreadyRegistered) {
             return Response.json(
               { error: "해당 이메일로 이미 등록된 다른 계정이 존재합니다.", code: "EMAIL_ALREADY_EXISTS" },
@@ -172,7 +248,7 @@ export default {
             );
           }
           return Response.json(
-            { error: "초대장 발송 및 계정 생성에 실패했습니다.", code: "INVITE_FAILED" },
+            { error: "계정 생성에 실패했습니다.", code: "INVITE_FAILED" },
             { status: 500 }
           );
         }
@@ -181,7 +257,7 @@ export default {
 
         // 7-1단계: 생성된 Auth UUID를 signup_requests.auth_user_id에 기록 (낙관적 락 & 0-row 검증)
         const nowIso = new Date().toISOString();
-        const { data: linkedRequest, error: linkError } = await ctx.supabaseAdmin
+        const { data: linkedRequest, error: linkError } = await admin
           .from("signup_requests")
           .update({
             auth_user_id: targetAuthUserId,
@@ -199,7 +275,7 @@ export default {
             authUserId: targetAuthUserId,
           });
           return Response.json(
-            { error: "계정 초대는 완료되었으나 연결 정보 저장에 실패했습니다. 관리자에게 문의하세요.", code: "PARTIAL_FAILURE_LINK" },
+            { error: "계정 생성은 완료되었으나 연결 정보 저장에 실패했습니다. 다시 승인을 시도해주세요.", code: "PARTIAL_FAILURE_LINK" },
             { status: 500 }
           );
         }
@@ -219,7 +295,7 @@ export default {
 
       // 8. 최종 승인 상태 업데이트 (status = 'approved', 0-row 검증)
       const finalNowIso = new Date().toISOString();
-      const { data: approvedRequest, error: approveError } = await ctx.supabaseAdmin
+      const { data: approvedRequest, error: approveError } = await admin
         .from("signup_requests")
         .update({
           status: "approved",
@@ -239,7 +315,7 @@ export default {
           authUserId: targetAuthUserId,
         });
         return Response.json(
-          { error: "계정 초대는 완료되었으나 승인 상태 반영에 실패했습니다. 다시 승인을 시도해주세요.", code: "PARTIAL_FAILURE_STATUS" },
+          { error: "계정 생성은 완료되었으나 승인 상태 반영에 실패했습니다. 다시 승인을 시도해주세요.", code: "PARTIAL_FAILURE_STATUS" },
           { status: 500 }
         );
       }
@@ -261,13 +337,21 @@ export default {
         success: true,
         message: isRestoredFromPartialFailure
           ? "이전 미완료 건을 포함하여 가입 승인 처리가 정상 복구 및 완료되었습니다."
-          : "가입 신청이 승인되었으며 비밀번호 설정 초대장이 발송되었습니다.",
+          : needTempPassword
+            ? "가입 신청이 승인되었습니다. 임시 비밀번호를 신청자에게 직접 전달해 주세요."
+            : "가입 신청이 승인되었습니다. 이제 모든 기능을 사용할 수 있습니다.",
         userId: targetAuthUserId,
-      });
+        // 새로 만든 계정일 때만 전달 (신청 때 비밀번호를 이미 받은 경우에는 없음)
+        temporaryPassword: needTempPassword ? temporaryPassword : undefined,
+      }, { headers: { "Cache-Control": "no-store" } });
     } catch (err) {
       console.error("Unhandled exception in approve-signup function:", err);
       return Response.json(
-        { error: "가입 승인 처리 중 서버 오류가 발생했습니다.", code: "INTERNAL_SERVER_ERROR" },
+        {
+          error: "가입 승인 처리 중 서버 오류가 발생했습니다." +
+            (err instanceof Error ? ` (원인: ${err.message.slice(0, 200)})` : ""),
+          code: "INTERNAL_SERVER_ERROR",
+        },
         { status: 500 }
       );
     }

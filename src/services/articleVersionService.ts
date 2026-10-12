@@ -181,6 +181,24 @@ class ArticleVersionService implements IArticleVersionService {
       restoredVersionNumber: result.restored_version_number,
     };
   }
+
+  /**
+   * 특정 버전 삭제 (delete_article_version RPC)
+   * - 본인이 만든 버전(또는 내 기사의 버전)만 삭제 가능, 출고 완료 기사는 불가
+   * - 삭제 사실은 업무 이력에 기록됨
+   */
+  async deleteVersion(versionId: string): Promise<void> {
+    if (!versionId) throw new Error('삭제할 버전 ID가 유효하지 않습니다.');
+
+    const { error } = await supabase.rpc('delete_article_version', {
+      p_version_id: versionId,
+    });
+
+    if (error) {
+      console.error(`[ArticleVersionService.deleteVersion] RPC error for version ${versionId}:`, error);
+      throw new Error(error.message);
+    }
+  }
 }
 
 export const articleVersionService = new ArticleVersionService();

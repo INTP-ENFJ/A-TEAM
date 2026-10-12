@@ -12,7 +12,7 @@ import {
   Calendar,
   UserCheck
 } from 'lucide-react';
-import { DashboardSummary, DashboardTaskItem, User, isDeskUser } from '../../types';
+import { DashboardSummary, DashboardTaskItem, User, isDeskUser, isManagerOrAboveUser } from '../../types';
 import { ArticleStatusBadge } from '../common/ArticleStatusBadge';
 import { AssignArticleModal } from './AssignArticleModal';
 
@@ -36,6 +36,8 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
   showToast,
 }) => {
   const isDesk = isDeskUser(currentUser);
+  // 출고 대기 기사는 부장 이상(부장 직급 또는 편집국장 역할)에게만 보인다
+  const canSeeReadyQueue = isManagerOrAboveUser(currentUser);
 
   // 1. 기자 관점 필터링
   const myDrafts = tasks.filter(t => t.authorId === currentUser.id && t.status === 'draft');
@@ -46,7 +48,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
   const totalMyTasks = myDrafts.length + myChangesRequested.length + myInReview.length + myReady.length + myPublished.length;
 
   // 데스크 사용자: 검토 대기(review) 또는 출고 대기(ready) 큐가 존재하면 '데스크 검토 큐'를 기본 활성화
-  const totalDeskActionable = summary.deskReviewQueueCount + summary.deskReadyQueueCount;
+  const totalDeskActionable = summary.deskReviewQueueCount + (canSeeReadyQueue ? summary.deskReadyQueueCount : 0);
   const [roleView, setRoleView] = useState<'reporter' | 'desk'>(
     isDesk ? (totalDeskActionable > 0 ? 'desk' : (totalMyTasks > 0 ? 'reporter' : 'desk')) : 'reporter'
   );
@@ -60,7 +62,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
   const renderMineBadge = (t: DashboardTaskItem) => isMine(t) ? (
     <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">내 기사</span>
   ) : null;
-  const deskReadyQueue = tasks.filter(t => t.status === 'ready');
+  const deskReadyQueue = canSeeReadyQueue ? tasks.filter(t => t.status === 'ready') : [];
 
   // 요약 카드를 누르면 해당 목록으로 부드럽게 이동하고 잠깐 강조한다
   const goTo = (id: string) => {
@@ -136,7 +138,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
                   summary.deskReviewQueueCount > 0 
                     ? 'bg-rose-500 text-white' 
-                    : (summary.deskReadyQueueCount > 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-600')
+                    : (canSeeReadyQueue && summary.deskReadyQueueCount > 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-600')
                 }`}>
                   {totalDeskActionable}
                 </span>
@@ -264,6 +266,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
           </div>
 
           {/* 출고 대기 */}
+          {canSeeReadyQueue && (
           <div {...cardNav('sec-d-ready', '출고 대기')} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-purple-800 flex items-center space-x-1.5">
@@ -274,6 +277,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
             </div>
             <span className="text-3xl font-black text-purple-900">{summary.deskReadyQueueCount}</span>
           </div>
+          )}
         </div>
       )}
 
@@ -631,6 +635,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
           </div>
 
           {/* [섹션 3]: 승인 및 출고 대기 기사 */}
+          {canSeeReadyQueue && (
           <div id="sec-d-ready" className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
             <div className="px-5 py-3.5 bg-purple-50/60 border-b border-purple-200 flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -697,6 +702,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
               )}
             </div>
           </div>
+          )}
         </div>
       )}
 

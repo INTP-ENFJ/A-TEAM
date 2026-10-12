@@ -11,7 +11,8 @@ import {
   Loader2, 
   FileText, 
   Image as ImageIcon,
-  CheckCircle2
+  CheckCircle2,
+  Trash2
 } from 'lucide-react';
 import { VersionSnapshot } from '../../types';
 import { AuditLogPanel } from '../audit/AuditLogPanel';
@@ -22,6 +23,7 @@ interface VersionHistoryModalProps {
   snapshots: VersionSnapshot[];
   onRestoreSnapshot: (snapshot: VersionSnapshot) => Promise<void> | void;
   onCreateVersion?: (summary: string) => Promise<void>;
+  onDeleteSnapshot?: (snapshot: VersionSnapshot) => Promise<void> | void;
   isLoading?: boolean;
   isRestoring?: boolean;
   articleId?: string;
@@ -33,6 +35,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
   snapshots,
   onRestoreSnapshot,
   onCreateVersion,
+  onDeleteSnapshot,
   isLoading = false,
   isRestoring = false,
   articleId,
@@ -75,6 +78,18 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
     if (isConfirmed) {
       onRestoreSnapshot(snap);
     }
+  };
+
+  // 삭제 확인 (되돌릴 수 없음)
+  const handleDeleteClick = async (snap: VersionSnapshot) => {
+    if (!onDeleteSnapshot) return;
+    const vName = snap.versionNumber ? `v${snap.versionNumber}` : snap.timestamp;
+    const ok = window.confirm(
+      `"${vName}" 수정이력을 삭제하시겠습니까?\n\n※ 삭제하면 되돌릴 수 없습니다. 삭제 사실은 업무 활동 이력에 남습니다.`
+    );
+    if (!ok) return;
+    await onDeleteSnapshot(snap);
+    setPreviewSnap(null);
   };
 
   return (
@@ -359,6 +374,19 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                             >
                               <RotateCcw className="w-3 h-3 text-amber-600" />
                               <span>복원</span>
+                            </button>
+                          )}
+
+                          {/* 삭제 버튼 */}
+                          {onDeleteSnapshot && (
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteClick(snap)}
+                              className="px-2.5 py-1 text-[11px] font-semibold text-rose-700 hover:text-rose-900 hover:bg-rose-50 rounded border border-rose-200 flex items-center space-x-1 transition-colors cursor-pointer"
+                              title="이 수정이력을 삭제합니다 (되돌릴 수 없음)"
+                            >
+                              <Trash2 className="w-3 h-3 text-rose-500" />
+                              <span>삭제</span>
                             </button>
                           )}
                         </div>
