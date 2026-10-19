@@ -216,7 +216,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               onChangeStatus(projectId, e.target.value);
             }
           }}
-          className="text-[11px] font-semibold bg-white hover:bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
+          className="text-[12px] font-semibold bg-white hover:bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
           title="기사 상태 직접 변경"
         >
           <option value="draft">초안</option>
@@ -234,7 +234,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     if (isPending) {
       const label = visibility === 'shared' ? '전체 공유' : visibility === 'department' ? '같은 부서 공유' : '미공개';
       return (
-        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
           {label}
         </span>
       );
@@ -260,7 +260,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     if (status && normalizeStatus(status) === 'draft') {
       return (
         <span 
-          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200 select-none whitespace-nowrap shrink-0"
+          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[12px] font-medium bg-slate-100 text-slate-500 border border-slate-200 select-none whitespace-nowrap shrink-0"
           title="초안 작성 중에는 전체 공유가 불가능합니다."
         >
           <Lock className="w-3 h-3 text-slate-400" />
@@ -272,7 +272,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     const isShared = visibility === 'shared';
     if (isPending) {
       return (
-        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
+        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap select-none">
           {isShared ? <Globe className="w-3 h-3 text-slate-500" /> : <Lock className="w-3 h-3 text-slate-400" />}
           <span>{isShared ? '전체 공유' : '비공개'}</span>
         </span>
@@ -288,7 +288,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
             onToggleShareProject(projectId);
           }
         }}
-        className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer shadow-2xs whitespace-nowrap shrink-0 ${isShared
+        className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold border transition-all cursor-pointer shadow-2xs whitespace-nowrap shrink-0 ${isShared
             ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
             : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
           }`}
@@ -482,7 +482,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                 <span>업무 대시보드</span>
                 {/* 중요 알림 뱃지: 기자는 수정요청, 데스크는 검토요청 */}
                 {(isManager ? summary.deskReviewQueueCount > 0 : summary.myChangesRequestedCount > 0) && (
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                  <span className={`px-1.5 py-0.2 rounded-full text-[12px] font-bold ${
                     activeView === 'tasks' ? 'bg-amber-400 text-slate-950' : 'bg-red-500 text-white'
                   }`}>
                     {isManager ? summary.deskReviewQueueCount : summary.myChangesRequestedCount}
@@ -502,7 +502,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
               >
                 <FolderGit2 className="w-3.5 h-3.5" />
                 <span>프로젝트 관리</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-semibold ${
+                <span className={`px-1.5 py-0.2 rounded-full text-[12px] font-semibold ${
                   activeView === 'projects' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-600'
                 }`}>
                   {projects.length}
@@ -596,7 +596,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                   }`}
               >
                 <span>출고 대기 검토</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                <span className={`px-1.5 py-0.2 rounded-full text-[12px] font-bold ${
                   activeTab === 'review_queue' ? 'bg-purple-950 text-white' : 'bg-purple-100 text-purple-800'
                 }`}>
                   {reviewQueueCount}
@@ -608,7 +608,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             {/* Status Filter */}
             <div className="flex items-center space-x-1 bg-white/85 backdrop-blur-md p-1 rounded-md border border-slate-300/80 shadow-xs">
-              <span className="text-[11px] text-slate-500 font-semibold px-1.5 whitespace-nowrap">상태:</span>
+              <span className="text-[12px] text-slate-500 font-semibold px-1.5 whitespace-nowrap">상태:</span>
               {[
                 { key: 'all' as const, label: '전체' },
                 { key: 'draft' as const, label: '초안' },
@@ -620,7 +620,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                   id={`filter-status-${opt.key}`}
                   type="button"
                   onClick={() => setStatusFilter(opt.key)}
-                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap ${statusFilter === opt.key
+                  className={`px-2.5 py-1 rounded text-[12px] font-medium transition-all cursor-pointer whitespace-nowrap ${statusFilter === opt.key
                       ? 'bg-slate-900 text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
@@ -724,7 +724,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-slate-100/90 text-slate-700 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 select-none">
+                <thead className="bg-slate-100/90 text-slate-700 uppercase text-[12px] font-bold tracking-wider border-b border-slate-200 select-none">
                   <tr>
                     <th className="py-3.5 px-4 font-bold whitespace-nowrap">프로젝트명</th>
                     <th className="py-3.5 px-4 font-bold whitespace-nowrap">기사 제목</th>
@@ -754,13 +754,13 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                               {p.name}
                             </span>
                             {p.desk && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200 whitespace-nowrap shrink-0">
+                              <span className="text-[12px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200 whitespace-nowrap shrink-0">
                                 {p.desk}
                               </span>
                             )}
                           </div>
                           {p.coverageType && (
-                            <span className="text-[10px] text-slate-400 mt-0.5 block whitespace-nowrap">
+                            <span className="text-[12px] text-slate-400 mt-0.5 block whitespace-nowrap">
                               {p.coverageType}
                             </span>
                           )}
@@ -774,12 +774,12 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                           >
                             {p.articleTitle}
                           </p>
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-1">
+                          <div className="flex flex-wrap items-center gap-1.5 text-[12px] mt-1">
                             {p.charCount !== undefined && (
                               <span className="text-slate-400 font-mono whitespace-nowrap">{p.charCount.toLocaleString()}자</span>
                             )}
                             {p.pendingReviewsCount !== undefined && p.pendingReviewsCount > 0 ? (
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-semibold whitespace-nowrap shrink-0">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[12px] font-semibold whitespace-nowrap shrink-0">
                                 <span>검토 대기 {p.pendingReviewsCount}건</span>
                                 <span className="text-amber-600 font-normal">
                                   ({p.aiPendingCount !== undefined ? `AI 검수 ${p.aiPendingCount}` : ''}
@@ -788,7 +788,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                                 </span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-medium whitespace-nowrap shrink-0">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium whitespace-nowrap shrink-0">
                                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                                 <span>검토 완료</span>
                               </span>
@@ -805,7 +805,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                         </td>
 
                         {/* 4. 생성일 */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[12px]">
                           <div className="flex items-center space-x-1">
                             <Calendar className="w-3 h-3 text-slate-400" />
                             <span>{p.createdAt || '2026.09.18'}</span>
@@ -813,7 +813,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                         </td>
 
                         {/* 5. 최종 수정일 */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-slate-700 font-mono text-[11px]">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-slate-700 font-mono text-[12px]">
                           <div className="flex items-center space-x-1 font-semibold text-slate-700">
                             <Clock className="w-3 h-3 text-blue-600" />
                             <span>{p.updatedAt}</span>
@@ -873,7 +873,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
             </div>
 
             {/* Table Footer info */}
-            <div className="p-3 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-500 flex items-center justify-between">
+            <div className="p-3 bg-slate-50 border-t border-slate-200 text-[12px] text-slate-500 flex items-center justify-between">
               <span className="whitespace-nowrap">
                 표시된 프로젝트: <strong>{sortedProjects.length}</strong>건 (최근 수정된 순으로 정렬됨)
               </span>
@@ -963,13 +963,13 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
                   placeholder="기자 이름 (예: 김현우)"
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 shadow-2xs"
                 />
-                <span className="text-[11px] text-slate-400 mt-1 block">
+                <span className="text-[12px] text-slate-400 mt-1 block">
                   현재 로그인된 계정: {currentUser.name} ({currentUser.email})
                 </span>
               </div>
 
               {/* Database Context Note */}
-              <div className="p-3 bg-slate-50 rounded-md border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
+              <div className="p-3 bg-slate-50 rounded-md border border-slate-200 text-[12px] text-slate-700 leading-relaxed">
                 ℹ️ 프로젝트를 생성하면 즉시 <strong>초안(Draft)</strong> 상태로 등록되며, 해당 기사 편집 화면으로 이동합니다.
               </div>
 

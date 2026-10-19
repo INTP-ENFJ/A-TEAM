@@ -24,7 +24,7 @@ export const PanelHeader: React.FC<Props> = ({ icon, title, subtitle, badge, act
             <h3 className="text-sm font-bold text-slate-900 truncate">{title}</h3>
             {badge}
           </div>
-          {subtitle && <p className="text-[11px] text-slate-600 truncate">{subtitle}</p>}
+          {subtitle && <p className="text-[12px] text-slate-600 truncate">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex items-center gap-1.5 shrink-0">{actions}</div>}
@@ -35,7 +35,7 @@ export const PanelHeader: React.FC<Props> = ({ icon, title, subtitle, badge, act
 
 /** 공통 보조 버튼 모양 */
 export const PANEL_BTN_SECONDARY =
-  'px-2.5 py-1 text-[11px] font-semibold rounded border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
+  'px-2.5 py-1 text-[12px] font-semibold rounded border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
 /** 공통 주요 버튼 모양 */
 export const PANEL_BTN_PRIMARY =
-  'px-2.5 py-1 text-[11px] font-bold rounded bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 transition-colors cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed whitespace-nowrap';
+  'px-2.5 py-1 text-[12px] font-bold rounded bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 transition-colors cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed whitespace-nowrap';

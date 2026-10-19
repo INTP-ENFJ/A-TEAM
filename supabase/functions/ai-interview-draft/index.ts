@@ -117,6 +117,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
 
     // 2. 프로필 및 권한 검증 (HR 계정 배제)
@@ -184,7 +192,7 @@ Deno.serve(async (req) => {
     // 개인 AI 설정: 계정에 암호화되어 저장된 공급자·키·모델을 읽는다
     let llmCfg: LlmConfig | null = null;
     try {
-      llmCfg = await loadLlmConfig(adminClient, user.id);
+      llmCfg = await loadLlmConfig(adminClient, user.id, "draft");
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);
       if (known) return known;
@@ -343,13 +351,15 @@ ${JSON.stringify(draftState, null, 2)}
 1. 기존에 수집된 draft_state 사실관계 범위 내에서만 해당 섹션을 다시 작성하라.
 2. 기자가 요구한 피드백 방향("더 간결하게", "표현 변경" 등)을 반영하되, 새로운 사실을 임의로 추가하지 마라.
 3. 사실이 부족하면 반드시 "[확인 필요: ○○]" 표시를 사용하라.
-4. JSON 형식으로 응답하라.
+4. 피드백이 draft_state에 없는 발언·사실·수치·평가(예: "시장이 환영했다는 말을 넣어줘")를 새로 넣어 달라는 요구라면, 그 내용은 문장으로도, "[확인 필요]" 표시로도 넣지 마라. 그 부분은 반영하지 말고 refused_requests에 무엇을 넣지 않았는지 짧게 적어라.
+5. JSON 형식으로 응답하라.
 
 JSON 스키마:
 {
   "questions": [],
   "updated_draft_state": { ... },
   "rewritten_text": "새로 작성된 섹션 텍스트",
+  "refused_requests": ["자료에 없어 넣지 않은 요청(없으면 빈 배열)"],
   "ready_to_finalize": true
 }`;
     } else if (action === "revise_draft") {
@@ -364,7 +374,7 @@ ${JSON.stringify(draftState, null, 2)}
 1. 기자의 지시("전체를 더 짧게", "제목을 덜 자극적으로", "해설 톤으로" 등)를 title_candidates, lead_paragraph, body_blocks 전체에 반영해 다시 작성하라.
 2. draft_state에 이미 있는 사실관계(five_w1h, quotes, key_figures) 범위 안에서만 쓰고, 새로운 사실·수치·인용을 절대 추가하지 마라.
 3. 사실이 부족한 곳은 기존처럼 "[확인 필요: ○○]" 표시를 그대로 유지하라.
-4. 지시가 사실을 새로 만들어 달라는 요구(예: "수치를 더 넣어줘")라면 지어내지 말고 해당 위치에 "[확인 필요: ○○]"로 남겨라.
+4. 지시가 draft_state에 없는 발언·사실·수치·평가를 새로 넣어 달라는 요구(예: "시장이 환영했다는 발언도 넣어줘", "수치를 더 넣어줘")라면, 그 내용은 문장으로도, "[확인 필요]" 표시로도 기사에 넣지 마라. 그 요구는 반영하지 말고 refused_requests에 무엇을 넣지 않았는지 짧게 적어라. 같은 지시 안의 다른 요구(길이·어조 등)는 그대로 반영하라.
 5. JSON 형식으로 응답하라.
 
 JSON 스키마:
@@ -381,6 +391,7 @@ JSON 스키마:
     "lead_paragraph": "수정된 리드",
     "body_blocks": ["수정된 본문 1", "수정된 본문 2"]
   },
+  "refused_requests": ["자료에 없어 넣지 않은 요청(없으면 빈 배열)"],
   "ready_to_finalize": true
 }`;
     } else if (action === "finalize") {
@@ -419,11 +430,11 @@ JSON 스키마:
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         rawContent = await callLlm(llmCfg, {
-          log: { admin: adminClient, userId: user.id, fn: "ai-interview-draft" },
           system: systemPrompt,
           user: userPrompt,
           maxTokens: 8192,
           temperature: 0.1,
+          log: { admin: adminClient, userId: user.id, fn: "ai-interview-draft" },
         });
         callError = null;
         break;
@@ -498,6 +509,20 @@ JSON 스키마:
         : draftState.body_blocks,
     };
 
+    // 수정 지시·문단 재작성으로는 수집된 사실(육하원칙·발언·수치)을 바꿀 수 없다 (AI가 새 발언을 끼워 넣는 것 방지)
+    const isEdit = action === "revise_draft" || action === "regenerate_section";
+    if (isEdit) {
+      newState.five_w1h = draftState.five_w1h;
+      newState.quotes = draftState.quotes;
+      newState.key_figures = draftState.key_figures;
+    }
+    const refused: string[] = isEdit && Array.isArray(parsed.refused_requests)
+      ? parsed.refused_requests.map((r: any) => safeSlice(r, 200)).filter((r: string) => r.trim()).slice(0, 5)
+      : [];
+    const refusedNote = refused.length
+      ? `\n\n다만 다음 요청은 취재 자료(기자 답변·메모)에 근거가 없어 넣지 않았습니다: ${refused.join(" / ")}. 사실을 확인하셨다면 답변으로 알려 주세요. 그러면 반영하겠습니다.`
+      : "";
+
     // 대화 내역 갱신
     const nowIso = new Date().toISOString();
     const newConversation = [...conversation];
@@ -536,7 +561,7 @@ JSON 스키마:
       });
       newConversation.push({
         role: "ai",
-        content: `요청하신 피드백을 반영하여 해당 섹션을 재작성했습니다.`,
+        content: `요청하신 피드백을 반영하여 해당 섹션을 재작성했습니다.${refusedNote}`,
         created_at: nowIso,
       });
     } else if (action === "revise_draft" && body.instructionText) {
@@ -547,7 +572,7 @@ JSON 스키마:
       });
       newConversation.push({
         role: "ai",
-        content: `지시하신 내용을 반영해 제목과 본문 초안을 다시 작성했습니다. 새로 추가한 사실은 없습니다.`,
+        content: `지시하신 내용을 반영해 제목과 본문 초안을 다시 작성했습니다. 새로 추가한 사실은 없습니다.${refusedNote}`,
         created_at: nowIso,
       });
     } else if (action === "finalize") {

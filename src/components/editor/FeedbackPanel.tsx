@@ -266,7 +266,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               key={r.type}
               type="button"
               onClick={() => onToggle(r.type)}
-              className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border ${
+              className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-semibold transition-all border ${
                 isUserReacted
                   ? 'bg-blue-50 text-blue-800 border-blue-300 font-bold shadow-2xs'
                   : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -274,7 +274,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               title={isUserReacted ? '리액션 취소' : '리액션 추가'}
             >
               <span>{REACTION_EMOJIS[r.type]}</span>
-              <span className="font-mono text-[10px]">{count}</span>
+              <span className="font-mono text-[12px]">{count}</span>
             </button>
           );
         })}
@@ -330,7 +330,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
         title="데스크 피드백"
         subtitle="기사 첨삭과 문단별 협업 메모"
         badge={unresolvedCount > 0 ? (
-          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+          <span className="px-1.5 py-0.5 rounded text-[12px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
             미해결 {unresolvedCount}
           </span>
         ) : undefined}
@@ -352,7 +352,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           <button
             type="button"
             onClick={() => setFilterMode('all')}
-            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
+            className={`px-2 py-0.5 rounded text-[12px] font-semibold transition-colors ${
               filterMode === 'all'
                 ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
@@ -363,7 +363,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           <button
             type="button"
             onClick={() => setFilterMode('unresolved')}
-            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
+            className={`px-2 py-0.5 rounded text-[12px] font-semibold transition-colors ${
               filterMode === 'unresolved'
                 ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
@@ -373,7 +373,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           </button>
         </div>
 
-        <span className="text-[10px] text-slate-500">
+        <span className="text-[12px] text-slate-500">
           작성자: {currentUser.name} ({currentUser.roleTitle || currentUser.rank})
         </span>
       </div>
@@ -385,7 +385,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           className="p-3 bg-blue-50/40 border-b border-blue-200 shrink-0 space-y-2 animate-in slide-in-from-top-2 duration-150"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-800 flex items-center space-x-1">
+            <span className="text-[12px] font-bold text-slate-800 flex items-center space-x-1">
               <MessageCircle className="w-3.5 h-3.5 text-blue-600" />
               <span>새 피드백 / 메모 작성</span>
             </span>
@@ -394,7 +394,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               id="select-feedback-paragraph"
               value={selectedBlockId}
               onChange={(e) => setSelectedBlockId(e.target.value)}
-              className="text-[11px] bg-white border border-slate-300 rounded px-2 py-1 text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 font-sans"
+              className="text-[12px] bg-white border border-slate-300 rounded px-2 py-1 text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 font-sans"
             >
               <option value="">전체 기사 대상 메모</option>
               {paragraphBlocks.map((p) => (
@@ -446,7 +446,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
             <p className="text-xs font-bold text-slate-700">
               {filterMode === 'unresolved' ? '미해결된 피드백 메모가 없습니다' : '등록된 피드백 메모가 없습니다'}
             </p>
-            <p className="text-[11px] text-slate-600 mt-1 max-w-xs">
+            <p className="text-[12px] text-slate-600 mt-1 max-w-xs">
               데스크 지시사항이나 동료 기자 간 검토 의견을 상단 "+ 메모 추가" 버튼으로 남길 수 있습니다.
             </p>
           </div>
@@ -487,7 +487,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                       </span>
                       
                       {/* Rank & Role title */}
-                      <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="px-1.5 py-0.2 rounded text-[12px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                         {fb.authorRoleTitle || USER_RANK_LABELS[fb.authorRank] || fb.authorRank}
                       </span>
 
@@ -495,7 +495,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                       {hasSelectedText ? (
                         isAnchorMissing ? (
                           <span 
-                            className="px-1.5 py-0.2 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-300"
+                            className="px-1.5 py-0.2 rounded text-[12px] font-medium bg-amber-50 text-amber-800 border border-amber-300"
                             title="본문이 수정 또는 삭제되어 원문 위치를 찾을 수 없습니다"
                           >
                             ⚠️ 연결된 원문 위치를 찾을 수 없음
@@ -510,7 +510,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                               }
                               if (onFocusFeedback) onFocusFeedback(fb.id, fb.blockId);
                             }}
-                            className={`px-1.5 py-0.2 rounded text-[10px] font-bold border transition-colors flex items-center space-x-0.5 cursor-pointer whitespace-nowrap ${cardTheme.badge}`}
+                            className={`px-1.5 py-0.2 rounded text-[12px] font-bold border transition-colors flex items-center space-x-0.5 cursor-pointer whitespace-nowrap ${cardTheme.badge}`}
                             title="선택한 원문 글자 위치로 바로 이동합니다"
                           >
                             <span>원문 이동</span>
@@ -521,7 +521,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                         <button
                           type="button"
                           onClick={() => fb.blockId && onFocusBlock && onFocusBlock(fb.blockId)}
-                          className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100 transition-colors flex items-center space-x-0.5 cursor-pointer"
+                          className="px-1.5 py-0.2 rounded text-[12px] font-bold bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100 transition-colors flex items-center space-x-0.5 cursor-pointer"
                           title="해당 문단으로 이동 및 강조"
                         >
                           <span>#{String(fb.paragraphIndex).padStart(2, '0')} 문단</span>
@@ -529,7 +529,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                         </button>
                       ) : null}
 
-                      <span className="text-[10px] text-slate-500 font-mono">
+                      <span className="text-[12px] text-slate-500 font-mono">
                         {fb.createdAt}
                       </span>
                     </div>
@@ -541,7 +541,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => onToggleResolve(fb.id)}
-                      className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors border ${
+                      className={`flex items-center space-x-1 px-2 py-0.5 rounded text-[12px] font-semibold transition-colors border ${
                         isResolved
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                           : 'bg-white text-slate-600 border-slate-300 hover:text-slate-900 hover:bg-slate-50'
@@ -716,7 +716,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                             key={reply.id}
                             className="bg-white p-2 rounded border border-slate-200 text-xs space-y-1"
                           >
-                            <div className="flex items-center justify-between text-[10px]">
+                            <div className="flex items-center justify-between text-[12px]">
                               <div className="flex items-center space-x-1 font-bold text-slate-800">
                                 <CornerDownRight className="w-3 h-3 text-slate-500 shrink-0" />
                                 <span>{reply.authorName}</span>
@@ -746,7 +746,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                                     </button>
 
                                     {isReplyMenuOpen && (
-                                      <div className="absolute right-0 top-full mt-1 z-20 w-20 bg-white border border-slate-200 rounded-md shadow-lg py-1 text-[11px] animate-in fade-in duration-100">
+                                      <div className="absolute right-0 top-full mt-1 z-20 w-20 bg-white border border-slate-200 rounded-md shadow-lg py-1 text-[12px] animate-in fade-in duration-100">
                                         <button
                                           type="button"
                                           onClick={() => handleStartEditReply(reply)}
@@ -775,7 +775,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
 
                             {/* Reply Delete Confirmation */}
                             {isDeletingThisReply && (
-                              <div className="p-2 bg-rose-50 border border-rose-200 rounded flex items-center justify-between text-[11px] text-rose-900">
+                              <div className="p-2 bg-rose-50 border border-rose-200 rounded flex items-center justify-between text-[12px] text-rose-900">
                                 <span>이 답글을 삭제하시겠습니까?</span>
                                 <div className="flex items-center space-x-1">
                                   <button
@@ -813,7 +813,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                                   <button
                                     type="button"
                                     onClick={() => setEditingReplyId(null)}
-                                    className="px-2 py-0.5 text-[11px] text-slate-600 bg-white border border-slate-300 rounded"
+                                    className="px-2 py-0.5 text-[12px] text-slate-600 bg-white border border-slate-300 rounded"
                                   >
                                     취소
                                   </button>
@@ -821,14 +821,14 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                                     type="button"
                                     onClick={() => handleSaveEditReply(fb.id, reply.id)}
                                     disabled={!editReplyContent.trim()}
-                                    className="px-2.5 py-0.5 text-[11px] font-bold text-white bg-slate-900 rounded"
+                                    className="px-2.5 py-0.5 text-[12px] font-bold text-white bg-slate-900 rounded"
                                   >
                                     저장
                                   </button>
                                 </div>
                               </div>
                             ) : (
-                              <p className="text-slate-800 pl-4 text-[11px] leading-relaxed select-text break-keep">
+                              <p className="text-slate-800 pl-4 text-[12px] leading-relaxed select-text break-keep">
                                 {reply.content}
                               </p>
                             )}
@@ -850,7 +850,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                   {/* Reply Button or Inline Composer */}
                   {isReplying ? (
                     <div className="space-y-1.5 pt-1">
-                      <div className="flex items-center space-x-1 text-[11px] text-slate-600 font-medium">
+                      <div className="flex items-center space-x-1 text-[12px] text-slate-600 font-medium">
                         <CornerDownRight className="w-3 h-3 text-slate-500" />
                         <span>{currentUser.name} ({currentUser.roleTitle || USER_RANK_LABELS[currentUser.rank]}) 답글 작성</span>
                       </div>
@@ -866,7 +866,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                         <button
                           type="button"
                           onClick={() => setOpenReplyBoxId(null)}
-                          className="px-2 py-0.5 text-[11px] text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded"
+                          className="px-2 py-0.5 text-[12px] text-slate-600 hover:text-slate-900 bg-white border border-slate-300 rounded"
                         >
                           취소
                         </button>
@@ -874,7 +874,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                           type="button"
                           onClick={() => handleSendReply(fb.id)}
                           disabled={!replyText.trim()}
-                          className="px-2.5 py-0.5 text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-50 rounded flex items-center space-x-1"
+                          className="px-2.5 py-0.5 text-[12px] font-bold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-50 rounded flex items-center space-x-1"
                         >
                           <Send className="w-2.5 h-2.5" />
                           <span>답글 등록</span>
@@ -885,7 +885,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => setOpenReplyBoxId(fb.id)}
-                      className="text-[11px] font-semibold text-slate-600 hover:text-slate-900 flex items-center space-x-1 py-0.5 transition-colors cursor-pointer"
+                      className="text-[12px] font-semibold text-slate-600 hover:text-slate-900 flex items-center space-x-1 py-0.5 transition-colors cursor-pointer"
                     >
                       <CornerDownRight className="w-3 h-3 text-slate-500" />
                       <span>답글 작성</span>

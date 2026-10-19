@@ -2,6 +2,7 @@ import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import {
   LLM_CORS_HEADERS,
+  sanitizeFunctionModels,
   KEY_PROVIDERS,
   parseGoogleServiceAccount,
   testGoogleCloudKey,
@@ -42,6 +43,14 @@ Deno.serve(async (req: Request) => {
     const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) return fail("유효하지 않은 사용자 세션입니다.", 401, "UNAUTHORIZED");
+
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
     const admin = createClient(supabaseUrl, serviceKey);
 
     let body: any;
@@ -59,9 +68,10 @@ Deno.serve(async (req: Request) => {
 
     // 현재 설정과 등록 현황 (키 원문은 절대 돌려주지 않음)
     const status = async () => {
+      // select("*"): function_models 칸이 아직 없어도 오류 없이 동작
       const { data: prefs } = await admin
         .from("user_ai_prefs")
-        .select("provider, model, endpoint")
+        .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
       const { data: keys } = await admin
@@ -72,6 +82,7 @@ Deno.serve(async (req: Request) => {
       for (const k of keys || []) registered[k.provider] = k.key_last4;
       return {
         prefs: prefs ? { provider: prefs.provider, model: prefs.model || "", endpoint: prefs.endpoint || "" } : null,
+        functionModels: sanitizeFunctionModels(prefs?.function_models),
         keys: registered,
       };
     };
@@ -97,6 +108,25 @@ Deno.serve(async (req: Request) => {
     };
 
     if (action === "status") {
+      return Response.json({ success: true, ...(await status()) }, { headers: corsHeaders });
+    }
+
+    // 기능별(검수·사진 분석·초안) 공급자·모델 저장. 비워 둔 기능은 기본 설정을 따른다
+    if (action === "save_function_models") {
+      const fm = sanitizeFunctionModels(body?.functionModels);
+      const { data: existing } = await admin.from("user_ai_prefs").select("*").eq("user_id", user.id).maybeSingle();
+      if (!existing) return fail("먼저 위에서 기본 AI 키를 등록해 주세요.");
+      if (!("function_models" in existing)) {
+        return fail("기능별 모델을 저장할 칸이 아직 없습니다. 관리자가 Supabase에서 20261016100000_user_ai_function_models.sql을 실행해야 합니다.");
+      }
+      const { error } = await admin
+        .from("user_ai_prefs")
+        .update({ function_models: fm, updated_at: new Date().toISOString() })
+        .eq("user_id", user.id);
+      if (error) {
+        console.error("[manage-ai-key] function models save failed:", error.code);
+        return fail("기능별 모델을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      }
       return Response.json({ success: true, ...(await status()) }, { headers: corsHeaders });
     }
 

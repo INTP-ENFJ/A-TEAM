@@ -266,7 +266,7 @@ export const PositionTitleManagementTab: React.FC<PositionTitleManagementTabProp
                       <span>{pos.name}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-semibold border ${
                         pos.isActive 
                           ? 'bg-emerald-950 text-emerald-300 border-emerald-800' 
                           : 'bg-slate-900 text-slate-500 border-slate-700'

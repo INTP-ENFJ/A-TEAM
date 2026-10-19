@@ -101,7 +101,7 @@ export const AuditLogPanel: React.FC<AuditLogPanelProps> = ({ articleId }) => {
           <div className="flex flex-col items-center justify-center py-16 text-slate-400 text-center">
             <History className="w-8 h-8 text-slate-300 mb-2" />
             <p className="font-semibold text-slate-600">기록된 업무 이력이 없습니다.</p>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[12px] text-slate-400 mt-1">
               검토 요청, 수정 요청, 승인, 출고, 배정 등의 작업이 발생하면 여기에 기록됩니다.
             </p>
           </div>
@@ -128,12 +128,12 @@ export const AuditLogPanel: React.FC<AuditLogPanelProps> = ({ articleId }) => {
                     <div className="flex items-center space-x-1.5">
                       <span className="shrink-0">{getActionIcon(log.action)}</span>
                       <span
-                        className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold border ${labelInfo.badgeColor}`}
+                        className={`inline-block px-1.5 py-0.5 rounded text-[12px] font-bold border ${labelInfo.badgeColor}`}
                       >
                         {labelInfo.label}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 whitespace-nowrap">
+                    <span className="text-[12px] text-slate-400 whitespace-nowrap">
                       {log.createdAtFormatted}
                     </span>
                   </div>
@@ -144,7 +144,7 @@ export const AuditLogPanel: React.FC<AuditLogPanelProps> = ({ articleId }) => {
                   </p>
 
                   {/* 하단: 행위자 메타 정보 */}
-                  <div className="flex items-center space-x-2 text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div className="flex items-center space-x-2 text-[12px] text-slate-500 pt-1 border-t border-slate-100">
                     <span className="font-semibold text-slate-700">{log.actorName}</span>
                     {log.actorDepartment && (
                       <>

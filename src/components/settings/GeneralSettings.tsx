@@ -75,7 +75,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = () => {
                     }`}
                   >
                     <div className="font-bold text-xs">{s.label}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">{s.desc}</div>
+                    <div className="text-[12px] text-slate-500 mt-0.5">{s.desc}</div>
                   </div>
                 ))}
               </div>
@@ -92,7 +92,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = () => {
                 />
                 <div>
                   <span className="font-semibold text-slate-800">사내 고유 언론 표준 용어집 우선 적용</span>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[12px] text-slate-500 mt-0.5">
                     국립국어원 표준국어대사전 외에 언론사 자체 외래어 표기 및 경제/정치 전문 용어 사전을 우선 적용합니다.
                   </p>
                 </div>
@@ -107,7 +107,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = () => {
                 />
                 <div>
                   <span className="font-semibold text-slate-800">균형 보도 및 누락 정보 질문 활성화</span>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[12px] text-slate-500 mt-0.5">
                     여야 쟁점 사안 및 정책 보도 시 반대 의견 또는 재원 대책이 누락된 경우 기자에게 AI 질문 카드를 제시합니다.
                   </p>
                 </div>
@@ -135,7 +135,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = () => {
                 <option value="30s">30초 주기</option>
                 <option value="1m">1분 주기</option>
               </select>
-              <span className="text-[10px] text-slate-400 mt-1 block">
+              <span className="text-[12px] text-slate-400 mt-1 block">
                 키보드 단축키 Ctrl+S / Cmd+S로도 언제든 즉시 저장이 가능합니다.
               </span>
             </div>
@@ -146,7 +146,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = () => {
                 <option value="serif">명조체 (신문 보도 표준 한국어 폰트)</option>
                 <option value="sans">고딕체 (디지털 웹 친화 폰트)</option>
               </select>
-              <span className="text-[10px] text-slate-400 mt-1 block">
+              <span className="text-[12px] text-slate-400 mt-1 block">
                 에디터 편집 화면 및 독자 뷰어에 기본 적용될 글꼴입니다.
               </span>
             </div>

@@ -337,7 +337,7 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
                     <td className="py-3 px-4 font-bold text-white">{req.name}</td>
                     <td className="py-3 px-4 text-slate-300 font-mono">{req.email}</td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700 text-slate-200 border border-slate-600 text-[11px] font-medium">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700 text-slate-200 border border-slate-600 text-[12px] font-medium">
                         {req.department}
                       </span>
                     </td>
@@ -387,7 +387,7 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-400">
-              <thead className="bg-slate-900/30 text-slate-500 text-[11px] border-b border-slate-700/60">
+              <thead className="bg-slate-900/30 text-slate-500 text-[12px] border-b border-slate-700/60">
                 <tr>
                   <th className="py-2 px-4">성명</th>
                   <th className="py-2 px-4">이메일</th>
@@ -438,7 +438,7 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
             <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-white text-sm">가입 승인 및 권한 배정</h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[12px] text-slate-400 mt-0.5">
                   신청자: <strong className="text-white">{selectedRequest.name}</strong> ({selectedRequest.email})
                 </p>
               </div>
@@ -523,7 +523,7 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
                       }`}
                     >
                       <div>{USER_RANK_LABELS[r]}</div>
-                      <div className="text-[10px] opacity-70">
+                      <div className="text-[12px] opacity-70">
                         {r === 'manager' ? '출고 권한' : '작성 권한'}
                       </div>
                     </button>
@@ -554,7 +554,7 @@ export const SignupApprovalTab: React.FC<SignupApprovalTabProps> = ({ onShowToas
                       }`}
                     >
                       <div>{item.label}</div>
-                      <div className="text-[10px] opacity-70">{item.desc}</div>
+                      <div className="text-[12px] opacity-70">{item.desc}</div>
                     </button>
                   ))}
                 </div>

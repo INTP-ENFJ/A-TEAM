@@ -15,7 +15,7 @@ export interface InfographicData {
   items: InfographicItem[];
 }
 
-export type InfographicStyle = 'bar' | 'column' | 'cards';
+export type InfographicStyle = 'bar' | 'column' | 'donut' | 'cards';
 
 export const INFOGRAPHIC_W = 1600;
 export const INFOGRAPHIC_H = 900;
@@ -170,6 +170,55 @@ export function drawInfographic(canvas: HTMLCanvasElement, data: InfographicData
       ctx.fillText(fitText(ctx, it.label, slot - 16), cx, baseY + 42);
     });
     ctx.textAlign = 'left';
+  } else if (style === 'donut') {
+    // 원형(도넛) 그래프: 왼쪽에 원, 오른쪽에 항목·값·비율
+    const shown = items.filter(i => Math.abs(i.value) > 0);
+    const total = shown.reduce((a, i) => a + Math.abs(i.value), 0) || 1;
+    const cx = 80 + 280;
+    const cy = (top + bottom) / 2 + 10;
+    const R = Math.min(300, (bottom - top) / 2);
+    const r = R * 0.58;
+    let start = -Math.PI / 2;
+    shown.forEach((it, i) => {
+      const ang = (Math.abs(it.value) / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, start, start + ang);
+      ctx.arc(cx, cy, r, start + ang, start, true);
+      ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      start += ang;
+    });
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#0f172a';
+    ctx.font = `800 46px ${FONT}`;
+    ctx.fillText(formatValue(total, data.unit), cx, cy + 10);
+    ctx.fillStyle = '#64748b';
+    ctx.font = `600 24px ${FONT}`;
+    ctx.fillText('합계', cx, cy + 46);
+    const lx = cx + R + 120;
+    const rowH = Math.min(84, (bottom - top) / Math.max(shown.length, 1));
+    const ly = cy - (rowH * shown.length) / 2;
+    ctx.textAlign = 'left';
+    shown.forEach((it, i) => {
+      const y = ly + i * rowH + rowH / 2;
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.beginPath();
+      (ctx as any).roundRect ? (ctx as any).roundRect(lx, y - 14, 28, 28, 6) : ctx.rect(lx, y - 14, 28, 28);
+      ctx.fill();
+      ctx.fillStyle = '#334155';
+      ctx.font = `600 30px ${FONT}`;
+      ctx.fillText(fitText(ctx, it.label, 420), lx + 48, y + 11);
+      const pct = Math.round((Math.abs(it.value) / total) * 1000) / 10;
+      ctx.fillStyle = '#0f172a';
+      ctx.font = `800 30px ${FONT}`;
+      ctx.textAlign = 'right';
+      ctx.fillText(`${formatValue(it.value, data.unit)} (${pct}%)`, W - 80, y + 11);
+      ctx.textAlign = 'left';
+    });
   } else {
     // 큰 숫자 카드 (최대 4개)
     const shown = items.slice(0, 4);

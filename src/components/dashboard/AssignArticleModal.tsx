@@ -144,7 +144,7 @@ export const AssignArticleModal: React.FC<AssignArticleModalProps> = ({
 
           {/* 기사 정보 */}
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-200/80">
-            <span className="text-[11px] font-semibold text-slate-400">대상 기사</span>
+            <span className="text-[12px] font-semibold text-slate-400">대상 기사</span>
             <p className="font-bold text-slate-900 mt-0.5 line-clamp-2">{articleTitle}</p>
           </div>
 
@@ -174,7 +174,7 @@ export const AssignArticleModal: React.FC<AssignArticleModalProps> = ({
                 ))}
               </select>
             )}
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[12px] text-slate-400">
               * 동일한 부서 소속 기자만 배정 대상에 노출됩니다.
             </p>
           </div>
@@ -190,7 +190,7 @@ export const AssignArticleModal: React.FC<AssignArticleModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setDeadlineInput('')}
-                  className="text-[11px] text-slate-400 hover:text-rose-600 cursor-pointer"
+                  className="text-[12px] text-slate-400 hover:text-rose-600 cursor-pointer"
                 >
                   마감시간 초기화
                 </button>
@@ -205,7 +205,7 @@ export const AssignArticleModal: React.FC<AssignArticleModalProps> = ({
                 className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 shadow-2xs"
               />
             </div>
-            <p className="text-[11px] text-slate-400 flex items-center space-x-1">
+            <p className="text-[12px] text-slate-400 flex items-center space-x-1">
               <Clock className="w-3 h-3 text-slate-400" />
               <span>마감 24시간 이내는 [마감 임박], 기한 경과 시 [마감 초과]로 표시됩니다.</span>
             </p>

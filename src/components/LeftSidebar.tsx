@@ -6,17 +6,21 @@ import {
   History, 
   Settings as SettingsIcon,
   ShieldCheck,
-  BookOpen
+  BookOpen,
+  Mic,
+  Users
 } from 'lucide-react';
 import { Article } from '../types';
 
 interface LeftSidebarProps {
-  activeScreen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media';
-  onNavigate: (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media') => void;
+  activeScreen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt';
+  onNavigate: (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt') => void;
   onOpenVersionHistory: () => void;
   article: Article;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  /** 인사부 화면: HR·환경설정·사용법 안내만 보여 준다 */
+  hrMode?: boolean;
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -24,6 +28,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onNavigate,
   onOpenVersionHistory,
   article,
+  hrMode = false,
 }) => {
   // Editorial calculations
   const charWithSpaces = article.blocks.reduce((acc, b) => acc + (b.text?.length || 0), 0) + article.title.length + article.subtitle.length;
@@ -38,10 +43,29 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
       {/* Top Menu Links */}
       <div className="p-3 space-y-6 overflow-y-auto">
         <div>
-          <div className="px-3 pb-2 text-[11px] font-bold text-white/60 uppercase tracking-wider">
+          <div className="px-3 pb-2 text-[12px] font-bold text-white/60 uppercase tracking-wider">
             EDITORIAL NAVIGATION
           </div>
           <nav className="space-y-1">
+            {hrMode && (
+            <button
+              id="sidebar-nav-hr"
+              onClick={() => onNavigate('hr')}
+              style={activeScreen === 'hr' ? { background: 'var(--grad-active)' } : undefined}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                activeScreen === 'hr'
+                  ? 'text-white font-bold shadow-xs'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center space-x-2.5 whitespace-nowrap shrink-0">
+                <Users className="w-4 h-4 text-white shrink-0" />
+                <span>HR</span>
+              </div>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">인사 관리</span>
+            </button>
+            )}
+            {!hrMode && (<>
             <button
               id="sidebar-nav-dashboard"
               onClick={() => onNavigate('dashboard')}
@@ -56,7 +80,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <LayoutDashboard className="w-4 h-4 text-white shrink-0" />
                 <span>Dashboard</span>
               </div>
-              <span className="text-[11px] text-white/70 whitespace-nowrap shrink-0">대시보드</span>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">대시보드</span>
             </button>
 
             <button
@@ -73,7 +97,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <FileText className="w-4 h-4 text-white shrink-0" />
                 <span>Article</span>
               </div>
-              <span className="text-[11px] text-white/70 whitespace-nowrap shrink-0">기사 편집기</span>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">기사 편집기</span>
             </button>
 
             <button
@@ -90,7 +114,24 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <ImageIcon className="w-4 h-4 text-white shrink-0" />
                 <span>Media</span>
               </div>
-              <span className="text-[11px] text-white/70 whitespace-nowrap shrink-0">미디어 라이브러리</span>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">미디어 라이브러리</span>
+            </button>
+
+            <button
+              id="sidebar-nav-stt"
+              onClick={() => onNavigate('stt')}
+              style={activeScreen === 'stt' ? { background: 'var(--grad-active)' } : undefined}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                activeScreen === 'stt'
+                  ? 'text-white font-bold shadow-xs'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center space-x-2.5 whitespace-nowrap shrink-0">
+                <Mic className="w-4 h-4 text-white shrink-0" />
+                <span>Voice</span>
+              </div>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">녹음 정리</span>
             </button>
 
             <button
@@ -102,8 +143,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <History className="w-4 h-4 text-white/80 shrink-0" />
                 <span>History</span>
               </div>
-              <span className="text-[11px] text-white/60 whitespace-nowrap shrink-0">이력·업무로그</span>
+              <span className="text-[12px] text-white/60 whitespace-nowrap shrink-0">이력·업무로그</span>
             </button>
+            </>)}
 
             <button
               id="sidebar-nav-settings"
@@ -119,17 +161,17 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <SettingsIcon className="w-4 h-4 text-white/80 shrink-0" />
                 <span>Settings</span>
               </div>
-              <span className="text-[11px] text-white/70 whitespace-nowrap shrink-0">환경 설정</span>
+              <span className="text-[12px] text-white/70 whitespace-nowrap shrink-0">환경 설정</span>
             </button>
           </nav>
         </div>
 
         {/* Real-time Article Metrics (When in Article Editor) */}
-        {activeScreen === 'editor' && (
+        {!hrMode && activeScreen === 'editor' && (
           <div className="bg-white/5 p-3 rounded-lg border border-white/10 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-200">기사 원고 분량</span>
-              <span className="text-[10px] text-white/60 font-semibold px-1.5 py-0.5 rounded bg-white/10">실시간</span>
+              <span className="text-[12px] text-white/60 font-semibold px-1.5 py-0.5 rounded bg-white/10">실시간</span>
             </div>
 
             <div className="flex flex-col space-y-2">
@@ -169,7 +211,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             <BookOpen className="w-4 h-4 text-blue-300 shrink-0" />
             <span>Guide</span>
           </div>
-          <span className="text-[10px] text-white/80 font-medium px-1.5 py-0.5 rounded bg-white/10 whitespace-nowrap shrink-0">
+          <span className="text-[12px] text-white/80 font-medium px-1.5 py-0.5 rounded bg-white/10 whitespace-nowrap shrink-0">
             사용법 안내
           </span>
         </button>
@@ -179,7 +221,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
           <div>
             <span className="font-semibold text-white block">기자 중심 집필 원칙</span>
-            <span className="text-[11px] text-white/70 leading-snug block mt-0.5">
+            <span className="text-[12px] text-white/70 leading-snug block mt-0.5">
               기자가 작성한 원문 중심의 Editorial CMS 기준을 준수합니다.
             </span>
           </div>

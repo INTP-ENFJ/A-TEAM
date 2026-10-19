@@ -79,7 +79,7 @@ export const PasswordChangeBox: React.FC<PasswordChangeBoxProps> = ({ email }) =
         <Lock className="w-4 h-4 text-slate-500" />
         <h3 className="text-sm font-bold text-slate-900">비밀번호 변경</h3>
       </div>
-      <p className="text-[11px] text-slate-500 leading-relaxed">
+      <p className="text-[12px] text-slate-500 leading-relaxed">
         인사부에서 받은 임시 비밀번호로 로그인했다면, 본인만 아는 비밀번호로 꼭 바꿔 주세요.
         (8자 이상, 영문과 숫자를 함께 사용)
       </p>
@@ -103,7 +103,7 @@ export const PasswordChangeBox: React.FC<PasswordChangeBoxProps> = ({ email }) =
       </div>
 
       {message && (
-        <div className={`flex items-center space-x-2 p-2.5 rounded-md border text-[11px] font-medium ${
+        <div className={`flex items-center space-x-2 p-2.5 rounded-md border text-[12px] font-medium ${
           message.ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700'
         }`}>
           {message.ok ? <Check className="w-3.5 h-3.5 shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 shrink-0" />}

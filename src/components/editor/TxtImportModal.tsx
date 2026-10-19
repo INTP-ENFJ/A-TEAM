@@ -203,7 +203,7 @@ export const TxtImportModal: React.FC<TxtImportModalProps> = ({
                     <p className="font-bold text-slate-900 truncate" title={selectedFile.name}>
                       {selectedFile.name}
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <p className="text-[12px] text-slate-500 mt-0.5">
                       용량 {(selectedFile.size / 1024).toFixed(1)} KB · 인식된 문단 <span className="font-bold text-blue-600">{parsedParagraphs.length}개</span>
                     </p>
                   </div>
@@ -244,7 +244,7 @@ export const TxtImportModal: React.FC<TxtImportModalProps> = ({
                         <Plus className="w-3.5 h-3.5 text-blue-600" />
                         <span>현재 본문 뒤에 추가 (권장)</span>
                       </span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <p className="text-[12px] text-slate-500 mt-0.5">
                         기존 {currentBlockCount}개 문단을 유지하고 뒤에 추가합니다.
                       </p>
                     </div>
@@ -270,7 +270,7 @@ export const TxtImportModal: React.FC<TxtImportModalProps> = ({
                         <RefreshCw className="w-3.5 h-3.5 text-rose-600" />
                         <span>현재 본문 교체</span>
                       </span>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <p className="text-[12px] text-slate-500 mt-0.5">
                         기존 문단을 모두 지우고 새 문단으로 교체합니다.
                       </p>
                     </div>
@@ -291,21 +291,21 @@ export const TxtImportModal: React.FC<TxtImportModalProps> = ({
                   <span className="font-bold text-slate-800 text-xs">
                     문단 미리보기 (총 {parsedParagraphs.length}개 중 앞부분)
                   </span>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[12px] text-slate-400">
                     빈 줄 기준으로 분리됨
                   </span>
                 </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-2.5 max-h-48 overflow-y-auto font-mono text-[11px] text-slate-700 leading-relaxed">
+                <div className="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-2.5 max-h-48 overflow-y-auto font-mono text-[12px] text-slate-700 leading-relaxed">
                   {parsedParagraphs.slice(0, 3).map((para, idx) => (
                     <div key={idx} className="pb-2 border-b border-slate-200 last:border-b-0 last:pb-0">
-                      <span className="inline-block px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[10px] font-bold mr-1.5">
+                      <span className="inline-block px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[12px] font-bold mr-1.5">
                         § {idx + 1}
                       </span>
                       <span className="whitespace-pre-wrap">{para}</span>
                     </div>
                   ))}
                   {parsedParagraphs.length > 3 && (
-                    <div className="text-center text-slate-400 text-[11px] pt-1 italic">
+                    <div className="text-center text-slate-400 text-[12px] pt-1 italic">
                       ... 외 {parsedParagraphs.length - 3}개 문단 생략 ...
                     </div>
                   )}

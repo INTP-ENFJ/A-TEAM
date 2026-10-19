@@ -49,6 +49,7 @@ import { HrDashboard } from './components/hr/HrDashboard';
 import { RequestChangesModal } from './components/workflow/RequestChangesModal';
 import { ApproveConfirmModal } from './components/workflow/ApproveConfirmModal';
 import { UserGuideView } from './components/guide/UserGuideView';
+import { SttView } from './components/stt/SttView';
 import { setBlurUploadConfig } from './components/editor/blurConfig';
 
 // AI 초안 반영 이력을 구분하는 표시 (버전 요약 앞부분)
@@ -64,7 +65,7 @@ export default function App() {
   const currentUserIdRef = useRef<string | null>(null);
 
   // Screen state (인사부 관리자는 'hr' 화면 전용, guide는 사용법 안내)
-  const [activeScreen, setActiveScreen] = useState<'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media'>('dashboard');
+  const [activeScreen, setActiveScreen] = useState<'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt'>('dashboard');
 
   // 사용자가 대시보드에서 명시적으로 기사/프로젝트를 선택했는지 여부
   const [hasSelectedArticle, setHasSelectedArticle] = useState(false);
@@ -113,7 +114,6 @@ export default function App() {
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   // Media Library Drawer state
-  const [isMediaDrawerOpen, setIsMediaDrawerOpen] = useState(false);
   // 미디어 라이브러리 카드 드래그 중 상태 (ArticleEditor 드롭존 노출용)
   const [, setIsDraggingLibraryMedia] = useState(false);
 
@@ -295,7 +295,9 @@ export default function App() {
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    // 오류 안내는 놓치지 않도록 더 오래 보여 준다 (일반 안내 3초, 오류 8초)
+    const isError = /실패|못했|없습니다|한도|오류|않습니다/.test(msg);
+    setTimeout(() => setToastMessage(prev => (prev === msg ? null : prev)), isError ? 8000 : 3000);
   }, []);
 
   // 기사 작성자 여부 판별
@@ -427,7 +429,6 @@ export default function App() {
     setActiveScreen('dashboard');
     setHasSelectedArticle(false);
     setSelectedReviewId(null);
-    setIsMediaDrawerOpen(false);
     setIsHistoryModalOpen(false);
     setIsPublishModalOpen(false);
     setIsRequestChangesModalOpen(false);
@@ -531,13 +532,6 @@ export default function App() {
       setIsLoadingArticle(false);
     }
   }, [showToast, loadProjectMedia, loadArticleVersions]);
-
-  // Drawer 열릴 때 프로젝트 미디어 최신화 (Signed URL 만료 대비 및 실시간 동기화)
-  useEffect(() => {
-    if (isMediaDrawerOpen && article?.projectId) {
-      loadProjectMedia(article.projectId);
-    }
-  }, [isMediaDrawerOpen, article?.projectId, loadProjectMedia]);
 
   // Version History Modal 열릴 때 최신 버전 목록 재조회
   useEffect(() => {
@@ -1286,7 +1280,7 @@ export default function App() {
 
   // 브라우저 History State 연동 헬퍼 (URL Hash 동기화로 브라우저 뒤로/앞으로 및 이탈 방어)
   const pushHistoryState = useCallback((
-    screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media',
+    screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt',
     projectId?: string,
     articleId?: string
   ) => {
@@ -2071,7 +2065,7 @@ export default function App() {
   };
 
   // 화면 전환 핸들러 (Editor에서 다른 화면으로 이탈 시 미저장 변경사항 flush 및 실패 시 전환 차단)
-  const handleNavigate = async (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media', skipHistory = false) => {
+  const handleNavigate = async (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt', skipHistory = false) => {
     if (screen === 'editor' && !hasSelectedArticle) {
       showToast('편집할 프로젝트를 먼저 대시보드에서 선택해주세요.');
       return;
@@ -2104,14 +2098,8 @@ export default function App() {
     }
     // 미디어 탭에서 누른 경우: 편집기로 이동한 뒤 맨 아래에 넣음
     pendingInsertRef.current = items;
-    setIsMediaDrawerOpen(false);
     handleNavigate('editor');
   };
-
-  // 편집기 밖으로 나가면 미디어 창도 함께 닫음
-  useEffect(() => {
-    if (activeScreen !== 'editor') setIsMediaDrawerOpen(false);
-  }, [activeScreen]);
 
   // 사진 올릴 때 고를 수 있는 프로젝트 (내가 만든 프로젝트)
   const uploadableProjects = projects
@@ -2133,7 +2121,7 @@ export default function App() {
       try { window.sessionStorage.setItem('press-cms-dashboard-view', 'projects'); } catch { /* 무시 */ }
     }
     const initialScreen = initialHash.startsWith('editor') ? 'editor' : (
-      ['dashboard', 'preview', 'settings', 'hr', 'guide', 'media'].includes(initialHash) ? initialHash as any : activeScreen
+      ['dashboard', 'preview', 'settings', 'hr', 'guide', 'media', 'stt'].includes(initialHash) ? initialHash as any : activeScreen
     );
 
     if (!window.history.state) {
@@ -2158,7 +2146,7 @@ export default function App() {
           targetProjectId = hash.split('/')[1];
         } else if (hash === 'editor') {
           targetScreen = 'editor';
-        } else if (['dashboard', 'preview', 'settings', 'hr', 'guide', 'media'].includes(hash)) {
+        } else if (['dashboard', 'preview', 'settings', 'hr', 'guide', 'media', 'stt'].includes(hash)) {
           targetScreen = hash as any;
         } else {
           targetScreen = 'dashboard';
@@ -2261,7 +2249,7 @@ export default function App() {
           onOpenPreview={() => {}}
           onOpenPublish={() => {}}
           onNavigate={(screen) => {
-            if (screen === 'settings' || screen === 'hr') {
+            if (screen === 'settings' || screen === 'hr' || screen === 'guide') {
               setActiveScreen(screen);
             }
           }}
@@ -2272,7 +2260,21 @@ export default function App() {
         />
 
         <div className="flex-1 flex overflow-hidden">
-          {activeScreen === 'settings' ? (
+          <LeftSidebar
+            hrMode
+            activeScreen={activeScreen}
+            onNavigate={(screen) => {
+              if (screen === 'settings' || screen === 'hr' || screen === 'guide') setActiveScreen(screen);
+            }}
+            onOpenVersionHistory={() => {}}
+            article={{ title: '', subtitle: '', blocks: [] } as unknown as Article}
+          />
+          {activeScreen === 'guide' ? (
+            <UserGuideView
+              initialTab="hr"
+              onNavigate={(screen) => setActiveScreen(screen === 'settings' ? 'settings' : 'hr')}
+            />
+          ) : activeScreen === 'settings' ? (
             <div className="flex-1 overflow-y-auto bg-slate-50 text-slate-800">
               <SettingsView
                 currentUser={currentUser}
@@ -2517,7 +2519,7 @@ export default function App() {
                             id={`btn-tab-${key}`}
                             type="button"
                             onClick={() => setRightPanelTab(key)}
-                            className={`flex-1 flex items-center justify-center gap-1 px-0.5 py-2.5 text-[11px] border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+                            className={`flex-1 flex items-center justify-center gap-1 px-0.5 py-2.5 text-[12px] border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
                               activeTab === key
                                 ? 'border-blue-600 text-blue-700 font-bold'
                                 : 'border-transparent text-slate-500 hover:text-slate-800 font-semibold'
@@ -2525,7 +2527,7 @@ export default function App() {
                           >
                             <span>{label}</span>
                             {!!badge && badge > 0 && (
-                              <span className={`px-1.5 rounded-full text-[10px] leading-4 text-white font-bold ${badgeClass}`}>{badge}</span>
+                              <span className={`px-1.5 rounded-full text-[12px] leading-4 text-white font-bold ${badgeClass}`}>{badge}</span>
                             )}
                           </button>
                         ))}
@@ -2580,10 +2582,18 @@ export default function App() {
                           currentUser={currentUser}
                           onApplyBlocks={async (paragraphs) => {
                             if (!article?.id || paragraphs.length === 0) return;
-                            await articleBlockService.importTextBlocks(article.id, paragraphs, false);
-                            const updated = await articleService.getArticleById(article.id);
-                            setArticle(updated);
-                            articleRef.current = updated;
+                            if (bodyEditorActiveRef.current && bodyControlsRef.current) {
+                              // 새 본문 편집기를 쓰는 중에는 편집기 안에 직접 넣고 바로 저장한다.
+                              // (서버에만 넣으면 편집기 화면에 안 보이고, 나중에 편집기 자동 저장이 덮어쓸 수 있다)
+                              const ok = bodyControlsRef.current.importParagraphs(paragraphs, 'append');
+                              if (!ok) throw new Error('본문 편집기에 문단을 넣지 못했습니다. 읽기 전용 상태인지 확인해 주세요.');
+                              await bodyControlsRef.current.flush();
+                            } else {
+                              await articleBlockService.importTextBlocks(article.id, paragraphs, false);
+                              const updated = await articleService.getArticleById(article.id);
+                              setArticle(updated);
+                              articleRef.current = updated;
+                            }
                             // AI 출처 기록: AI 초안이 본문에 들어간 사실을 버전 이력에 남김 (출고 창 안내에 사용)
                             try {
                               await articleVersionService.createVersion(
@@ -2664,6 +2674,10 @@ export default function App() {
 
           {activeScreen === 'guide' && (
             <UserGuideView onNavigate={handleNavigate} />
+          )}
+
+          {activeScreen === 'stt' && (
+            <SttView showToast={showToast} isReadOnly={isPendingApproval} />
           )}
 
           {activeScreen === 'media' && (

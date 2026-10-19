@@ -38,6 +38,21 @@
     font-family: inherit;
     letter-spacing: inherit;
   }
+
+  /* 입력칸 글씨는 항상 진하게 (연한 회색으로 보이는 문제 방지) */
+  input, textarea, select {
+    color: #0f172a;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #64748b;
+    opacity: 1;
+  }
+  /* 펼쳐진 목록의 글씨·배경은 선택 칸을 그대로 따라간다
+     (어두운 칸에서 목록 글씨만 어둡게 되어 안 보이는 문제 방지) */
+  select option {
+    color: inherit;
+    background-color: inherit;
+  }
 }
 
 /* 폰트 종류 표준화 클래스 */

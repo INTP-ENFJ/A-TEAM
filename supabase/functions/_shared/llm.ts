@@ -30,8 +30,8 @@ const LLM_CONFIG_MESSAGE =
 
 const DEFAULT_MODELS: Record<LlmProvider, string> = {
   gemini: "gemini-3.8-flash",
-  openai: "gpt-4o",
-  anthropic: "claude-3-7-sonnet",
+  openai: "gpt-6-luna",
+  anthropic: "claude-sonnet-5-5",
   custom: "custom-newsroom-llm-v1",
 };
 
@@ -141,13 +141,55 @@ export async function loadProviderKey(adminClient: any, userId: string, provider
   return await decryptKey(row.key_cipher, row.key_iv);
 }
 
-/** 로그인한 사용자의 저장된 공급자·모델·키를 읽어 온다. 키가 없으면 null */
-export async function loadLlmConfig(adminClient: any, userId: string): Promise<LlmConfig | null> {
+/** 기능별 모델을 고를 수 있는 AI 기능 묶음 */
+export type AiFeature = "review" | "media" | "draft";
+export const AI_FEATURES: AiFeature[] = ["review", "media", "draft"];
+/** 기능별로 다른 공급자를 쓸 수 있는 곳 (사내 API는 주소가 하나라 기본 설정에서만 사용) */
+export const FEATURE_PROVIDERS: LlmProvider[] = ["gemini", "openai", "anthropic"];
+
+/** user_ai_prefs.function_models 값을 안전하게 정리한다 */
+export function sanitizeFunctionModels(raw: unknown): Partial<Record<AiFeature, { provider: LlmProvider; model: string }>> {
+  const out: Partial<Record<AiFeature, { provider: LlmProvider; model: string }>> = {};
+  if (!raw || typeof raw !== "object") return out;
+  for (const f of AI_FEATURES) {
+    const v = (raw as any)[f];
+    if (!v || typeof v !== "object") continue;
+    const p = String(v.provider || "") as LlmProvider;
+    if (!FEATURE_PROVIDERS.includes(p)) continue;
+    out[f] = { provider: p, model: sanitizeModel(p, v.model) };
+  }
+  return out;
+}
+
+/**
+ * 로그인한 사용자의 저장된 공급자·모델·키를 읽어 온다. 키가 없으면 null
+ * feature를 주면, 그 기능에 따로 고른 공급자·모델이 있고 그 공급자의 키가 등록돼 있을 때 그것을 쓴다.
+ * (따로 고르지 않았거나 그 공급자 키가 없으면 기본 설정을 쓴다)
+ */
+export async function loadLlmConfig(adminClient: any, userId: string, feature?: AiFeature): Promise<LlmConfig | null> {
+  // select("*"): function_models 칸을 만드는 SQL을 아직 실행하지 않은 경우에도 오류 없이 동작
   const { data: prefs } = await adminClient
     .from("user_ai_prefs")
-    .select("provider, model, endpoint")
+    .select("*")
     .eq("user_id", userId)
     .maybeSingle();
+
+  if (feature) {
+    const pick = sanitizeFunctionModels(prefs?.function_models)[feature];
+    if (pick) {
+      const { data: frow } = await adminClient
+        .from("user_ai_keys")
+        .select("key_cipher, key_iv")
+        .eq("user_id", userId)
+        .eq("provider", pick.provider)
+        .maybeSingle();
+      if (frow) {
+        const fkey = await decryptKey(frow.key_cipher, frow.key_iv);
+        return { provider: pick.provider, apiKey: fkey, model: pick.model };
+      }
+    }
+  }
+
   const provider = (PROVIDERS.includes(prefs?.provider) ? prefs.provider : "gemini") as LlmProvider;
 
   const { data: row } = await adminClient
@@ -449,6 +491,8 @@ export interface SttOptions {
   mode: SttMode;
   /** 인터뷰에서 말하는 사람 수 (모르면 생략). Gemini 안내문에만 쓰인다 */
   speakers?: number;
+  /** 받아쓰기에 쓸 모델 (글쓰기 모델과 따로 고름). 없으면 기본 모델 */
+  model?: string;
 }
 
 export interface SttResult {
@@ -467,7 +511,9 @@ export function sanitizeSttOptions(body: any): SttOptions {
   const mode: SttMode = body?.mode === "interview" ? "interview" : "speech";
   const n = Number(body?.speakers);
   const speakers = Number.isInteger(n) && n >= 2 && n <= 6 ? n : undefined;
-  return { language, mode, speakers };
+  const m = typeof body?.model === "string" ? body.model.trim() : "";
+  const model = /^[A-Za-z0-9._:\/\-]{1,100}$/.test(m) ? m : undefined;
+  return { language, mode, speakers, model };
 }
 
 /** 말한 사람별 조각을 "화자1: …" 줄로 정리한다. 같은 사람이 이어 말하면 한 줄로 합친다 */
@@ -552,11 +598,13 @@ export function transcribeAudio(
       let done: SttResult | null = null;
       let note: string | undefined;
 
-      if (opts.mode === "interview") {
+      // 고른 모델이 화자 구분 모델이거나 따로 고르지 않았을 때만 화자 구분을 시도한다
+      const pickedDiarize = !opts.model || opts.model.includes("diarize");
+      if (opts.mode === "interview" && pickedDiarize) {
         // 화자 구분 전용 모델을 먼저 시도하고, 쓸 수 없으면 일반 받아쓰기로 대신한다
         try {
           const form = new FormData();
-          form.append("model", "gpt-4o-transcribe-diarize");
+          form.append("model", opts.model && opts.model.includes("diarize") ? opts.model : "gpt-4o-transcribe-diarize");
           form.append("response_format", "diarized_json");
           form.append("chunking_strategy", "auto");
           form.append("file", file(), `audio.${ext}`);
@@ -570,10 +618,12 @@ export function transcribeAudio(
           console.error("[stt] openai diarize unavailable:", (e as Error)?.message);
         }
         if (!done) note = "OpenAI의 화자 구분 기능을 쓰지 못해 화자 구분 없이 받아 적었습니다.";
+      } else if (opts.mode === "interview") {
+        note = "고른 모델은 화자를 나누지 못해 화자 구분 없이 받아 적었습니다. 화자 구분 모델로 바꾸면 말한 사람별로 나뉩니다.";
       }
       if (!done) {
         const form = new FormData();
-        form.append("model", Deno.env.get("STT_MODEL_OPENAI") || "whisper-1");
+        form.append("model", (opts.model && !opts.model.includes("diarize") ? opts.model : "") || Deno.env.get("STT_MODEL_OPENAI") || "whisper-1");
         form.append("language", opts.language);
         form.append("response_format", "json");
         form.append("file", file(), `audio.${ext}`);
@@ -799,9 +849,15 @@ export function generateImage(
   prompt: string,
   log?: AiLogContext,
 ): Promise<{ mimeType: string; base64: string; model: string }> {
-  return withLog(log, cfg, prompt.length, async () => {
+  // 사용 현황 표에는 글쓰기 모델이 아니라 실제로 부른 이미지 모델 이름을 남긴다
+  const imageModel = cfg.provider === "gemini"
+    ? (Deno.env.get("IMAGE_MODEL_GEMINI") || "gemini-3.1-flash-lite-image")
+    : cfg.provider === "openai"
+    ? (Deno.env.get("IMAGE_MODEL_OPENAI") || "gpt-image-2.5-flare")
+    : cfg.model;
+  return withLog(log, { provider: cfg.provider, model: imageModel }, prompt.length, async () => {
     if (cfg.provider === "gemini") {
-      const model = Deno.env.get("IMAGE_MODEL_GEMINI") || "gemini-2.5-flash-image";
+      const model = imageModel;
       let json: any;
       try {
         json = await postJson(
@@ -820,7 +876,7 @@ export function generateImage(
       return { mimeType: String(d.mimeType || d.mime_type || "image/png"), base64: String(d.data), model };
     }
     if (cfg.provider === "openai") {
-      const model = Deno.env.get("IMAGE_MODEL_OPENAI") || "gpt-image-1";
+      const model = imageModel;
       let json: any;
       try {
         json = await postJson(

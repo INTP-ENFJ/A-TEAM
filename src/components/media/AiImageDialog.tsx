@@ -83,7 +83,7 @@ export const AiImageDialog: React.FC<Props> = ({ onClose, onUse }) => {
                 type="button"
                 onClick={() => setStyle(s.value)}
                 disabled={busy}
-                className={`px-2.5 py-1 rounded-full border text-[11px] font-semibold cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full border text-[12px] font-semibold cursor-pointer ${
                   style === s.value ? 'bg-purple-600 border-purple-600 text-white' : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
                 }`}
               >
@@ -97,11 +97,11 @@ export const AiImageDialog: React.FC<Props> = ({ onClose, onUse }) => {
           {result && (
             <div className="space-y-2">
               <img src={result.previewUrl} alt="AI가 만든 이미지 미리보기" className="w-full max-h-[40vh] object-contain rounded-lg border border-slate-200 bg-slate-50" />
-              <p className="text-[11px] text-slate-700">마음에 들지 않으면 설명을 고쳐서 다시 만들 수 있어요.</p>
+              <p className="text-[12px] text-slate-700">마음에 들지 않으면 설명을 고쳐서 다시 만들 수 있어요.</p>
             </div>
           )}
 
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[11px] text-amber-900 space-y-0.5">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[12px] text-amber-900 space-y-0.5">
             <p className="font-bold">쓰기 전에 꼭 확인해 주세요</p>
             <p>• AI가 만든 이미지는 실제 사건의 사진이 아닙니다. 기사에서는 사진처럼 오해되지 않게 쓰세요.</p>
             <p>• 올릴 때 출처에 "AI 생성"이 자동으로 적히고, 캡션 맨 앞에도 표시가 붙습니다. 지우지 마세요.</p>

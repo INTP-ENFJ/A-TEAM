@@ -335,10 +335,10 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                         <div className="font-semibold text-slate-100 flex items-center space-x-1.5">
                           <span>{item.name}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                        <div className="text-[12px] text-slate-400 font-mono mt-0.5">
                           {item.loginId}
                           {item.companyEmail && (
-                            <span className="text-slate-500 text-[10px] ml-1">({item.companyEmail})</span>
+                            <span className="text-slate-500 text-[12px] ml-1">({item.companyEmail})</span>
                           )}
                         </div>
                       </td>
@@ -358,10 +358,10 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                         {hasEmail ? (
                           <div className="flex items-center space-x-1.5 text-slate-200">
                             <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                            <span className="font-mono text-[11px]">{effectiveEmail}</span>
+                            <span className="font-mono text-[12px]">{effectiveEmail}</span>
                           </div>
                         ) : (
-                          <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-amber-950/70 text-amber-300 border border-amber-800 text-[11px] font-semibold">
+                          <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-amber-950/70 text-amber-300 border border-amber-800 text-[12px] font-semibold">
                             <AlertCircle className="w-3 h-3 text-amber-400 shrink-0" />
                             <span>복구 이메일 없음, 직접 확인 필요</span>
                           </div>
@@ -387,12 +387,12 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                       {/* 5. 상태 뱃지 */}
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
                         {item.status === 'pending' ? (
-                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-950 text-amber-300 border border-amber-800">
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-medium bg-amber-950 text-amber-300 border border-amber-800">
                             <Clock className="w-3 h-3" />
                             <span>처리 대기</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
                             <CheckCircle2 className="w-3 h-3" />
                             <span>처리 완료</span>
                           </span>
@@ -427,11 +427,11 @@ export const PasswordResetRequestsTab: React.FC<PasswordResetRequestsTabProps> =
                           </div>
                         ) : (
                           <div className="text-right">
-                            <span className="text-[11px] text-slate-400 block">
+                            <span className="text-[12px] text-slate-400 block">
                               완료일: {item.resolvedAt ? new Date(item.resolvedAt).toLocaleDateString('ko-KR') : '-'}
                             </span>
                             {item.adminNotes && (
-                              <span className="text-[10px] text-slate-500 block truncate max-w-xs" title={item.adminNotes}>
+                              <span className="text-[12px] text-slate-500 block truncate max-w-xs" title={item.adminNotes}>
                                 {item.adminNotes}
                               </span>
                             )}

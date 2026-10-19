@@ -323,7 +323,7 @@ const MediaNodeView: React.FC<NodeViewProps> = ({ node, updateAttributes, delete
                 className="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-400 focus:outline-none text-slate-700 py-0.5"
               />
             </div>
-            <div className="flex items-center space-x-1 text-[11px] text-slate-400 shrink-0">
+            <div className="flex items-center space-x-1 text-[12px] text-slate-400 shrink-0">
               <span>출처:</span>
               <input
                 type="text"
@@ -984,7 +984,7 @@ export const BodyEditor: React.FC<BodyEditorProps> = ({
     <div ref={containerRef} className={`body-editor${isDraggingMedia ? ' is-dragging-media' : ''}`}>
       {isDraggingMedia && (
         <div className="sticky top-2 z-40 h-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute right-2 -top-1 px-3 py-1 rounded-full bg-blue-600 text-white text-[11px] font-bold shadow-lg whitespace-nowrap">
+          <div className="absolute right-2 -top-1 px-3 py-1 rounded-full bg-blue-600 text-white text-[12px] font-bold shadow-lg whitespace-nowrap">
             점선 자리에 놓을 수 있어요
           </div>
         </div>
@@ -992,7 +992,7 @@ export const BodyEditor: React.FC<BodyEditorProps> = ({
       {aiHighlightText && aiHighlightBlockId && (
         <div className="sticky top-2 z-40 h-0 pointer-events-none" aria-hidden="true">
           <div className="absolute right-2 -top-1 max-w-[60%] px-2 py-1 bg-amber-50 border border-amber-300 rounded text-xs flex items-center space-x-2 text-amber-900 shadow-md">
-            <span className="px-1.5 py-0.5 rounded bg-amber-300 text-slate-900 font-bold text-[10px] shrink-0">AI 검수 대상</span>
+            <span className="px-1.5 py-0.5 rounded bg-amber-300 text-slate-900 font-bold text-[12px] shrink-0">AI 검수 대상</span>
             <span className="font-semibold underline decoration-amber-500 decoration-2 truncate">"{aiHighlightText}"</span>
           </div>
         </div>

@@ -64,7 +64,7 @@ export const MediaSettings: React.FC = () => {
                 <option value="20MB">20 MB (고해상도 보도사진 권장)</option>
                 <option value="50MB">50 MB (RAW / 대형 사진)</option>
               </select>
-              <span className="text-[10px] text-slate-400 mt-1 block">지원 포맷: JPG, JPEG, PNG, WEBP</span>
+              <span className="text-[12px] text-slate-400 mt-1 block">지원 포맷: JPG, JPEG, PNG, WEBP</span>
             </div>
 
             <div>
@@ -80,7 +80,7 @@ export const MediaSettings: React.FC = () => {
                 <option value="500MB">500 MB (권장 현장 취재 영상)</option>
                 <option value="1GB">1 GB (심층 다큐/고화질)</option>
               </select>
-              <span className="text-[10px] text-slate-400 mt-1 block">지원 포맷: MP4, MOV, WEBM</span>
+              <span className="text-[12px] text-slate-400 mt-1 block">지원 포맷: MP4, MOV, WEBM</span>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const MediaSettings: React.FC = () => {
               />
               <div>
                 <span className="font-semibold text-slate-800">포털 및 웹 출고 시 차세대 WebP 자동 변환</span>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[12px] text-slate-500 mt-0.5">
                   원본 화질을 유지하면서 파일 용량을 평균 65% 절감하여 모바일 독자 페이지 로딩 속도를 향상시킵니다.
                 </p>
               </div>
@@ -117,7 +117,7 @@ export const MediaSettings: React.FC = () => {
               />
               <div>
                 <span className="font-semibold text-slate-800">촬영자 GPS 위치 등 민감 EXIF 정보 자동 제거</span>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[12px] text-slate-500 mt-0.5">
                   취재원 보호 및 기자 개인정보 보호를 위해 사진 파일 내 임베드된 위치 메타데이터를 출고 전 자동 필터링합니다.
                 </p>
               </div>
@@ -132,7 +132,7 @@ export const MediaSettings: React.FC = () => {
               />
               <div>
                 <span className="font-semibold text-slate-800">AI 비전 자동 태깅 및 캡션 초안 생성</span>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[12px] text-slate-500 mt-0.5">
                   사진 업로드 시 피사체(인물, 장소, 사건)를 식별하여 #국회 #본회의 등 메타데이터 태그와 캡션 예시를 자동 제안합니다.
                 </p>
               </div>

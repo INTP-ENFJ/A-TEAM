@@ -193,7 +193,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     const cls = colorClasses[meta.color] || colorClasses.slate;
 
     return (
-      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border inline-flex items-center space-x-1 ${cls}`}>
+      <span className={`px-1.5 py-0.5 rounded text-[12px] font-bold border inline-flex items-center space-x-1 ${cls}`}>
         {renderTypeIcon(type)}
         <span>{meta.label}</span>
       </span>
@@ -219,7 +219,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         {unreadCount > 0 && (
           <span
             id="badge-unread-notifications"
-            className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-xs border-2 border-slate-900 animate-in zoom-in-75 duration-150"
+            className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full text-[12px] font-black bg-rose-500 text-white shadow-xs border-2 border-slate-900 animate-in zoom-in-75 duration-150"
           >
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
@@ -237,11 +237,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <div className="flex items-center space-x-2">
               <span className="text-xs font-bold text-slate-900">업무 알림</span>
               {unreadCount > 0 ? (
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-700">
+                <span className="px-1.5 py-0.5 rounded-full text-[12px] font-extrabold bg-rose-100 text-rose-700">
                   {unreadCount}건 미확인
                 </span>
               ) : (
-                <span className="text-[11px] text-slate-400 font-medium">모두 확인됨</span>
+                <span className="text-[12px] text-slate-400 font-medium">모두 확인됨</span>
               )}
             </div>
 
@@ -251,7 +251,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 type="button"
                 onClick={handleMarkAllAsRead}
                 disabled={isMarkingAll}
-                className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1 cursor-pointer transition-colors disabled:opacity-50"
+                className="text-[12px] text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1 cursor-pointer transition-colors disabled:opacity-50"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
                 <span>모두 읽음</span>
@@ -272,7 +272,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <Inbox className="w-5 h-5" />
                 </div>
                 <p className="text-xs font-bold text-slate-700">새로운 업무 알림이 없습니다.</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">기사 검토, 수정 요청, 승인 내역이 여기에 표시됩니다.</p>
+                <p className="text-[12px] text-slate-400 mt-0.5">기사 검토, 수정 요청, 승인 내역이 여기에 표시됩니다.</p>
               </div>
             ) : (
               notifications.map(notif => (
@@ -293,7 +293,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <div className="flex-1 min-w-0 pl-1.5">
                     <div className="flex items-center justify-between gap-1 mb-1">
                       {renderTypeBadge(notif.type)}
-                      <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                      <span className="text-[12px] text-slate-400 whitespace-nowrap">
                         {notif.createdAtFormatted || '방금 전'}
                       </span>
                     </div>
@@ -306,11 +306,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
                     {/* 프로젝트 및 바로가기 안내 */}
                     {(notif.projectName || notif.articleTitle) && (
-                      <div className="mt-1.5 flex items-center justify-between text-[11px] text-slate-400">
+                      <div className="mt-1.5 flex items-center justify-between text-[12px] text-slate-400">
                         <span className="truncate max-w-[200px] text-slate-500 font-medium">
                           {notif.projectName || notif.articleTitle}
                         </span>
-                        <span className="text-blue-600 group-hover:underline inline-flex items-center space-x-0.5 font-semibold text-[10px]">
+                        <span className="text-blue-600 group-hover:underline inline-flex items-center space-x-0.5 font-semibold text-[12px]">
                           <span>기사 보기</span>
                           <ExternalLink className="w-2.5 h-2.5" />
                         </span>
@@ -324,7 +324,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
           {/* Footer */}
           <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 text-center">
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[12px] text-slate-400">
               알림을 클릭하면 해당 기사 편집기로 바로 이동합니다
             </span>
           </div>

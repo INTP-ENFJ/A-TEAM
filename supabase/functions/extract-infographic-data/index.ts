@@ -33,6 +33,14 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: "유효하지 않은 사용자 세션입니다." }, { status: 401, headers: corsHeaders });
     }
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     const adminClient = createClient(supabaseUrl, serviceKey);
     const { data: profile } = await adminClient.from("profiles").select("department, role").eq("id", user.id).single();
     if (!profile || profile.department === "인사부" || profile.role === "hr_admin") {
@@ -51,7 +59,7 @@ Deno.serve(async (req) => {
     // 개인 AI 설정: 계정에 암호화되어 저장된 공급자·키·모델을 읽는다
     let llmCfg: LlmConfig | null = null;
     try {
-      llmCfg = await loadLlmConfig(adminClient, user.id);
+      llmCfg = await loadLlmConfig(adminClient, user.id, "draft");
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);
       if (known) return known;

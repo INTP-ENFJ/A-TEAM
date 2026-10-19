@@ -185,7 +185,7 @@ export const MediaLibraryView: React.FC<Props> = ({
   }, [items, query, scope, typeFilter, periodMode, periodYear, periodMonth, periodDay, currentProjectId, deptNamesFor]);
 
   const chip = (active: boolean) =>
-    `px-2.5 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors ${
+    `px-2.5 py-1 rounded text-[12px] font-semibold cursor-pointer transition-colors ${
       active ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
     }`;
 
@@ -327,9 +327,9 @@ export const MediaLibraryView: React.FC<Props> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-xs font-bold text-slate-900 line-clamp-1 break-all">{it.title}</div>
-                      <div className="text-[11px] text-slate-600 line-clamp-2 whitespace-pre-line break-words">{it.caption || '캡션 없음'}</div>
-                      <div className="mt-0.5 text-[11px] text-slate-700 truncate">{it.uploaderName || '-'} · {it.uploaderDepartment || '-'}</div>
-                      <div className="text-[10px] text-slate-500 truncate">{it.uploaderEmail || ''}</div>
+                      <div className="text-[12px] text-slate-600 line-clamp-2 whitespace-pre-line break-words">{it.caption || '캡션 없음'}</div>
+                      <div className="mt-0.5 text-[12px] text-slate-700 truncate">{it.uploaderName || '-'} · {it.uploaderDepartment || '-'}</div>
+                      <div className="text-[12px] text-slate-500 truncate">{it.uploaderEmail || ''}</div>
                     </div>
                     {canInsert && (
                       <button
@@ -594,12 +594,12 @@ const UploadDialog: React.FC<{
 
           {/* 자동 입력 정보 */}
           <div className="grid grid-cols-3 gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <div><div className="text-[10px] font-bold text-slate-600">기자 (자동)</div><div className="font-semibold text-slate-900">{currentUser.name}</div></div>
-            <div className="min-w-0"><div className="text-[10px] font-bold text-slate-600">이메일 (자동)</div><div className="font-semibold text-slate-900 break-all">{currentUser.email}</div></div>
-            <div><div className="text-[10px] font-bold text-slate-600">부서 (자동)</div><div className="font-semibold text-slate-900">{currentUser.department}</div></div>
+            <div><div className="text-[12px] font-bold text-slate-600">기자 (자동)</div><div className="font-semibold text-slate-900">{currentUser.name}</div></div>
+            <div className="min-w-0"><div className="text-[12px] font-bold text-slate-600">이메일 (자동)</div><div className="font-semibold text-slate-900 break-all">{currentUser.email}</div></div>
+            <div><div className="text-[12px] font-bold text-slate-600">부서 (자동)</div><div className="font-semibold text-slate-900">{currentUser.department}</div></div>
           </div>
 
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[12px] text-slate-600">
             {inEditor
               ? '이 기사에서 쓰는 사진으로 올라가며, 기사 공개 범위를 따릅니다.'
               : '올린 사진은 모든 직원이 라이브러리에서 볼 수 있습니다.'}
@@ -723,18 +723,18 @@ const DetailDialog: React.FC<{
                 <ImageIcon className="w-8 h-8 text-slate-400" />
               )}
             </div>
-            <div className="text-[11px] text-slate-700 space-y-0.5">
+            <div className="text-[12px] text-slate-700 space-y-0.5">
               <div>올린 사람: <b>{item.uploaderName || '-'}</b> · {item.uploaderEmail || '-'} · {item.uploaderDepartment || '-'}</div>
               <div>올린 때: {item.uploadedAt} · {item.resolution} · {item.fileSize}</div>
             </div>
             <div>
               <div className="font-bold text-slate-700 mb-1">이 사진이 쓰인 기사 ({usages.length})</div>
               {usages.length === 0 ? (
-                <p className="text-[11px] text-slate-600">아직 쓰인 기사가 없습니다. (삭제 가능)</p>
+                <p className="text-[12px] text-slate-600">아직 쓰인 기사가 없습니다. (삭제 가능)</p>
               ) : (
                 <ul className="space-y-1">
                   {usages.map(u => (
-                    <li key={u.articleId} className="flex items-center gap-1.5 text-[11px] text-slate-800">
+                    <li key={u.articleId} className="flex items-center gap-1.5 text-[12px] text-slate-800">
                       <ExternalLink className="w-3 h-3 text-slate-500 shrink-0" />
                       <span className="truncate">{u.articleTitle || '(제목 없음)'}</span>
                       <span className="text-slate-500 shrink-0">· {u.projectName}</span>
@@ -758,7 +758,7 @@ const DetailDialog: React.FC<{
               <textarea value={caption} disabled={!canEdit} maxLength={CAPTION_MAX} rows={4} onChange={(e) => setCaption(e.target.value)} className="mt-1 w-full border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-800 disabled:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none" />
             </label>
             {item.captionSuggestion && canEdit && (
-              <button type="button" onClick={() => setCaption(item.captionSuggestion!.replace(/^▲\s*/, '').slice(0, CAPTION_MAX))} className="w-full text-left p-2 rounded bg-purple-50 border border-purple-200 text-[11px] text-purple-900 hover:bg-purple-100 cursor-pointer">
+              <button type="button" onClick={() => setCaption(item.captionSuggestion!.replace(/^▲\s*/, '').slice(0, CAPTION_MAX))} className="w-full text-left p-2 rounded bg-purple-50 border border-purple-200 text-[12px] text-purple-900 hover:bg-purple-100 cursor-pointer">
                 <b>AI 제안 캡션 쓰기:</b> {item.captionSuggestion}
               </button>
             )}
@@ -766,8 +766,8 @@ const DetailDialog: React.FC<{
               <span className="font-semibold text-slate-700">바이라인 (사진 출처)</span>
               <input value={credit} disabled={!canEdit} maxLength={60} onChange={(e) => setCredit(e.target.value)} className="mt-1 w-full border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-800 disabled:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500" />
             </label>
-            {!canEdit && <p className="text-[11px] text-slate-600">올린 기자와 데스크만 고칠 수 있습니다.</p>}
-            {msg && <p className="text-[11px] text-slate-800 bg-slate-50 border border-slate-200 rounded p-2">{msg}</p>}
+            {!canEdit && <p className="text-[12px] text-slate-600">올린 기자와 데스크만 고칠 수 있습니다.</p>}
+            {msg && <p className="text-[12px] text-slate-800 bg-slate-50 border border-slate-200 rounded p-2">{msg}</p>}
           </div>
         </div>
 
@@ -798,31 +798,6 @@ const DetailDialog: React.FC<{
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-/**
- * 편집기 아래쪽에 붙는 미디어 라이브러리 창
- * - 본문이 가려지지 않게 아래쪽에 두고, 줄을 끌어서 본문에 놓을 수 있습니다.
- */
-export const MediaDock: React.FC<{ onClose: () => void; children: React.ReactNode }> = ({ onClose, children }) => {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <div
-      id="media-library-dock"
-      className={`fixed inset-x-0 bottom-0 z-40 bg-white border-t border-slate-300 shadow-2xl flex flex-col ${expanded ? 'h-[75vh]' : 'h-[42vh]'}`}
-    >
-      <div className="flex items-center justify-between px-4 py-1.5 bg-white border-b border-slate-200 text-slate-600 text-[11px] shrink-0 select-none">
-        <span className="font-semibold">미디어 라이브러리 · 줄을 끌어서 본문에 놓으면 기사에 들어갑니다</span>
-        <div className="flex items-center gap-1">
-          <button type="button" onClick={() => setExpanded(v => !v)} className="px-2 py-0.5 rounded hover:bg-slate-100 text-slate-700 cursor-pointer">
-            {expanded ? '▼ 작게' : '▲ 크게'}
-          </button>
-          <button type="button" onClick={onClose} className="px-2 py-0.5 rounded hover:bg-slate-100 text-slate-500 cursor-pointer" title="닫기">✕</button>
-        </div>
-      </div>
-      {children}
     </div>
   );
 };

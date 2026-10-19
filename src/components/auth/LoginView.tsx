@@ -367,7 +367,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                     setResetError(null);
                     setViewMode('password_reset');
                   }}
-                  className="text-[11px] text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer"
+                  className="text-[12px] text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer"
                 >
                   비밀번호를 잃어버렸어요
                 </button>
@@ -433,10 +433,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 title="프로필 사진 (안내)"
               >
                 <Camera className="w-5 h-5 mb-0.5 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px]">사진 등록</span>
+                <span className="text-[12px]">사진 등록</span>
               </div>
               {photoNotice && (
-                <p className="text-[11px] text-blue-400 mt-1.5 animate-in fade-in">
+                <p className="text-[12px] text-blue-400 mt-1.5 animate-in fade-in">
                   프로필 사진 업로드는 다음 단계에서 연결됩니다.
                 </p>
               )}
@@ -533,7 +533,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 pt-1 leading-relaxed">
+            <p className="text-[12px] text-slate-400 pt-1 leading-relaxed">
               ※ 직급 및 담당 역할은 가입 신청서 접수 후 인사부 승인 과정에서 공식 배정됩니다.
             </p>
 
@@ -593,11 +593,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
             {issuedAccount && (
               <div className="text-left p-3.5 bg-slate-950 border border-slate-700 rounded-lg space-y-2">
-                <div className="flex justify-between text-[11px]">
+                <div className="flex justify-between text-[12px]">
                   <span className="text-slate-400">로그인 아이디</span>
                   <span className="font-mono text-slate-200">{issuedAccount.email.split('@')[0]}</span>
                 </div>
-                <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center justify-between text-[12px]">
                   <span className="text-slate-400">임시 비밀번호</span>
                   <span className="flex items-center space-x-2">
                     <span className="font-mono text-sm font-bold text-emerald-300 select-all tracking-wide">{issuedAccount.password}</span>
@@ -612,13 +612,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                           setPwCopied(false);
                         }
                       }}
-                      className="px-2 py-0.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[10px] font-semibold cursor-pointer"
+                      className="px-2 py-0.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[12px] font-semibold cursor-pointer"
                     >
                       {pwCopied ? '복사됨' : '복사'}
                     </button>
                   </span>
                 </div>
-                <p className="text-[10px] text-amber-300 leading-relaxed pt-1">
+                <p className="text-[12px] text-amber-300 leading-relaxed pt-1">
                   이 화면을 닫으면 다시 볼 수 없으니 지금 적어 두거나 복사해 주세요. 로그인한 뒤 [환경 설정]에서 꼭 새 비밀번호로 바꿔 주세요.
                 </p>
               </div>
@@ -651,7 +651,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 <KeyRound className="w-4 h-4 text-blue-400 shrink-0" />
                 <span>비밀번호 분실 신고 안내</span>
               </div>
-              <p className="text-[11px] text-blue-200/90 leading-relaxed">
+              <p className="text-[12px] text-blue-200/90 leading-relaxed">
                 비밀번호를 잃어버리셨나요? 본인 정보를 입력하여 신고해 주시면, 인사부 담당자가 직접 확인 후 사내 메신저, 전화 또는 복구용 이메일로 연락을 드립니다.
               </p>
             </div>
@@ -721,7 +721,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 <label className="block text-slate-300 font-semibold">
                   등록된 복구용 개인 이메일
                 </label>
-                <span className="text-[10px] text-slate-400">선택 사항</span>
+                <span className="text-[12px] text-slate-400">선택 사항</span>
               </div>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -735,7 +735,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                   className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
                 />
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[12px] text-slate-400 mt-1">
                 ※ 프로필에 미리 등록해 둔 개인 이메일이 있다면 적어주세요. 등록하지 않았더라도 인사부가 직접 확인하여 연락드립니다.
               </p>
             </div>

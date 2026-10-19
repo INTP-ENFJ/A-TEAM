@@ -60,7 +60,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
   const deskChangesRequested = tasks.filter(t => t.status === 'changes_requested');
   const isMine = (t: DashboardTaskItem) => t.authorId === currentUser.id;
   const renderMineBadge = (t: DashboardTaskItem) => isMine(t) ? (
-    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">내 기사</span>
+    <span className="px-1.5 py-0.5 rounded text-[12px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">내 기사</span>
   ) : null;
   const deskReadyQueue = canSeeReadyQueue ? tasks.filter(t => t.status === 'ready') : [];
 
@@ -86,7 +86,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
     if (!task.deadlineFormatted) return null;
     if (task.isOverdue) {
       return (
-        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center space-x-1">
+        <span className="px-1.5 py-0.5 rounded text-[12px] font-bold bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center space-x-1">
           <span>🚨 마감 초과</span>
           <span>({task.deadlineFormatted})</span>
         </span>
@@ -94,14 +94,14 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
     }
     if (task.isUrgentDeadline) {
       return (
-        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center space-x-1 animate-pulse">
+        <span className="px-1.5 py-0.5 rounded text-[12px] font-bold bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center space-x-1 animate-pulse">
           <span>⏰ 마감 임박</span>
           <span>({task.deadlineFormatted})</span>
         </span>
       );
     }
     return (
-      <span className="text-[11px] text-slate-500 font-medium inline-flex items-center space-x-1">
+      <span className="text-[12px] text-slate-500 font-medium inline-flex items-center space-x-1">
         <Calendar className="w-3 h-3 text-slate-400" />
         <span>마감 {task.deadlineFormatted}</span>
       </span>
@@ -135,7 +135,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
               >
                 <Inbox className="w-3.5 h-3.5" />
                 <span>데스크 검토 큐</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                <span className={`px-1.5 py-0.2 rounded-full text-[12px] font-extrabold ${
                   summary.deskReviewQueueCount > 0 
                     ? 'bg-rose-500 text-white' 
                     : (canSeeReadyQueue && summary.deskReadyQueueCount > 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-600')
@@ -154,7 +154,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
               >
                 <FileEdit className="w-3.5 h-3.5" />
                 <span>내 기사 업무</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                <span className={`px-1.5 py-0.2 rounded-full text-[12px] font-extrabold ${
                   summary.myChangesRequestedCount > 0 
                     ? 'bg-rose-500 text-white animate-pulse' 
                     : (totalMyTasks > 0 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600')
@@ -182,7 +182,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {/* 작성중 */}
           <div {...cardNav('sec-r-draft', '초안 작성중')} className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center space-x-1">
               <FileEdit className="w-3 h-3 text-slate-400" />
               <span>초안 작성중</span>
             </span>
@@ -195,7 +195,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
               ? 'bg-rose-50/80 border-rose-300 ring-2 ring-rose-200'
               : 'bg-white border-slate-200/90'
           }`}>
-            <span className={`text-[11px] font-bold flex items-center space-x-1 ${
+            <span className={`text-[12px] font-bold flex items-center space-x-1 ${
               summary.myChangesRequestedCount > 0 ? 'text-rose-700' : 'text-slate-500'
             }`}>
               <AlertCircle className={`w-3 h-3 ${summary.myChangesRequestedCount > 0 ? 'text-rose-600' : 'text-slate-400'}`} />
@@ -210,7 +210,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
 
           {/* 검토중 */}
           <div {...cardNav('sec-r-review', '데스크 검토중')} className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center space-x-1">
               <Clock className="w-3 h-3 text-blue-500" />
               <span>데스크 검토중</span>
             </span>
@@ -219,7 +219,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
 
           {/* 출고 대기 */}
           <div {...cardNav('sec-r-ready', '승인 / 출고대기')} className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center space-x-1">
               <CheckCircle2 className="w-3 h-3 text-purple-500" />
               <span>승인 / 출고대기</span>
             </span>
@@ -228,7 +228,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
 
           {/* 출고 완료 */}
           <div {...cardNav('sec-r-ready', '출고 완료')} className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center space-x-1">
               <CheckCircle2 className="w-3 h-3 text-emerald-500" />
               <span>출고 완료</span>
             </span>
@@ -248,7 +248,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                 <Inbox className="w-4 h-4 text-blue-600" />
                 <span>검토 요청된 기사</span>
               </span>
-              <p className="text-[11px] text-blue-600/80 mt-1">부서 기자가 감수를 요청한 기사</p>
+              <p className="text-[12px] text-blue-600/80 mt-1">부서 기자가 감수를 요청한 기사</p>
             </div>
             <span className="text-3xl font-black text-blue-900">{summary.deskReviewQueueCount}</span>
           </div>
@@ -260,7 +260,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                 <RotateCcw className="w-4 h-4 text-amber-500" />
                 <span>기자 수정 대기 중</span>
               </span>
-              <p className="text-[11px] text-slate-500 mt-1">데스크가 수정을 요청하여 보완 중</p>
+              <p className="text-[12px] text-slate-500 mt-1">데스크가 수정을 요청하여 보완 중</p>
             </div>
             <span className="text-3xl font-black text-slate-800">{summary.deskChangesRequestedCount}</span>
           </div>
@@ -273,7 +273,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                 <CheckCircle2 className="w-4 h-4 text-purple-600" />
                 <span>출고 대기 기사</span>
               </span>
-              <p className="text-[11px] text-slate-500 mt-1">승인 완료되어 최종 출고 가능한 기사</p>
+              <p className="text-[12px] text-slate-500 mt-1">승인 완료되어 최종 출고 가능한 기사</p>
             </div>
             <span className="text-3xl font-black text-purple-900">{summary.deskReadyQueueCount}</span>
           </div>
@@ -293,7 +293,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   수정 요청 받은 기사 ({myChangesRequested.length})
                 </h3>
               </div>
-              <span className="text-[11px] text-rose-700 font-semibold">
+              <span className="text-[12px] text-rose-700 font-semibold">
                 * 데스크 피드백을 확인하고 수정 후 [재검토 요청]을 진행하세요
               </span>
             </div>
@@ -363,7 +363,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   내가 작성 중인 기사 ({myDrafts.length})
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-500">작성 완료 후 [검토 요청]을 진행할 수 있습니다</span>
+              <span className="text-[12px] text-slate-500">작성 완료 후 [검토 요청]을 진행할 수 있습니다</span>
             </div>
 
             <div className="divide-y divide-slate-100">
@@ -431,7 +431,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                       className="p-3 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
                     >
                       <h5 className="text-xs font-bold text-slate-800 line-clamp-1">{task.title}</h5>
-                      <div className="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+                      <div className="text-[12px] text-slate-400 mt-1 flex items-center justify-between">
                         <span>{task.projectName}</span>
                         <span>{task.updatedAtFormatted}</span>
                       </div>
@@ -448,7 +448,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
                   <span>출고 대기 / 완료 ({myReady.length + myPublished.length})</span>
                 </span>
-                <span className="text-[11px] text-purple-700 font-semibold">
+                <span className="text-[12px] text-purple-700 font-semibold">
                   대기 {myReady.length} · 출고 {myPublished.length}
                 </span>
               </div>
@@ -468,7 +468,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                         <h5 className="text-xs font-bold text-slate-800 line-clamp-1">{task.title}</h5>
                         <ArticleStatusBadge status={task.status} size="sm" />
                       </div>
-                      <div className="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+                      <div className="text-[12px] text-slate-400 mt-1 flex items-center justify-between">
                         <span>{task.projectName}</span>
                         <span>{task.updatedAtFormatted}</span>
                       </div>
@@ -491,7 +491,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   내가 검토해야 할 기사 ({deskReviewQueue.length})
                 </h3>
               </div>
-              <span className="text-[11px] text-blue-700 font-semibold">
+              <span className="text-[12px] text-blue-700 font-semibold">
                 * 기사를 검토하고 피드백 메모, [수정 요청] 또는 [승인]을 처리하세요
               </span>
             </div>
@@ -570,7 +570,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   수정 요청 중인 기사 ({deskChangesRequested.length})
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-500">기자의 수정 보완 진행 상황을 모니터링합니다</span>
+              <span className="text-[12px] text-slate-500">기자의 수정 보완 진행 상황을 모니터링합니다</span>
             </div>
 
             <div className="divide-y divide-slate-100">
@@ -644,7 +644,7 @@ export const TaskDashboardView: React.FC<TaskDashboardViewProps> = ({
                   출고 대기 기사 ({deskReadyQueue.length})
                 </h3>
               </div>
-              <span className="text-[11px] text-purple-700">부장 직급은 상단 [기사 출고]를 통해 즉시 배포할 수 있습니다</span>
+              <span className="text-[12px] text-purple-700">부장 직급은 상단 [기사 출고]를 통해 즉시 배포할 수 있습니다</span>
             </div>
 
             <div className="divide-y divide-slate-100">

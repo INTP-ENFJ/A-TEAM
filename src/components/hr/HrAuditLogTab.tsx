@@ -101,7 +101,7 @@ export const HrAuditLogTab: React.FC = () => {
               <span className="mt-0.5 text-blue-300">{icon(r.entity)}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-100 break-words">{r.summary}</p>
-                <p className="text-[11px] text-slate-500 mt-1">
+                <p className="text-[12px] text-slate-500 mt-1">
                   {ENTITY_LABEL[r.entity]} · 변경한 사람: {r.actorName} · {formatDateTime(r.createdAt)}
                 </p>
               </div>

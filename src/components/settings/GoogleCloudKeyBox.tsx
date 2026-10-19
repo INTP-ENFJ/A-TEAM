@@ -53,7 +53,7 @@ export const GoogleCloudKeyBox: React.FC = () => {
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3">
       <div>
         <h3 className="text-sm font-extrabold text-slate-900">구글 클라우드 키 (녹음 받아쓰기 전용)</h3>
-        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+        <p className="text-[12px] text-slate-600 mt-1 leading-relaxed">
           긴 녹음이나 화자 구분이 필요할 때 구글 클라우드의 음성 인식을 쓸 수 있습니다. 글쓰기 AI와는 별개이며, 사용 요금은 내 구글 클라우드 계정으로 청구됩니다.
           발급 방법은 사용자 가이드의 「API 연결」 탭에 있습니다.
         </p>
@@ -73,7 +73,7 @@ export const GoogleCloudKeyBox: React.FC = () => {
         spellCheck={false}
         autoComplete="off"
         placeholder={'서비스 계정 키 파일(JSON)을 메모장으로 열어 내용 전체를 복사해 붙여 넣으세요.\n{ "type": "service_account", ... }'}
-        className="w-full text-[11px] font-mono p-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+        className="w-full text-[12px] font-mono p-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
       />
 
       <div className="flex flex-wrap items-center gap-2">
@@ -108,9 +108,9 @@ export const GoogleCloudKeyBox: React.FC = () => {
       </div>
 
       {msg && (
-        <p className={`text-[11px] font-bold ${msg.ok ? 'text-emerald-800' : 'text-red-700'}`}>{msg.text}</p>
+        <p className={`text-[12px] font-bold ${msg.ok ? 'text-emerald-800' : 'text-red-700'}`}>{msg.text}</p>
       )}
-      <p className="text-[10px] text-slate-500">
+      <p className="text-[12px] text-slate-500">
         키는 암호화되어 내 계정에만 저장되며, 화면에는 다시 표시되지 않습니다. 채팅이나 메신저에 붙여 넣지 마세요.
       </p>
     </div>

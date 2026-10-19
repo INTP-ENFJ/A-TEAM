@@ -27,6 +27,8 @@ import {
 
 interface UserGuideViewProps {
   onNavigate: (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide') => void;
+  /** 처음 열 때 보여줄 안내서 (인사부는 'hr') */
+  initialTab?: 'reporter' | 'hr' | 'api';
 }
 
 /* ---------- 읽기 쉬운 안내서용 작은 부품들 ---------- */
@@ -96,7 +98,7 @@ const Section: React.FC<{
         {icon}
       </div>
       <div>
-        <div className="text-[11px] font-bold text-slate-500 tracking-wide">STEP {no}</div>
+        <div className="text-[12px] font-bold text-slate-500 tracking-wide">STEP {no}</div>
         <h3 className="text-base sm:text-lg font-extrabold text-white leading-snug">{title}</h3>
         <p className="text-[13px] text-slate-400 mt-0.5">{summary}</p>
       </div>
@@ -175,8 +177,8 @@ const HR_TOC = [
   { id: 'hr-rules', label: '권한 규칙과 보안 수칙' },
 ];
 
-export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState<'reporter' | 'hr' | 'api'>('reporter');
+export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate, initialTab }) => {
+  const [activeTab, setActiveTab] = useState<'reporter' | 'hr' | 'api'>(initialTab ?? 'reporter');
 
   const tabClass = (on: boolean, color: string) =>
     `flex items-center space-x-2 px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all cursor-pointer ${
@@ -714,13 +716,13 @@ export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
                     <td className="p-3">1초 단위로 계산. 무료 한도는 안내되어 있지 않고, 신규 고객에게 $300 체험 크레딧이 있습니다. 화자 구분 추가 요금은 안내에 없으나 청구서에서 확인하세요. 서버 오류로 실패한 요청은 청구되지 않습니다.</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-white">Gemini 받아쓰기<br /><span className="font-normal text-slate-400">(Gemini 3.8 Flash)</span></td>
+                    <td className="p-3 font-bold text-white">Gemini 받아쓰기<br /><span className="font-normal text-slate-400">(기본 Gemini 3.8 Flash · 환경설정에서 변경)</span></td>
                     <td className="p-3">글자 조각(토큰) 단위<br />입력 $0.75 · 출력 $3.75 (100만 토큰당, 2026-12-31까지)<br /><span className="text-slate-400">2027-01-01부터 입력 $1.50 · 출력 $7.50</span></td>
                     <td className="p-3">약 $0.1~0.3 (추정)</td>
                     <td className="p-3">소리 입력 요금이 따로 표기되지 않아 위 값으로 계산한 추정입니다. 무료 한도가 있으나 무료 사용분은 서비스 개선에 쓰일 수 있습니다.</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-white">OpenAI 받아쓰기<br /><span className="font-normal text-slate-400">(기본 whisper-1)</span></td>
+                    <td className="p-3 font-bold text-white">OpenAI 받아쓰기<br /><span className="font-normal text-slate-400">(기본: 인터뷰 gpt-4o-transcribe-diarize · 발표 gpt-4o-transcribe)</span></td>
                     <td className="p-3">분당 $0.006<br /><span className="text-slate-400">(gpt-4o-transcribe 분당 $0.006, gpt-4o-mini-transcribe 분당 $0.003)</span></td>
                     <td className="p-3">약 $0.36</td>
                     <td className="p-3">whisper-1의 분당 $0.006은 OpenAI 공식 표가 아닌 외부 자료 기준이라 확인이 필요합니다. 화자 구분 모델(gpt-4o-transcribe-diarize)은 소리 입력 100만 토큰당 $2.50, 출력 $10으로 분당 환산이 안내되어 있지 않습니다.</td>
@@ -729,13 +731,13 @@ export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
                     <td className="p-3 font-bold text-white">이미지 만들기 (Gemini)</td>
                     <td className="p-3">1장(1K 크기) 약 $0.034~0.067<br /><span className="text-slate-400">모델에 따라 다름</span></td>
                     <td className="p-3">—</td>
-                    <td className="p-3">이미지 모델은 무료 한도가 없습니다. 이 프로그램이 쓰는 이미지 모델이 목록에 없다고 나오면 관리자에게 모델 변경을 요청하세요.</td>
+                    <td className="p-3">이미지 모델은 무료 한도가 없을 수 있습니다. "사용 한도를 넘었습니다"라고 나오면 키의 결제 설정을 확인하세요. 기본 이미지 모델은 gemini-3.1-flash-lite-image입니다.</td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-bold text-white">이미지 만들기 (OpenAI)</td>
+                    <td className="p-3 font-bold text-white">이미지 만들기 (OpenAI)<br /><span className="font-normal text-slate-400">(기본 gpt-image-2.5-flare)</span></td>
                     <td className="p-3">장당 가격을 공식 표에서 확인하지 못함</td>
                     <td className="p-3">—</td>
-                    <td className="p-3">OpenAI 요금 계산기에서 직접 확인해 주세요.</td>
+                    <td className="p-3">OpenAI 요금 계산기에서 직접 확인해 주세요. 새 모델이라 이 프로그램에서 아직 시험하지 못했습니다.</td>
                   </tr>
                   <tr>
                     <td className="p-3 font-bold text-white">Claude (글 작업)</td>
@@ -764,6 +766,7 @@ export const UserGuideView: React.FC<UserGuideViewProps> = ({ onNavigate }) => {
                 <li>구글 클라우드: cloud.google.com/speech-to-text/pricing (V2 표준 모델 요금)</li>
                 <li>Gemini: ai.google.dev/gemini-api/docs/pricing (3.8 Flash, 이미지 모델 표)</li>
                 <li>OpenAI: developers.openai.com/api/docs/pricing 및 모델 소개 페이지 (gpt-4o-transcribe 계열)</li>
+                <li>받아쓰기 모델은 글쓰기 모델과 따로 고릅니다. 왼쪽 메뉴 [녹음 정리] 화면이나 환경설정 → AI 서비스 설정의 "받아쓰기 모델"에서 바꿀 수 있고, 인터뷰에서 화자를 나누려면 "화자 구분 가능" 표시가 있는 모델을 고르세요.</li>
                 <li>요금과 모델 이름은 자주 바뀝니다. 실제 결제 전에 각 사이트의 최신 요금표를 꼭 확인하세요. 표시된 환산 금액은 이해를 돕기 위한 어림값입니다.</li>
                 <li>AI 호출 횟수와 실패율은 환경설정 아래쪽의 <strong className="text-slate-200">AI 사용 현황</strong> 표에서 볼 수 있습니다. 금액은 각 서비스의 사용량 화면에서 확인합니다.</li>
               </ul>

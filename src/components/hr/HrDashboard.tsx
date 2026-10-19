@@ -72,7 +72,7 @@ export const HrDashboard: React.FC<HrDashboardProps> = ({ currentUser }) => {
               <ShieldCheck className="w-4 h-4" />
               <span>인사관리 워크스페이스</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[12px] text-slate-400 mt-1">
               언론사 조직·직책 및 가입 승인 포털
             </p>
           </div>
@@ -126,7 +126,7 @@ export const HrDashboard: React.FC<HrDashboardProps> = ({ currentUser }) => {
                 <span>비밀번호 분실 신고</span>
               </div>
               {pendingResetCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950">
+                <span className="px-1.5 py-0.5 rounded-full text-[12px] font-bold bg-amber-500 text-slate-950">
                   {pendingResetCount}
                 </span>
               )}
@@ -183,13 +183,13 @@ export const HrDashboard: React.FC<HrDashboardProps> = ({ currentUser }) => {
         </div>
 
         {/* 하단 관리자 정보 카드 */}
-        <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1">
+        <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[12px] text-slate-400 space-y-1">
           <div className="flex items-center justify-between font-semibold text-slate-300">
             <span>{currentUser.name}</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">인사관리자</span>
+            <span className="text-[12px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">인사관리자</span>
           </div>
           <div className="truncate text-slate-500">{currentUser.email}</div>
-          <div className="text-[10px] text-slate-400 pt-1">
+          <div className="text-[12px] text-slate-400 pt-1">
             소속: {currentUser.department} ({currentUser.roleTitle || '관리자'})
           </div>
         </div>

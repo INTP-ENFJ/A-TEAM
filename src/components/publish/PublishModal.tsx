@@ -194,7 +194,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
             {/* Confirmation Banner */}
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-md">
               <h4 className="text-sm font-bold text-slate-900">최종 출고 전 검증(Publish Preflight)</h4>
-              <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+              <p className="text-[12px] text-slate-600 mt-0.5 leading-relaxed">
                 출고 기준 충족 여부를 확인한 후 승인된 기사만 지정된 송고 채널로 배포됩니다.
               </p>
             </div>
@@ -202,8 +202,8 @@ export const PublishModal: React.FC<PublishModalProps> = ({
             {/* Article Digest */}
             <div className="p-3 bg-white border border-slate-200 rounded-md space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase text-slate-400">출고 대상 기사</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                <span className="text-[12px] font-bold uppercase text-slate-400">출고 대상 기사</span>
+                <span className={`text-[12px] font-bold px-1.5 py-0.5 rounded border ${
                   article.status === 'ready' 
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
                     : 'bg-amber-50 text-amber-700 border-amber-300'
@@ -212,7 +212,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                 </span>
               </div>
               <h5 className="text-sm font-bold text-slate-900 line-clamp-1">{article.title || '(제목 없음)'}</h5>
-              <div className="flex items-center space-x-2 text-[11px] text-slate-500">
+              <div className="flex items-center space-x-2 text-[12px] text-slate-500">
                 <span>{article.desk || '데스크 미지정'}</span>
                 <span>•</span>
                 <span>{article.reporter || '기자 미지정'}</span>
@@ -235,17 +235,17 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                   <span>출고 전 필수 검증 체크리스트</span>
                 </span>
                 {isValidating ? (
-                  <span className="flex items-center space-x-1 text-[11px] text-blue-600">
+                  <span className="flex items-center space-x-1 text-[12px] text-blue-600">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     <span>서버 검증 중...</span>
                   </span>
                 ) : isAllChecksPassed ? (
-                  <span className="text-[11px] font-bold text-emerald-600 flex items-center space-x-1">
+                  <span className="text-[12px] font-bold text-emerald-600 flex items-center space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>검증 통과 (출고 가능)</span>
                   </span>
                 ) : (
-                  <span className="text-[11px] font-bold text-rose-600 flex items-center space-x-1">
+                  <span className="text-[12px] font-bold text-rose-600 flex items-center space-x-1">
                     <XCircle className="w-3.5 h-3.5" />
                     <span>검증 미달 (출고 불가)</span>
                   </span>
@@ -268,10 +268,10 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     </div>
                     <div>
                       <span className="font-semibold text-xs">기사 승인 상태</span>
-                      <span className="text-[10px] text-slate-500 ml-1.5">출고 대기(ready) 상태 필수</span>
+                      <span className="text-[12px] text-slate-500 ml-1.5">출고 대기(ready) 상태 필수</span>
                     </div>
                   </div>
-                  <span className={`text-[11px] font-bold ${statusReady ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <span className={`text-[12px] font-bold ${statusReady ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {statusReady ? 'PASS' : `FAIL (${article.status})`}
                   </span>
                 </div>
@@ -290,10 +290,10 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     </div>
                     <div>
                       <span className="font-semibold text-xs">기사 제목 유효성</span>
-                      <span className="text-[10px] text-slate-500 ml-1.5">공백 제외 1자 이상 입력</span>
+                      <span className="text-[12px] text-slate-500 ml-1.5">공백 제외 1자 이상 입력</span>
                     </div>
                   </div>
-                  <span className={`text-[11px] font-bold ${titleValid ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <span className={`text-[12px] font-bold ${titleValid ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {titleValid ? 'PASS' : 'FAIL (제목 없음)'}
                   </span>
                 </div>
@@ -313,10 +313,10 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     <div className="flex items-center space-x-1">
                       <FileText className="w-3 h-3 text-slate-400" />
                       <span className="font-semibold text-xs">본문 텍스트 존재</span>
-                      <span className="text-[10px] text-slate-500 ml-1">실질적인 본문 문단 최소 1개 이상</span>
+                      <span className="text-[12px] text-slate-500 ml-1">실질적인 본문 문단 최소 1개 이상</span>
                     </div>
                   </div>
-                  <span className={`text-[11px] font-bold ${bodyValid ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <span className={`text-[12px] font-bold ${bodyValid ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {bodyValid ? 'PASS' : 'FAIL (실질 본문 없음)'}
                   </span>
                 </div>
@@ -336,10 +336,10 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     <div className="flex items-center space-x-1">
                       <Radio className="w-3 h-3 text-slate-400" />
                       <span className="font-semibold text-xs">출고 대상 채널</span>
-                      <span className="text-[10px] text-slate-500 ml-1">최소 1개 이상의 송고 채널 선택</span>
+                      <span className="text-[12px] text-slate-500 ml-1">최소 1개 이상의 송고 채널 선택</span>
                     </div>
                   </div>
-                  <span className={`text-[11px] font-bold ${channelsValid ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <span className={`text-[12px] font-bold ${channelsValid ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {channelsValid ? `PASS (${channels.length}개 선택)` : 'FAIL (채널 미선택)'}
                   </span>
                 </div>
@@ -359,10 +359,10 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     <div className="flex items-center space-x-1">
                       <Clock className="w-3 h-3 text-slate-400" />
                       <span className="font-semibold text-xs">엠바고 검증</span>
-                      <span className="text-[10px] text-slate-500 ml-1">미래 엠바고 즉시 출고 차단</span>
+                      <span className="text-[12px] text-slate-500 ml-1">미래 엠바고 즉시 출고 차단</span>
                     </div>
                   </div>
-                  <span className={`text-[11px] font-bold ${embargoValid ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <span className={`text-[12px] font-bold ${embargoValid ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {embargoValid ? (article.embargo ? 'PASS (엠바고 해제)' : 'PASS (엠바고 없음)') : 'FAIL (미래 엠바고)'}
                   </span>
                 </div>
@@ -371,11 +371,11 @@ export const PublishModal: React.FC<PublishModalProps> = ({
               {/* 검증 이슈 목록 (존재하는 경우) */}
               {preflightResult?.issues && preflightResult.issues.length > 0 && (
                 <div className="mt-2 p-2.5 bg-rose-50 border border-rose-300 rounded text-rose-900 space-y-1">
-                  <div className="font-bold flex items-center space-x-1 text-[11px]">
+                  <div className="font-bold flex items-center space-x-1 text-[12px]">
                     <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                     <span>출고 차단 원인 ({preflightResult.issues.length}건):</span>
                   </div>
-                  <ul className="list-disc list-inside space-y-0.5 text-[11px] pl-1">
+                  <ul className="list-disc list-inside space-y-0.5 text-[12px] pl-1">
                     {preflightResult.issues.map((issue, idx) => (
                       <li key={idx} className="leading-tight">{issue.message}</li>
                     ))}
@@ -384,7 +384,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
               )}
 
               {preflightError && (
-                <div className="p-2 bg-amber-50 border border-amber-300 rounded text-amber-900 text-[11px]">
+                <div className="p-2 bg-amber-50 border border-amber-300 rounded text-amber-900 text-[12px]">
                   검증 오류: {preflightError}
                 </div>
               )}
@@ -399,12 +399,12 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span>주의: 정보 확인 필요 {unresolvedInfoChecks.length}건이 미해결 상태입니다.</span>
                   </div>
-                  <p className="text-[10px] text-amber-800">
+                  <p className="text-[12px] text-amber-800">
                     사실관계 오류나 누락 정보가 없는지 확인 후 출고하시기 바랍니다.
                   </p>
                 </div>
               ) : (
-                <div className="p-2 bg-emerald-50 border border-emerald-200 rounded text-emerald-900 flex items-center space-x-2 text-[11px]">
+                <div className="p-2 bg-emerald-50 border border-emerald-200 rounded text-emerald-900 flex items-center space-x-2 text-[12px]">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>모든 정보 확인 검토가 완료되었습니다.</span>
                 </div>
@@ -418,7 +418,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                   <AlertTriangle className="w-3.5 h-3.5 text-violet-600 shrink-0" />
                   <span>이 기사에는 AI 초안 도구를 사용한 기록이 있습니다.</span>
                 </div>
-                <p className="text-[10px] text-violet-800">
+                <p className="text-[12px] text-violet-800">
                   회사의 AI 사용 표기 기준에 따라 필요하면 표기해 주세요. AI가 만든 문장의 사실관계와 인용문은 기자가 직접 확인해야 합니다.
                 </p>
               </div>
@@ -427,18 +427,18 @@ export const PublishModal: React.FC<PublishModalProps> = ({
             {/* Publication Channels Selection */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-700">출고 채널 선택 <span className="ml-1 text-[11px] font-medium text-slate-500">({channels.length}/5개 선택됨)</span></span>
-                <span className="flex items-center gap-2 text-[11px]">
+                <span className="font-bold text-slate-700">출고 채널 선택 <span className="ml-1 text-[12px] font-medium text-slate-500">({channels.length}/5개 선택됨)</span></span>
+                <span className="flex items-center gap-2 text-[12px]">
                   <button type="button" onClick={() => setChannels(ALL_CHANNELS)} className="text-blue-600 hover:underline cursor-pointer">모두 선택</button>
                   <span className="text-slate-300">|</span>
                   <button type="button" onClick={() => setChannels([])} className="text-slate-500 hover:underline cursor-pointer">모두 해제</button>
                 </span>
               </div>
               {channels.length === 0 && (
-                <p className="text-[11px] text-rose-600">내보낼 곳을 하나 이상 골라 주세요. 하나도 고르지 않으면 출고할 수 없습니다.</p>
+                <p className="text-[12px] text-rose-600">내보낼 곳을 하나 이상 골라 주세요. 하나도 고르지 않으면 출고할 수 없습니다.</p>
               )}
               {channels.includes('모바일 긴급 속보 Push 알림') && (
-                <p className="text-[11px] text-amber-700">⚠ 긴급 속보 알림은 구독자 전체에게 알림이 바로 나갑니다. 꼭 필요할 때만 선택하세요.</p>
+                <p className="text-[12px] text-amber-700">⚠ 긴급 속보 알림은 구독자 전체에게 알림이 바로 나갑니다. 꼭 필요할 때만 선택하세요.</p>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {[
@@ -466,7 +466,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
                       </div>
                       <div>
                         <div className="font-semibold text-xs leading-tight">{item.id}</div>
-                        <div className="text-[10px] text-slate-500 mt-0.5">{item.desc}</div>
+                        <div className="text-[12px] text-slate-500 mt-0.5">{item.desc}</div>
                       </div>
                     </div>
                   );
@@ -477,7 +477,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
             {/* Publishing Progress Bar if submitting */}
             {isPublishing && (
               <div className="space-y-1.5 pt-2">
-                <div className="flex justify-between text-[11px] text-slate-500">
+                <div className="flex justify-between text-[12px] text-slate-500">
                   <span>포털 및 통신망 API 출고 패킷 전송 중...</span>
                   <span className="font-mono">{publishProgress}%</span>
                 </div>
@@ -492,7 +492,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
 
             {/* Actions */}
             <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
-              <div className="text-[11px] text-slate-500">
+              <div className="text-[12px] text-slate-500">
                 {!isAllChecksPassed && (
                   <span className="text-rose-600 font-medium">
                     * 위 필수 검증 항목을 모두 충족해야 최종 출고가 가능합니다.
@@ -547,7 +547,7 @@ export const PublishModal: React.FC<PublishModalProps> = ({
               </p>
             </div>
 
-            <div className="bg-slate-50 p-3 rounded border text-left text-[11px] text-slate-600 space-y-1">
+            <div className="bg-slate-50 p-3 rounded border text-left text-[12px] text-slate-600 space-y-1">
               <div>• 출고 기사: <strong>{article.title}</strong></div>
               <div>• 출고 시각: <strong>{new Date().toLocaleString('ko-KR')}</strong></div>
               <div>• 출고 채널: <strong>{channels.join(', ')}</strong></div>

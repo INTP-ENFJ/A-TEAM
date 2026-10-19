@@ -44,6 +44,14 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: "유효하지 않은 사용자 세션입니다." }, { status: 401, headers: corsHeaders });
     }
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     const adminClient = createClient(supabaseUrl, serviceKey);
     const { data: profile } = await adminClient.from("profiles").select("department, role").eq("id", user.id).single();
     if (!profile || profile.department === "인사부" || profile.role === "hr_admin") {
@@ -64,7 +72,7 @@ Deno.serve(async (req) => {
 
     let llmCfg: LlmConfig | null = null;
     try {
-      llmCfg = await loadLlmConfig(adminClient, user.id);
+      llmCfg = await loadLlmConfig(adminClient, user.id, "draft");
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);
       if (known) return known;
@@ -91,11 +99,11 @@ Deno.serve(async (req) => {
     let raw: string;
     try {
       raw = await callLlm(llmCfg, {
-        log: { admin: adminClient, userId: user.id, fn: "organize-raw-data" },
         system: instruction,
         user: `${topic ? `[취재 주제]\n${topic}\n\n` : ""}[원자료]\n${text}`,
         maxTokens: 4096,
         temperature: 0.1,
+        log: { admin: adminClient, userId: user.id, fn: "organize-raw-data" },
       });
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);

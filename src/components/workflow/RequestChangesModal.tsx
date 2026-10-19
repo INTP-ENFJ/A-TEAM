@@ -81,7 +81,7 @@ export const RequestChangesModal: React.FC<RequestChangesModalProps> = ({
               className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-slate-800 placeholder-slate-400 resize-none leading-relaxed"
               required
             />
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-[12px] text-slate-500 mt-1">
               * 작성된 사유는 기자의 데스크 피드백 및 버전 기록에 자동으로 저장됩니다.
             </p>
           </div>

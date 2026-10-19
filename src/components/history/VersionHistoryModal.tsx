@@ -100,7 +100,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
           <div className="flex items-center space-x-2">
             <History className="w-4 h-4 text-amber-400" />
             <h3 className="text-sm font-bold">기사 Version History (수정이력)</h3>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+            <span className="text-[12px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
               Supabase 영속화
             </span>
           </div>
@@ -151,7 +151,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
               <p className="text-slate-600 font-semibold text-xs">
                 의미 있는 편집 시점과 복원 이력이 기록된 스냅샷 목록입니다.
               </p>
-              <p className="text-slate-400 text-[11px] mt-0.5">
+              <p className="text-slate-400 text-[12px] mt-0.5">
                 복원 시 현재 기사 상태가 새 백업 버전으로 자동 저장되어 언제든 이전 상태로 재복원할 수 있습니다.
               </p>
             </div>
@@ -227,7 +227,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                 </button>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[12px] text-slate-500">
                     {previewSnap.timestamp} · {previewSnap.author}
                   </span>
                   <button
@@ -245,7 +245,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
               {/* Preview Article Content */}
               <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3 font-sans max-h-[50vh] overflow-y-auto">
                 <div>
-                  <div className="flex items-center space-x-2 text-[10px] text-blue-700 font-mono font-semibold mb-1">
+                  <div className="flex items-center space-x-2 text-[12px] text-blue-700 font-mono font-semibold mb-1">
                     <span>{previewSnap.versionNumber ? `Version ${previewSnap.versionNumber}` : '버전 스냅샷'}</span>
                     <span>•</span>
                     <span>{previewSnap.summary}</span>
@@ -270,7 +270,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                         {block.type === 'paragraph' ? (
                           <p className="whitespace-pre-wrap">{block.text || '(빈 문단)'}</p>
                         ) : (
-                          <div className="flex items-center space-x-2 text-slate-600 text-[11px]">
+                          <div className="flex items-center space-x-2 text-slate-600 text-[12px]">
                             <ImageIcon className="w-4 h-4 text-slate-400" />
                             <span className="font-semibold">[{block.type === 'video' ? '영상 미디어' : '보도사진'}]</span>
                             <span className="truncate">{block.caption || block.media_url || '미디어 블록'}</span>
@@ -296,7 +296,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                 <div className="py-10 text-center text-slate-400 space-y-1">
                   <History className="w-8 h-8 mx-auto text-slate-300 mb-2" />
                   <p className="font-semibold text-slate-600">저장된 버전 이력이 없습니다.</p>
-                  <p className="text-[11px]">상단의 [새 버전 저장] 버튼을 눌러 첫 번째 버전을 기록하세요.</p>
+                  <p className="text-[12px]">상단의 [새 버전 저장] 버튼을 눌러 첫 번째 버전을 기록하세요.</p>
                 </div>
               ) : (
                 snapshots.map((snap, idx) => {
@@ -318,19 +318,19 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                             <span>{snap.timestamp}</span>
                           </span>
                           {snap.versionNumber && (
-                            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-blue-100 text-blue-800">
+                            <span className="px-1.5 py-0.2 rounded text-[12px] font-mono font-bold bg-blue-100 text-blue-800">
                               v{snap.versionNumber}
                             </span>
                           )}
                           {isCurrent && (
-                            <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-slate-900 text-white flex items-center space-x-0.5">
+                            <span className="px-1.5 py-0.2 rounded text-[12px] font-bold bg-slate-900 text-white flex items-center space-x-0.5">
                               <CheckCircle2 className="w-2.5 h-2.5" />
                               <span>현재 버전</span>
                             </span>
                           )}
                         </div>
 
-                        <div className="flex items-center space-x-1 text-slate-500 font-medium text-[11px]">
+                        <div className="flex items-center space-x-1 text-slate-500 font-medium text-[12px]">
                           <UserIcon className="w-3 h-3 text-slate-400" />
                           <span>{snap.author}</span>
                         </div>
@@ -342,7 +342,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                       </p>
 
                       {/* Bottom Bar: Stats & Action Buttons */}
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-400">
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[12px] text-slate-400">
                         <div className="flex items-center space-x-2 font-mono">
                           <span className="flex items-center space-x-1">
                             <FileText className="w-3 h-3 text-slate-400" />
@@ -357,7 +357,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                           <button
                             type="button"
                             onClick={() => setPreviewSnap(snap)}
-                            className="px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded border border-slate-200 flex items-center space-x-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 text-[12px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded border border-slate-200 flex items-center space-x-1 transition-colors cursor-pointer"
                             title="이 버전의 본문과 메타데이터를 확인합니다"
                           >
                             <Eye className="w-3 h-3 text-slate-500" />
@@ -370,7 +370,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                               type="button"
                               disabled={isRestoring}
                               onClick={() => handleRestoreClick(snap)}
-                              className="px-2.5 py-1 text-[11px] font-semibold text-amber-800 hover:text-amber-900 hover:bg-amber-50 rounded border border-amber-300 flex items-center space-x-1 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
+                              className="px-2.5 py-1 text-[12px] font-semibold text-amber-800 hover:text-amber-900 hover:bg-amber-50 rounded border border-amber-300 flex items-center space-x-1 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
                             >
                               <RotateCcw className="w-3 h-3 text-amber-600" />
                               <span>복원</span>
@@ -382,7 +382,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                             <button
                               type="button"
                               onClick={() => handleDeleteClick(snap)}
-                              className="px-2.5 py-1 text-[11px] font-semibold text-rose-700 hover:text-rose-900 hover:bg-rose-50 rounded border border-rose-200 flex items-center space-x-1 transition-colors cursor-pointer"
+                              className="px-2.5 py-1 text-[12px] font-semibold text-rose-700 hover:text-rose-900 hover:bg-rose-50 rounded border border-rose-200 flex items-center space-x-1 transition-colors cursor-pointer"
                               title="이 수정이력을 삭제합니다 (되돌릴 수 없음)"
                             >
                               <Trash2 className="w-3 h-3 text-rose-500" />
@@ -402,7 +402,7 @@ export const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
 
         {/* Footer */}
         <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[12px] text-slate-400">
             {snapshots.length}개의 버전 기록 보유
           </span>
           <button

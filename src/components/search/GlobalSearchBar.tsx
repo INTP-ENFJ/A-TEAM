@@ -228,7 +228,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
           </button>
         )}
 
-        <div className="hidden sm:flex items-center space-x-0.5 text-[10px] text-white/40 bg-white/10 px-1.5 py-0.5 rounded border border-white/10 shrink-0 select-none">
+        <div className="hidden sm:flex items-center space-x-0.5 text-[12px] text-white/40 bg-white/10 px-1.5 py-0.5 rounded border border-white/10 shrink-0 select-none">
           <Command className="w-2.5 h-2.5" />
           <span>K</span>
         </div>
@@ -241,7 +241,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
           className="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50 text-slate-900 animate-in fade-in zoom-in-95 duration-150"
         >
           {/* Header 상태 바 */}
-          <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-[11px] text-slate-500 select-none">
+          <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-[12px] text-slate-500 select-none">
             <span>
               {query.trim().length < 2
                 ? '2글자 이상 입력해주세요'
@@ -249,7 +249,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                 ? '검색 중...'
                 : `검색 결과 ${results.totalCount}건`}
             </span>
-            <div className="flex items-center space-x-2 text-[10px] text-slate-400">
+            <div className="flex items-center space-x-2 text-[12px] text-slate-400">
               <span className="flex items-center space-x-0.5">
                 <span>↑↓ 이동</span>
               </span>
@@ -276,14 +276,14 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
               <div className="p-8 text-center text-xs text-slate-400">
                 <Search className="w-6 h-6 mx-auto mb-2 text-slate-300" />
                 <p className="font-semibold text-slate-600">뉴스룸 통합 검색</p>
-                <p className="text-[11px] mt-1 text-slate-400">
+                <p className="text-[12px] mt-1 text-slate-400">
                   기사 제목, 부제, 카테고리 또는 프로젝트명을 입력하세요.
                 </p>
               </div>
             ) : results.totalCount === 0 ? (
               <div className="p-8 text-center text-xs text-slate-400">
                 <p className="font-bold text-slate-700">검색 결과가 없습니다.</p>
-                <p className="text-[11px] mt-1 text-slate-400">
+                <p className="text-[12px] mt-1 text-slate-400">
                   입력하신 검색어와 일치하는 기사나 프로젝트를 찾을 수 없습니다.
                 </p>
               </div>
@@ -292,7 +292,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                 {/* 1) 기사 검색 결과 */}
                 {results.articles.length > 0 && (
                   <div>
-                    <div className="px-3.5 py-1.5 bg-slate-100/70 text-[11px] font-bold text-slate-600 flex items-center justify-between select-none">
+                    <div className="px-3.5 py-1.5 bg-slate-100/70 text-[12px] font-bold text-slate-600 flex items-center justify-between select-none">
                       <span className="flex items-center space-x-1.5">
                         <FileText className="w-3.5 h-3.5 text-blue-600" />
                         <span>기사 ({results.articles.length})</span>
@@ -316,15 +316,15 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2 mb-1 flex-wrap gap-y-0.5">
                                 <ArticleStatusBadge status={art.status} size="sm" />
-                                <span className="text-[11px] font-semibold text-slate-500 truncate max-w-[140px]">
+                                <span className="text-[12px] font-semibold text-slate-500 truncate max-w-[140px]">
                                   {art.projectName}
                                 </span>
                                 {art.category && (
-                                  <span className="text-[10px] text-slate-400 bg-slate-100 px-1 py-0.2 rounded">
+                                  <span className="text-[12px] text-slate-600 bg-slate-100 px-1 py-0.2 rounded">
                                     {art.category}
                                   </span>
                                 )}
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[12px] text-slate-400">
                                   {art.updatedAtFormatted}
                                 </span>
                               </div>
@@ -332,12 +332,12 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                                 <HighlightedText text={art.title} query={query} />
                               </h4>
                               {art.subtitle && (
-                                <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                                <p className="text-[12px] text-slate-500 line-clamp-1 mt-0.5">
                                   <HighlightedText text={art.subtitle} query={query} />
                                 </p>
                               )}
                               {art.authorName && (
-                                <p className="text-[10px] text-slate-400 mt-1">
+                                <p className="text-[12px] text-slate-400 mt-1">
                                   작성자: {art.authorName} ({art.authorDepartment || '보도국'})
                                 </p>
                               )}
@@ -355,7 +355,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                 {/* 2) 프로젝트 검색 결과 */}
                 {results.projects.length > 0 && (
                   <div>
-                    <div className="px-3.5 py-1.5 bg-slate-100/70 text-[11px] font-bold text-slate-600 flex items-center justify-between select-none">
+                    <div className="px-3.5 py-1.5 bg-slate-100/70 text-[12px] font-bold text-slate-600 flex items-center justify-between select-none">
                       <span className="flex items-center space-x-1.5">
                         <FolderKanban className="w-3.5 h-3.5 text-indigo-600" />
                         <span>프로젝트 ({results.projects.length})</span>
@@ -378,14 +378,14 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                           >
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2 mb-1">
-                                <span className={`text-[10px] px-1.5 py-0.2 rounded font-semibold border ${
+                                <span className={`text-[12px] px-1.5 py-0.2 rounded font-semibold border ${
                                   proj.visibility === 'shared'
                                     ? 'bg-amber-50 text-amber-700 border-amber-200'
                                     : 'bg-slate-50 text-slate-600 border-slate-200'
                                 }`}>
                                   {proj.visibility === 'shared' ? '전체공유' : '비공개'}
                                 </span>
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[12px] text-slate-400">
                                   {proj.updatedAtFormatted}
                                 </span>
                               </div>
@@ -393,12 +393,12 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
                                 <HighlightedText text={proj.name} query={query} />
                               </h4>
                               {proj.articleTitle && (
-                                <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                                <p className="text-[12px] text-slate-500 line-clamp-1 mt-0.5">
                                   기사: <HighlightedText text={proj.articleTitle} query={query} />
                                 </p>
                               )}
                               {proj.ownerName && (
-                                <p className="text-[10px] text-slate-400 mt-1">
+                                <p className="text-[12px] text-slate-400 mt-1">
                                   생성자: {proj.ownerName} ({proj.ownerDepartment || '보도국'})
                                 </p>
                               )}
@@ -418,7 +418,7 @@ export const GlobalSearchBar: React.FC<GlobalSearchBarProps> = ({
 
           {/* Footer 안내 */}
           <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 text-center select-none">
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[12px] text-slate-400">
               클릭하거나 Enter를 누르면 해당 기사 편집기 또는 프로젝트로 즉시 이동합니다
             </span>
           </div>

@@ -197,7 +197,7 @@ export const BlurModal: React.FC<Props> = ({ src, onClose, onApply }) => {
                 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
                 {rects.map((r, i) => (
                   <div key={i} className="absolute border-2 border-dashed border-blue-500 pointer-events-none" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.w * 100}%`, height: `${r.h * 100}%` }}>
-                    <span className="absolute -top-0.5 -left-0.5 bg-blue-600 text-white text-[10px] leading-none px-1 py-0.5 rounded-br">{i + 1}</span>
+                    <span className="absolute -top-0.5 -left-0.5 bg-blue-600 text-white text-[12px] leading-none px-1 py-0.5 rounded-br">{i + 1}</span>
                   </div>
                 ))}
                 {draft && (

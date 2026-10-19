@@ -284,7 +284,7 @@ export const DepartmentManagementTab: React.FC<DepartmentManagementTabProps> = (
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-bold text-white text-sm">{root.name}</span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded font-semibold border ${
+                          <span className={`text-[12px] px-2 py-0.5 rounded font-semibold border ${
                             root.isActive 
                               ? 'bg-emerald-950 text-emerald-300 border-emerald-800' 
                               : 'bg-slate-900 text-slate-500 border-slate-700'
@@ -292,7 +292,7 @@ export const DepartmentManagementTab: React.FC<DepartmentManagementTabProps> = (
                             {root.isActive ? '운영 중' : '비활성'}
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-400">
+                        <span className="text-[12px] text-slate-400">
                           정렬 순서: {root.sortOrder} · 하위 부서: {children.length}개
                         </span>
                       </div>
@@ -343,14 +343,14 @@ export const DepartmentManagementTab: React.FC<DepartmentManagementTabProps> = (
                           <div className="flex items-center space-x-2">
                             <CornerDownRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                             <span className="font-semibold text-slate-200 text-xs">{child.name}</span>
-                            <span className={`text-[10px] px-1.5 py-0.2 rounded font-semibold border ${
+                            <span className={`text-[12px] px-1.5 py-0.2 rounded font-semibold border ${
                               child.isActive 
                                 ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800' 
                                 : 'bg-slate-900 text-slate-500 border-slate-700'
                             }`}>
                               {child.isActive ? '운영 중' : '비활성'}
                             </span>
-                            <span className="text-[10px] text-slate-500">(순서: {child.sortOrder})</span>
+                            <span className="text-[12px] text-slate-500">(순서: {child.sortOrder})</span>
                           </div>
 
                           <div className="flex items-center space-x-1">

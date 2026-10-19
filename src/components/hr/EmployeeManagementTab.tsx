@@ -189,12 +189,12 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
   const getRoleBadge = (role: UserRole) => {
     switch (role) {
       case 'editor_in_chief':
-        return <span className="px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800 text-[10px] font-bold">편집국장</span>;
+        return <span className="px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800 text-[12px] font-bold">편집국장</span>;
       case 'desk_editor':
-        return <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800 text-[10px] font-bold">데스크</span>;
+        return <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800 text-[12px] font-bold">데스크</span>;
       case 'reporter':
       default:
-        return <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">일반 기자</span>;
+        return <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[12px]">일반 기자</span>;
     }
   };
 
@@ -315,12 +315,12 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                   <tr key={emp.id} className={`hover:bg-slate-700/40 transition-colors ${emp.isActive === false ? 'opacity-60' : ''}`}>
                     {/* 이름 (SSOT: profiles.name) */}
                     <td className="py-3 px-4 font-bold text-white flex items-center space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-blue-900/80 border border-blue-700 flex items-center justify-center text-[10px] font-bold text-blue-200 shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-blue-900/80 border border-blue-700 flex items-center justify-center text-[12px] font-bold text-blue-200 shrink-0">
                         {emp.name.slice(0, 1)}
                       </div>
                       <span>{emp.name}</span>
                       {emp.isActive === false && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600 text-[10px] font-semibold">비활성</span>
+                        <span className="px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600 text-[12px] font-semibold">비활성</span>
                       )}
                     </td>
 
@@ -334,7 +334,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
 
                     {/* 소속 부서 */}
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700/80 text-slate-200 border border-slate-600 text-[11px] font-medium">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-700/80 text-slate-200 border border-slate-600 text-[12px] font-medium">
                         {emp.department}
                       </span>
                     </td>
@@ -344,7 +344,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                       <div className="flex items-center space-x-1.5">
                         <Briefcase className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         <span className="font-semibold">{emp.roleTitle || '-'}</span>
-                        <span className="text-slate-400 text-[11px]">
+                        <span className="text-slate-400 text-[12px]">
                           ({USER_RANK_LABELS[emp.rank] || emp.rank})
                         </span>
                       </div>
@@ -356,7 +356,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                     </td>
 
                     {/* 가입일 */}
-                    <td className="py-3 px-4 text-slate-400 text-[11px]">
+                    <td className="py-3 px-4 text-slate-400 text-[12px]">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                         <span>
@@ -374,14 +374,14 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                     {/* 관리 */}
                     <td className="py-3 px-4 whitespace-nowrap">
                       {emp.id === myId ? (
-                        <span className="text-[11px] text-slate-500">본인</span>
+                        <span className="text-[12px] text-slate-500">본인</span>
                       ) : (
                         <div className="flex items-center space-x-1.5 flex-nowrap">
                           <button
                             type="button"
                             onClick={() => openEdit(emp)}
                             disabled={busyId === emp.id}
-                            className="inline-flex items-center space-x-1 px-2 py-1 rounded border border-slate-600 text-slate-200 hover:bg-slate-700 text-[11px] cursor-pointer whitespace-nowrap shrink-0"
+                            className="inline-flex items-center space-x-1 px-2 py-1 rounded border border-slate-600 text-slate-200 hover:bg-slate-700 text-[12px] cursor-pointer whitespace-nowrap shrink-0"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>수정</span>
@@ -390,7 +390,7 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
                             type="button"
                             onClick={() => toggleActive(emp)}
                             disabled={busyId === emp.id}
-                            className={`inline-flex items-center space-x-1 px-2 py-1 rounded border text-[11px] cursor-pointer whitespace-nowrap shrink-0 ${
+                            className={`inline-flex items-center space-x-1 px-2 py-1 rounded border text-[12px] cursor-pointer whitespace-nowrap shrink-0 ${
                               emp.isActive === false
                                 ? 'border-emerald-700 text-emerald-300 hover:bg-emerald-950/50'
                                 : 'border-rose-800 text-rose-300 hover:bg-rose-950/50'
@@ -423,33 +423,33 @@ export const EmployeeManagementTab: React.FC<EmployeeManagementTabProps> = ({ on
             <div className="p-4 space-y-3">
               <label className="block">
                 <span className="block mb-1 text-slate-400">소속 부서</span>
-                <select value={formDeptId} onChange={(e) => setFormDeptId(e.target.value)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded">
+                <select value={formDeptId} onChange={(e) => setFormDeptId(e.target.value)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded text-slate-200">
                   <option value="">선택</option>
                   {deptOptions.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
               </label>
               <label className="block">
                 <span className="block mb-1 text-slate-400">직책</span>
-                <select value={formPosId} onChange={(e) => setFormPosId(e.target.value)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded">
+                <select value={formPosId} onChange={(e) => setFormPosId(e.target.value)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded text-slate-200">
                   <option value="">선택</option>
                   {posOptions.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
               </label>
               <label className="block">
                 <span className="block mb-1 text-slate-400">직급</span>
-                <select value={formRank} onChange={(e) => setFormRank(e.target.value as UserRankCode)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded">
+                <select value={formRank} onChange={(e) => setFormRank(e.target.value as UserRankCode)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded text-slate-200">
                   {(Object.keys(USER_RANK_LABELS) as UserRankCode[]).map((r) => <option key={r} value={r}>{USER_RANK_LABELS[r]}</option>)}
                 </select>
               </label>
               <label className="block">
                 <span className="block mb-1 text-slate-400">시스템 역할 (기사 검토·승인 권한)</span>
-                <select value={formRole} onChange={(e) => setFormRole(e.target.value as UserRole)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded">
+                <select value={formRole} onChange={(e) => setFormRole(e.target.value as UserRole)} className="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded text-slate-200">
                   <option value="reporter">일반 기자</option>
                   <option value="desk_editor">데스크</option>
                   <option value="editor_in_chief">편집국장</option>
                 </select>
               </label>
-              <p className="text-[11px] text-amber-300/90">
+              <p className="text-[12px] text-amber-300/90">
                 부장·차장 직급이나 데스크·편집국장 역할이면 같은 부서 기사를 검토·승인할 수 있습니다. 바꾸면 본인에게 알림이 가고 변경 기록에 남습니다.
               </p>
             </div>

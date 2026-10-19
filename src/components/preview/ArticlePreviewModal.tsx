@@ -102,7 +102,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({
                 {article.exclusive && <span className="text-rose-600">[단독]</span>}
                 {article.urgent && <span className="text-amber-600">[속보]</span>}
               </div>
-              <div className="flex items-center space-x-2 font-mono text-[11px] text-slate-400">
+              <div className="flex items-center space-x-2 font-mono text-[12px] text-slate-400">
                 <span>출고 예정: 2026.09.21 {article.lastSaved}</span>
               </div>
             </div>
@@ -161,7 +161,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({
                         </figcaption>
                       )}
                       {block.credit && (
-                        <div className="text-[11px] font-sans text-slate-400 text-right">
+                        <div className="text-[12px] font-sans text-slate-400 text-right">
                           {block.credit}
                         </div>
                       )}
@@ -215,7 +215,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({
 
               <div className="bg-slate-50 p-4 rounded text-xs text-slate-500 font-sans leading-relaxed">
                 <p className="font-semibold text-slate-700">저작권자 ⓒ 뉴스룸 (Newsroom). 무단전재 및 재배포 금지</p>
-                <p className="text-[11px] text-slate-400 mt-1">본 기사는 한국신문윤리위원회 윤리강령 및 보도준칙을 준수하여 작성되었습니다.</p>
+                <p className="text-[12px] text-slate-400 mt-1">본 기사는 한국신문윤리위원회 윤리강령 및 보도준칙을 준수하여 작성되었습니다.</p>
               </div>
             </div>
           </div>
@@ -263,7 +263,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({
                   return (
                     <div key={b.id} className="break-inside-avoid my-4 border border-stone-300 p-1 bg-white">
                       <CroppedImage src={b.runtimeMediaUrl || b.mediaUrl} alt="지면 사진" focusText={b.text} className="w-full object-cover" />
-                      <p className="text-[11px] text-stone-600 mt-1 font-sans leading-tight">
+                      <p className="text-[12px] text-stone-600 mt-1 font-sans leading-tight">
                         {b.caption}
                       </p>
                     </div>
@@ -303,7 +303,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({
                     return (
                       <div key={b.id} className="space-y-1 my-3">
                         <CroppedImage src={b.runtimeMediaUrl || b.mediaUrl} alt="모바일 사진" focusText={b.text} className="w-full rounded" />
-                        <p className="text-[11px] text-slate-500 font-sans">{b.caption}</p>
+                        <p className="text-[12px] text-slate-500 font-sans">{b.caption}</p>
                       </div>
                     );
                   }

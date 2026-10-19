@@ -10,7 +10,8 @@ import {
   LogOut, 
   ChevronDown,
   Sparkles,
-  WifiOff
+  WifiOff,
+  BookOpen
 } from 'lucide-react';
 import { Article, User, USER_RANK_LABELS, canSubmitArticle, isHrAdmin, SaveStatus } from '../types';
 import { NotificationCenter } from './notifications/NotificationCenter';
@@ -21,14 +22,14 @@ interface TopHeaderProps {
   currentUser: User;
   saveStatus: SaveStatus;
   lastSavedTime: string;
-  activeScreen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media';
+  activeScreen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt';
   isRightPanelOpen?: boolean;
   onToggleRightPanel?: () => void;
   unresolvedFeedbackCount?: number;
   onOpenVersionHistory: () => void;
   onOpenPreview: () => void;
   onOpenPublish: () => void;
-  onNavigate: (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media') => void;
+  onNavigate: (screen: 'dashboard' | 'editor' | 'preview' | 'settings' | 'hr' | 'guide' | 'media' | 'stt') => void;
   onManualSave: () => void;
   onLogout: () => void;
   unresolvedAiCount?: number;
@@ -246,6 +247,20 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
             <div className="h-4 w-px bg-white/20 mx-1" />
           </>
+        )}
+
+        {/* 인사부 전용 화면에는 왼쪽 메뉴가 없으므로 사용법 안내 버튼을 여기에 둔다 */}
+        {hrMode && (
+          <button
+            id="btn-hr-guide"
+            type="button"
+            onClick={() => onNavigate('guide')}
+            className="flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white whitespace-nowrap transition-colors cursor-pointer"
+            title="사용법 안내 보기"
+          >
+            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+            <span>사용법 안내</span>
+          </button>
         )}
 
         {/* In-app Notification Center (모든 화면에서 업무 알림 확인 가능) */}

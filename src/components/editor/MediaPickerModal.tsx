@@ -118,7 +118,7 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-1.5 left-1.5 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                <div className="absolute top-1.5 left-1.5 bg-black/70 text-white text-[12px] font-bold px-1.5 py-0.5 rounded">
                   {item.format}
                 </div>
                 {item.type === 'video' && (
@@ -134,13 +134,13 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                 <p className="text-xs font-semibold text-slate-800 line-clamp-2 leading-snug group-hover:text-blue-600">
                   {item.title}
                 </p>
-                <p className="text-[11px] text-slate-400 truncate">
+                <p className="text-[12px] text-slate-400 truncate">
                   출처: {item.credit}
                 </p>
               </div>
 
               <div className="px-2.5 py-1.5 bg-slate-50 border-t border-slate-100 text-center">
-                <span className="text-[11px] font-bold text-slate-700 group-hover:text-blue-600 group-hover:underline">
+                <span className="text-[12px] font-bold text-slate-700 group-hover:text-blue-600 group-hover:underline">
                   + 이 위치에 삽입
                 </span>
               </div>
@@ -151,7 +151,7 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
             <div className="col-span-full py-12 text-center text-slate-500 text-xs space-y-2">
               <ImageIcon className="w-8 h-8 text-slate-300 mx-auto" />
               <p className="font-semibold text-slate-700">검색 조건에 일치하는 미디어가 없습니다</p>
-              <p className="text-[11px] text-slate-400">다른 검색어를 입력하거나 미디어 라이브러리에서 새 파일을 업로드하세요.</p>
+              <p className="text-[12px] text-slate-400">다른 검색어를 입력하거나 미디어 라이브러리에서 새 파일을 업로드하세요.</p>
             </div>
           )}
         </div>

@@ -323,8 +323,9 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
   };
 
   // 2-1b. 웹 주소에서 글 가져오기 (출처·수집일 자동 기재)
-  const handleFetchWeb = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // 주의: 이 입력칸은 이미 다른 form 안에 있어서 form 태그를 또 쓰면 안 된다(중첩 form은 제출이 엉뚱하게 동작함).
+  const handleFetchWeb = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
     if (!webUrlInput.trim() || isFetchingWeb) return;
     try {
       setIsFetchingWeb(true);
@@ -424,7 +425,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
   const audioPanelJsx = (
                       <div className="mt-1.5 p-2.5 rounded-lg border border-slate-300 bg-slate-50 space-y-2">
                         <div className="grid grid-cols-2 gap-2">
-                          <label className="text-[11px] font-bold text-slate-700">
+                          <label className="text-[12px] font-bold text-slate-700">
                             말하는 언어
                             <select
                               value={sttLanguage}
@@ -436,7 +437,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                               ))}
                             </select>
                           </label>
-                          <label className="text-[11px] font-bold text-slate-700">
+                          <label className="text-[12px] font-bold text-slate-700">
                             받아쓰기 방식
                             <select
                               value={sttMode}
@@ -449,7 +450,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                           </label>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          <label className="text-[11px] font-bold text-slate-700">
+                          <label className="text-[12px] font-bold text-slate-700">
                             받아쓰기 엔진
                             <select
                               value={sttEngine}
@@ -462,7 +463,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                             </select>
                           </label>
                           {sttMode === 'interview' && (
-                            <label className="text-[11px] font-bold text-slate-700">
+                            <label className="text-[12px] font-bold text-slate-700">
                               말하는 사람 수 (선택)
                               <select
                                 value={sttSpeakers}
@@ -475,7 +476,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                             </label>
                           )}
                         </div>
-                        <p className="text-[10px] text-slate-600">
+                        <p className="text-[12px] text-slate-600">
                           Claude는 소리를 들을 수 없어 받아쓰기에는 위 세 엔진만 쓸 수 있습니다. 엔진별 키는 환경설정 → AI 서비스 설정에서 등록합니다.
                           {sttEngine === 'googlecloud'
                             ? ' 구글 클라우드는 30분·60MB까지, 1분 단위로 나눠 처리합니다.'
@@ -486,12 +487,12 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                           type="button"
                           onClick={() => audioFileRef.current?.click()}
                           disabled={isTranscribing || (!!sttKeys && !sttKeys[sttEngine])}
-                          className="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold cursor-pointer disabled:opacity-50"
+                          className="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-900 text-white text-[12px] font-bold cursor-pointer disabled:opacity-50"
                         >
                           녹음 파일 고르고 시작
                         </button>
                         {sttKeys && !sttKeys[sttEngine] && (
-                          <p className="text-[10px] text-red-700 font-bold">이 엔진의 키가 등록되어 있지 않습니다. 환경설정에서 먼저 등록해 주세요.</p>
+                          <p className="text-[12px] text-red-700 font-bold">이 엔진의 키가 등록되어 있지 않습니다. 환경설정에서 먼저 등록해 주세요.</p>
                         )}
                       </div>
   );
@@ -685,12 +686,12 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
         icon={<Sparkles className="w-4 h-4" />}
         title="AI 초안 작성"
         subtitle="기자가 입력한 사실만으로 육하원칙 초안을 조립합니다"
-        badge={<span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">기자 작성 보조</span>}
+        badge={<span className="text-[12px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">기자 작성 보조</span>}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* 기사 톤 선택 드롭다운 */}
           <div className="flex items-center space-x-1.5">
-            <label htmlFor="select-article-tone" className="text-[11px] font-bold text-slate-600 hidden sm:inline">
+            <label htmlFor="select-article-tone" className="text-[12px] font-bold text-slate-600 hidden sm:inline">
               기사 톤:
             </label>
             <select
@@ -709,19 +710,19 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
 
           {/* 5W1H 수집 진행도 */}
           <div className="flex items-center space-x-2">
-            <span className="text-[11px] font-bold text-slate-600">수집 진행:</span>
+            <span className="text-[12px] font-bold text-slate-600">수집 진행:</span>
             <div className="w-16 bg-slate-200 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-purple-600 h-2 transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="text-[11px] font-extrabold text-purple-700">{progressPercent}%</span>
+            <span className="text-[12px] font-extrabold text-purple-700">{progressPercent}%</span>
           </div>
 
         </div>
         {compact && (
-          <div className="mt-2.5 grid grid-cols-2 gap-1 p-0.5 bg-slate-100 rounded-md text-[11px] font-semibold">
+          <div className="mt-2.5 grid grid-cols-2 gap-1 p-0.5 bg-slate-100 rounded-md text-[12px] font-semibold">
             <button type="button" onClick={() => setCompactView('chat')} className={`py-1 rounded cursor-pointer ${compactView === 'chat' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'}`}>인터뷰 대화</button>
             <button type="button" onClick={() => setCompactView('draft')} className={`py-1 rounded cursor-pointer ${compactView === 'draft' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'}`}>초안 미리보기</button>
           </div>
@@ -742,14 +743,14 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                     <FileText className="w-4 h-4 text-purple-600" />
                     <span>취재 기본 정보 입력</span>
                   </h4>
-                  <p className="text-[11px] text-slate-700 font-medium">
+                  <p className="text-[12px] text-slate-700 font-medium">
                     취재하고자 하는 핵심 주제와 메모를 입력하시면 AI가 맞춤형 질문을 시작합니다.
                   </p>
                 </div>
 
                 <form onSubmit={handleStartInterview} className="space-y-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    <label className="block text-[12px] font-bold text-slate-700 mb-1">
                       취재 주제 / 가제 <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -762,7 +763,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    <label className="block text-[12px] font-bold text-slate-700 mb-1">
                       핵심 키워드 (쉼표 구분)
                     </label>
                     <input
@@ -775,7 +776,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    <label className="block text-[12px] font-bold text-slate-700 mb-1">
                       기사 어조 및 서술 톤
                     </label>
                     <select
@@ -791,7 +792,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    <label className="block text-[12px] font-bold text-slate-700 mb-1">
                       초기 취재 메모 / 로우데이터 (선택)
                     </label>
                     <textarea
@@ -812,7 +813,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                       <button
                         type="button"
                         onClick={() => rawFileRef.current?.click()}
-                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-800 cursor-pointer"
+                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-800 cursor-pointer"
                       >
                         파일 불러오기 (TXT·CSV)
                       </button>
@@ -827,14 +828,14 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                         type="button"
                         onClick={toggleAudioPanel}
                         disabled={isTranscribing}
-                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-800 cursor-pointer disabled:opacity-50"
+                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-800 cursor-pointer disabled:opacity-50"
                       >
                         {isTranscribing ? `받아 적는 중... ${sttProgress}` : '녹음 받아쓰기'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowWebInput(v => !v)}
-                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-800 cursor-pointer"
+                        className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-800 cursor-pointer"
                       >
                         웹 주소에서 가져오기
                       </button>
@@ -842,7 +843,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                         type="button"
                         onClick={handleOrganizeRaw}
                         disabled={isOrganizing || rawNotesInput.trim().length < 30}
-                        className="px-2.5 py-1 rounded border border-purple-300 bg-purple-50 hover:bg-purple-100 text-[11px] font-bold text-purple-900 cursor-pointer disabled:opacity-50"
+                        className="px-2.5 py-1 rounded border border-purple-300 bg-purple-50 hover:bg-purple-100 text-[12px] font-bold text-purple-900 cursor-pointer disabled:opacity-50"
                       >
                         {isOrganizing ? '정리 중...' : 'AI로 정리하기'}
                       </button>
@@ -850,7 +851,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                         <button
                           type="button"
                           onClick={() => { setRawNotesInput(rawBeforeOrganize); setRawBeforeOrganize(null); }}
-                          className="text-[11px] underline text-slate-700 cursor-pointer"
+                          className="text-[12px] underline text-slate-700 cursor-pointer"
                         >
                           정리 전 원문으로 되돌리기
                         </button>
@@ -859,10 +860,10 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                     {showAudioPanel && audioPanelJsx}
                     {speakerNames.length > 0 && (
                       <div className="mt-1.5 p-2.5 rounded-lg border border-purple-200 bg-purple-50 space-y-1.5">
-                        <p className="text-[11px] font-bold text-purple-900">화자 이름 바꾸기 (비워 두면 그대로)</p>
+                        <p className="text-[12px] font-bold text-purple-900">화자 이름 바꾸기 (비워 두면 그대로)</p>
                         <div className="flex flex-wrap gap-2">
                           {speakerNames.map((sp, i) => (
-                            <label key={sp.current} className="flex items-center gap-1 text-[11px] text-slate-800">
+                            <label key={sp.current} className="flex items-center gap-1 text-[12px] text-slate-800">
                               <span className="font-bold">{sp.current}</span>
                               <input
                                 value={sp.input}
@@ -876,7 +877,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                           <button
                             type="button"
                             onClick={applySpeakerNames}
-                            className="px-2 py-1 rounded bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-bold cursor-pointer"
+                            className="px-2 py-1 rounded bg-purple-700 hover:bg-purple-800 text-white text-[12px] font-bold cursor-pointer"
                           >
                             이름 적용
                           </button>
@@ -884,35 +885,42 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                       </div>
                     )}
                     {showWebInput && (
-                      <form onSubmit={handleFetchWeb} className="flex items-center gap-1.5 mt-1.5">
+                      <div className="flex items-center gap-1.5 mt-1.5">
                         <input
                           type="url"
                           value={webUrlInput}
                           onChange={(e) => setWebUrlInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              void handleFetchWeb(e);
+                            }
+                          }}
                           disabled={isFetchingWeb}
                           placeholder="https://… 기사나 자료가 있는 웹 주소"
-                          className="flex-1 min-w-0 text-xs p-2 bg-white border border-slate-300 rounded-lg placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                          className="flex-1 min-w-0 text-xs p-2 bg-white border border-slate-300 rounded-lg placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-purple-500"
                         />
                         <button
-                          type="submit"
+                          type="button"
+                          onClick={(e) => void handleFetchWeb(e)}
                           disabled={isFetchingWeb || !webUrlInput.trim()}
-                          className="px-2.5 py-2 rounded bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold cursor-pointer disabled:opacity-50 shrink-0"
+                          className="px-2.5 py-2 rounded bg-slate-800 hover:bg-slate-900 text-white text-[12px] font-bold cursor-pointer disabled:opacity-50 shrink-0"
                         >
                           {isFetchingWeb ? '가져오는 중...' : '가져오기'}
                         </button>
-                      </form>
+                      </div>
                     )}
                     {showWebInput && (
-                      <p className="text-[10px] text-amber-900 mt-1">
+                      <p className="text-[12px] text-amber-900 mt-1">
                         가져온 글은 사실을 확인하는 참고 자료입니다. 문장을 그대로 옮기지 말고, 기사에 쓸 때는 출처를 밝혀 주세요. 사이트가 자동 수집을 막아 둔 곳은 가져오지 않습니다.
                       </p>
                     )}
-                    <p className="text-[10px] text-slate-600 mt-1">
+                    <p className="text-[12px] text-slate-600 mt-1">
                       30자 이상 있으면 AI가 핵심 사실·수치·발언·확인 필요 항목으로 나눠 줍니다. 원자료에 없는 내용은 만들지 않습니다.
                     </p>
 
                     {organized && (
-                      <div className="mt-2 p-3 rounded-lg border border-purple-200 bg-purple-50/50 space-y-2 text-[11px] text-slate-800">
+                      <div className="mt-2 p-3 rounded-lg border border-purple-200 bg-purple-50/50 space-y-2 text-[12px] text-slate-800">
                         {organized.data.summary && <p className="font-semibold leading-relaxed">{organized.data.summary}</p>}
                         <p className="text-slate-700">
                           핵심 사실 {organized.data.key_facts.length}건 · 수치 {organized.data.figures.length}건 · 발언 {organized.data.quotes.length}건 · 시간순 {organized.data.timeline.length}건 · 확인 필요 {organized.data.open_questions.length}건
@@ -1027,7 +1035,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   type="button"
                   onClick={toggleAudioPanel}
                   disabled={isTranscribing}
-                  className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-800 cursor-pointer disabled:opacity-50"
+                  className="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 text-[12px] font-semibold text-slate-800 cursor-pointer disabled:opacity-50"
                 >
                   {isTranscribing ? `받아 적는 중... ${sttProgress}` : '녹음 받아쓰기 (녹음으로 답하기)'}
                 </button>
@@ -1036,7 +1044,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
 
               {/* 초안 정리 및 완성 버튼 */}
               <div className="flex items-center justify-between pt-1">
-                <span className="text-[11px] text-slate-700 font-medium">
+                <span className="text-[12px] text-slate-700 font-medium">
                   {isReadyToFinalize ? '필수 사실이 충분히 수집되었습니다.' : '질문에 답변할수록 초안 완성도가 높아집니다.'}
                 </span>
 
@@ -1070,7 +1078,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
               <button
                 type="button"
                 onClick={handleApplyAllDraft}
-                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-md shadow-2xs cursor-pointer flex items-center space-x-1"
+                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-bold rounded-md shadow-2xs cursor-pointer flex items-center space-x-1"
                 title="리드와 모든 본문 문단을 에디터에 일괄 추가합니다"
               >
                 <Plus className="w-3 h-3 stroke-[3]" />
@@ -1082,7 +1090,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           {/* 0. 초안 전체 수정 지시 */}
           {(draftState.lead_paragraph || draftState.body_blocks.length > 0) && (
             <div className="p-2.5 rounded-lg border border-purple-200 bg-purple-50/50 space-y-2">
-              <span className="text-[11px] font-bold text-purple-900">AI에게 수정 지시 (초안 전체)</span>
+              <span className="text-[12px] font-bold text-purple-900">AI에게 수정 지시 (초안 전체)</span>
               <div className="flex flex-wrap gap-1">
                 {['전체를 20% 짧게', '더 쉬운 말로', '제목을 덜 자극적으로', '해설 톤으로'].map(ex => (
                   <button
@@ -1090,7 +1098,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                     type="button"
                     disabled={isRevising}
                     onClick={() => handleReviseDraft(ex)}
-                    className="px-2 py-0.5 rounded-full border border-purple-300 bg-white text-[10px] font-semibold text-purple-800 hover:bg-purple-100 cursor-pointer disabled:opacity-50"
+                    className="px-2 py-0.5 rounded-full border border-purple-300 bg-white text-[12px] font-semibold text-purple-800 hover:bg-purple-100 cursor-pointer disabled:opacity-50"
                   >
                     {ex}
                   </button>
@@ -1103,24 +1111,24 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   onChange={(e) => setReviseInput(e.target.value)}
                   disabled={isRevising}
                   placeholder="예: 리드를 두 문장으로 줄이고 존댓말을 빼 주세요"
-                  className="flex-1 min-w-0 border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-500 bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="flex-1 min-w-0 border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-600 bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
                 />
                 <button
                   type="submit"
                   disabled={isRevising || !reviseInput.trim()}
-                  className="px-2.5 py-1.5 rounded bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold cursor-pointer disabled:opacity-50 shrink-0"
+                  className="px-2.5 py-1.5 rounded bg-purple-600 hover:bg-purple-700 text-white text-[12px] font-bold cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {isRevising ? '수정 중...' : '지시 보내기'}
                 </button>
               </form>
-              <p className="text-[10px] text-slate-600">수집된 사실 안에서만 고치며, 새 사실은 추가하지 않습니다.</p>
+              <p className="text-[12px] text-slate-600">수집된 사실 안에서만 고치며, 새 사실은 추가하지 않습니다.</p>
             </div>
           )}
 
           {/* 1. 5W1H 수집 현황 칩 */}
           <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-slate-600">5W1H 사실관계 검증 현황:</span>
-            <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+            <span className="text-[12px] font-bold text-slate-600">5W1H 사실관계 검증 현황:</span>
+            <div className="grid grid-cols-2 gap-1.5 text-[12px]">
               {Object.entries(draftState.five_w1h).map(([key, val]) => {
                 const labelMap: Record<string, string> = {
                   who: '누가 (Who)',
@@ -1144,7 +1152,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                     {isFilled ? (
                       <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
                     ) : (
-                      <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-400">
+                      <span className="text-[12px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-400">
                         [확인 필요]
                       </span>
                     )}
@@ -1157,7 +1165,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           {/* 2. 제목 후보 (Title Candidates) */}
           {draftState.title_candidates.length > 0 && (
             <div className="space-y-1.5">
-              <span className="text-[11px] font-bold text-purple-900 flex items-center space-x-1">
+              <span className="text-[12px] font-bold text-purple-900 flex items-center space-x-1">
                 <BookmarkPlus className="w-3 h-3 text-purple-600" />
                 <span>추천 제목 후보</span>
               </span>
@@ -1175,7 +1183,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                           onApplyTitle(t);
                           showToast?.('기사 제목이 적용되었습니다.');
                         }}
-                        className="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 text-[10px] font-bold rounded border border-purple-300 transition-colors shrink-0 cursor-pointer"
+                        className="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 text-[12px] font-bold rounded border border-purple-300 transition-colors shrink-0 cursor-pointer"
                       >
                         제목 적용
                       </button>
@@ -1188,13 +1196,13 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
 
           {/* 근거 표시 안내 */}
           {(draftState.lead_paragraph || draftState.body_blocks.length > 0) && (
-            <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-[10px] text-slate-700">
+            <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-[12px] text-slate-700">
               <div className="space-y-0.5">
                 <div>
                   <span className="bg-emerald-100/70 px-1 rounded-sm">초록</span> 내가 준 자료에서 나온 문장 {evidenceSummary.supported}개 ·{' '}
                   <span className="bg-amber-200/80 px-1 rounded-sm underline decoration-dotted">노랑</span> 근거를 못 찾은 문장 {evidenceSummary.unsupported}개
                 </div>
-                <div className="text-slate-500">글자 비교로 찾은 참고 표시입니다. 문장에 마우스를 올리면 이유가 보입니다. 노랑은 꼭 사실을 확인해 주세요.</div>
+                <div className="text-slate-600">글자 비교로 찾은 참고 표시입니다. 문장에 마우스를 올리면 이유가 보입니다. 노랑은 꼭 사실을 확인해 주세요.</div>
               </div>
               <button
                 type="button"
@@ -1210,12 +1218,12 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           {draftState.lead_paragraph && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-blue-900">리드 문단 (Lead)</span>
+                <span className="text-[12px] font-bold text-blue-900">리드 문단 (Lead)</span>
                 <div className="flex items-center space-x-1">
                   <button
                     type="button"
                     onClick={() => setRegenTarget({ type: 'lead', index: 0 })}
-                    className="text-[10px] text-slate-600 hover:text-blue-600 flex items-center space-x-0.5 cursor-pointer"
+                    className="text-[12px] text-slate-600 hover:text-blue-600 flex items-center space-x-0.5 cursor-pointer"
                   >
                     <RotateCcw className="w-2.5 h-2.5" />
                     <span>다시 작성</span>
@@ -1225,9 +1233,9 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                     type="button"
                     onClick={() => handleApplySingleBlock(draftState.lead_paragraph!, 0, true)}
                     disabled={isLeadApplied}
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded border transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 text-[12px] font-bold rounded border transition-colors cursor-pointer ${
                       isLeadApplied
-                        ? 'bg-slate-100 text-slate-500 border-slate-200'
+                        ? 'bg-slate-100 text-slate-600 border-slate-200'
                         : 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
                     }`}
                   >
@@ -1244,7 +1252,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           {/* 4. 본문 블록 목록 (Body Blocks) */}
           {draftState.body_blocks.length > 0 && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-slate-700">본문 문단 목록</span>
+              <span className="text-[12px] font-bold text-slate-700">본문 문단 목록</span>
               <div className="space-y-2">
                 {draftState.body_blocks.map((blockText, idx) => {
                   const isApplied = appliedBlockIndices.has(idx);
@@ -1253,7 +1261,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                       key={idx}
                       className="p-2.5 bg-slate-50/70 rounded-lg border border-slate-200 space-y-1.5"
                     >
-                      <div className="flex items-center justify-between text-[10px] text-slate-600 font-semibold">
+                      <div className="flex items-center justify-between text-[12px] text-slate-600 font-semibold">
                         <span>문단 {idx + 1}</span>
                         <div className="flex items-center space-x-1.5">
                           <button
@@ -1271,7 +1279,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                             disabled={isApplied}
                             className={`px-2 py-0.5 font-bold rounded border transition-colors cursor-pointer ${
                               isApplied
-                                ? 'bg-slate-100 text-slate-500 border-slate-200'
+                                ? 'bg-slate-100 text-slate-600 border-slate-200'
                                 : 'bg-white text-purple-700 border-purple-300 hover:bg-purple-50'
                             }`}
                           >
@@ -1292,16 +1300,16 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           {/* 5. 인용구 및 주요 수치 보관함 */}
           {(draftState.quotes.length > 0 || draftState.key_figures.length > 0) && (
             <div className="space-y-2 pt-2 border-t border-slate-100">
-              <span className="text-[11px] font-bold text-slate-600">수집된 취재 팩트 조각:</span>
+              <span className="text-[12px] font-bold text-slate-600">수집된 취재 팩트 조각:</span>
               <div className="space-y-1">
                 {draftState.quotes.map((q, idx) => (
-                  <div key={idx} className="p-1.5 rounded bg-slate-100 text-[11px] text-slate-700">
+                  <div key={idx} className="p-1.5 rounded bg-slate-100 text-[12px] text-slate-700">
                     <span className="font-bold">"{q.quote}"</span>
                     <span className="text-slate-700 font-medium ml-1">— {q.speaker}</span>
                   </div>
                 ))}
                 {draftState.key_figures.map((kf, idx) => (
-                  <div key={idx} className="p-1.5 rounded bg-slate-100 text-[11px] text-slate-700 flex justify-between">
+                  <div key={idx} className="p-1.5 rounded bg-slate-100 text-[12px] text-slate-700 flex justify-between">
                     <span className="font-semibold">{kf.label}</span>
                     <span className="font-bold text-purple-700">{kf.value}</span>
                   </div>
@@ -1324,7 +1332,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
               <button
                 type="button"
                 onClick={() => setRegenTarget(null)}
-                className="text-slate-500 hover:text-slate-600 cursor-pointer"
+                className="text-slate-600 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1332,7 +1340,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
 
             <form onSubmit={handleRegenerateSectionSubmit} className="space-y-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                <label className="block text-[12px] font-bold text-slate-700 mb-1">
                   어떻게 수정할까요? (사실관계 내에서만 재작성됩니다)
                 </label>
                 <textarea

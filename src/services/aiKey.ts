@@ -34,8 +34,14 @@ export interface MyAiPrefs {
   endpoint: string;
 }
 
+/** 기능별로 따로 고르는 AI (review=기사 검수, media=사진 분석, draft=초안·원자료 정리·인포그래픽) */
+export type AiFeatureName = 'review' | 'media' | 'draft';
+export type FunctionModels = Partial<Record<AiFeatureName, { provider: AiProviderName; model: string }>>;
+
 interface AiStatus {
   prefs: MyAiPrefs | null;
+  /** 기능별로 따로 고른 공급자·모델 (없으면 기본 설정을 따름) */
+  functionModels: FunctionModels;
   /** 공급자별 등록된 키의 뒤 4자리 */
   keys: Partial<Record<Slug | 'googlecloud', string>>;
 }
@@ -73,7 +79,13 @@ function toStatus(data: any): AiStatus {
   const prefs: MyAiPrefs | null = p && NAME[p.provider as Slug]
     ? { provider: NAME[p.provider as Slug], model: String(p.model || ''), endpoint: String(p.endpoint || '') }
     : null;
-  return { prefs, keys: (data?.keys || {}) as AiStatus['keys'] };
+  const functionModels: FunctionModels = {};
+  const fm = data?.functionModels || {};
+  for (const f of ['review', 'media', 'draft'] as AiFeatureName[]) {
+    const v = fm[f];
+    if (v && NAME[v.provider as Slug]) functionModels[f] = { provider: NAME[v.provider as Slug], model: String(v.model || '') };
+  }
+  return { prefs, functionModels, keys: (data?.keys || {}) as AiStatus['keys'] };
 }
 
 // 같은 화면에서 여러 번 묻지 않도록 잠깐 보관
@@ -97,7 +109,7 @@ function applyStatus(uid: string, data: any): AiStatus {
 
 async function loadStatus(force = false): Promise<AiStatus> {
   const uid = await currentUserId();
-  if (!uid) return { prefs: null, keys: {} };
+  if (!uid) return { prefs: null, functionModels: {}, keys: {} };
   if (!force && cache && cache.uid === uid && Date.now() - cache.at < CACHE_MS) return cache.value;
   try {
     const data = await callManage({ action: 'status' });
@@ -106,7 +118,7 @@ async function loadStatus(force = false): Promise<AiStatus> {
     cache = { uid, at: Date.now(), value };
     return value;
   } catch {
-    return cache?.uid === uid ? cache.value : { prefs: null, keys: {} };
+    return cache?.uid === uid ? cache.value : { prefs: null, functionModels: {}, keys: {} };
   }
 }
 
@@ -179,6 +191,29 @@ export async function setMyAiPrefs(prefs: MyAiPrefs): Promise<void> {
     endpoint: prefs.endpoint,
   });
   applyStatus(uid, data);
+}
+
+/** 기능별로 따로 고른 공급자·모델 */
+export async function getMyFunctionModels(): Promise<FunctionModels> {
+  return (await loadStatus(true)).functionModels;
+}
+
+/** 기능별 공급자·모델 저장. 비워 둔 기능은 기본 설정을 따른다 */
+export async function setMyFunctionModels(fm: FunctionModels): Promise<void> {
+  const uid = await currentUserId();
+  if (!uid) throw new Error('로그인 정보를 확인할 수 없습니다. 다시 로그인해 주세요.');
+  const body: Record<string, { provider: Slug; model: string }> = {};
+  for (const [f, v] of Object.entries(fm)) {
+    if (v && v.provider !== 'Custom API') body[f] = { provider: SLUG[v.provider], model: v.model };
+  }
+  const data = await callManage({ action: 'save_function_models', functionModels: body });
+  applyStatus(uid, data);
+}
+
+/** 등록된 키가 있는 공급자 목록 (구글 클라우드 제외) */
+export async function getMyKeyProviders(): Promise<AiProviderName[]> {
+  const keys = (await loadStatus()).keys;
+  return (Object.keys(NAME) as Slug[]).filter(k => keys[k]).map(k => NAME[k]);
 }
 
 /** 이 공급자의 등록된 키 뒤 4자리 (없으면 빈 문자열) */

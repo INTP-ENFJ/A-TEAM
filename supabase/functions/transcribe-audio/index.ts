@@ -32,6 +32,14 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) return fail("유효하지 않은 사용자 세션입니다.", 401);
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     const admin = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const { data: profile } = await admin.from("profiles").select("department, role").eq("id", user.id).single();
     if (!profile || profile.department === "인사부" || profile.role === "hr_admin") {
@@ -77,10 +85,8 @@ Deno.serve(async (req) => {
               { status: 400, headers: corsHeaders },
             );
           }
-          llmCfg = { provider: wanted, apiKey: key, model: wanted === "gemini" ? "gemini-3.8-flash" : "whisper-1" };
-          // Gemini는 사용자가 고른 모델을 그대로 쓰도록 환경설정의 모델을 반영
-          const active = await loadLlmConfig(admin, user.id);
-          if (active && active.provider === wanted) llmCfg.model = active.model;
+          // 받아쓰기 모델은 글쓰기 모델과 따로 쓴다 (글쓰기 모델이 막혀도 받아쓰기는 되도록)
+          llmCfg = { provider: wanted, apiKey: key, model: wanted === "gemini" ? (opts.model || "gemini-3.8-flash") : (opts.model || "whisper-1") };
         } else {
           llmCfg = await loadLlmConfig(admin, user.id);
           if (!llmCfg) return llmMissingResponse(corsHeaders);
@@ -88,6 +94,7 @@ Deno.serve(async (req) => {
         if (llmCfg.provider !== "gemini" && llmCfg.provider !== "openai") {
           return Response.json({ success: false, error: STT_UNSUPPORTED_MESSAGE, code: "AI_CONFIG_INVALID" }, { status: 400, headers: corsHeaders });
         }
+        if (!wanted && llmCfg.provider === "gemini" && opts.model) llmCfg.model = opts.model;
         engine = llmCfg.provider;
         let bytes: Uint8Array<ArrayBuffer> | null = null;
         if (llmCfg.provider === "openai") {

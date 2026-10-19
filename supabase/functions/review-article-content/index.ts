@@ -80,6 +80,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
 
     // 2. 프로필 및 권한 검증 (HR 계정 배제)
@@ -189,7 +197,7 @@ Deno.serve(async (req) => {
     // 개인 AI 설정: 계정에 암호화되어 저장된 공급자·키·모델을 읽는다
     let llmCfg: LlmConfig | null = null;
     try {
-      llmCfg = await loadLlmConfig(adminClient, user.id);
+      llmCfg = await loadLlmConfig(adminClient, user.id, "review");
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);
       if (known) return known;

@@ -1,7 +1,7 @@
 /**
  * AI 기능(서버 함수) 호출이 실패했을 때 사용자에게 보여줄 쉬운 안내 문구.
  * - 서버가 "AI 키 미설정(CONFIG_ERROR)"이라고 알려 주면 그대로 안내하고,
- * - 서버가 직접 알려 준 4xx 안내(권한 없음 등)는 그대로 보여주고,
+ * - 서버가 직접 알려 준 4xx 안내(권한 없음 등)와 502 안내(AI 서비스가 돌려준 문제)는 그대로 보여주고,
  * - 그 밖의 서버 내부 오류(500대)나 연결 실패는 "AI 키 미설정 또는 일시적 문제" 안내로 바꾼다.
  */
 export const AI_UNAVAILABLE_MESSAGE =
@@ -20,7 +20,8 @@ export async function friendlyAiError(error: unknown): Promise<string> {
     }
     if (body?.code === 'CONFIG_ERROR') return AI_KEY_MISSING_MESSAGE;
     if (body?.code === 'AI_KEY_INVALID' && typeof body?.error === 'string') return body.error;
-    if (ctx.status >= 400 && ctx.status < 500 && typeof body?.error === 'string' && body.error.trim()) {
+    // 502는 서버가 직접 쉽게 풀어 쓴 설명(예: 녹음을 글자로 바꾸지 못했습니다)이라 그대로 보여준다
+    if (((ctx.status >= 400 && ctx.status < 500) || ctx.status === 502) && typeof body?.error === 'string' && body.error.trim()) {
       return body.error;
     }
   }

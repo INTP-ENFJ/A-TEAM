@@ -22,6 +22,7 @@ interface Props {
 const STYLES: { value: InfographicStyle; label: string }[] = [
   { value: 'bar', label: '가로 막대' },
   { value: 'column', label: '세로 막대' },
+  { value: 'donut', label: '원형 그래프' },
   { value: 'cards', label: '큰 숫자 카드' },
 ];
 
@@ -122,11 +123,11 @@ export const InfographicPanel: React.FC<Props> = ({ articleTitle, paragraphs, on
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
           {busy ? '기사에서 숫자 찾는 중...' : '기사에서 숫자 뽑기'}
         </button>
-        {notice && <p className="text-[11px] text-slate-600 bg-white border border-slate-200 rounded p-2">{notice}</p>}
+        {notice && <p className="text-[12px] text-slate-600 bg-white border border-slate-200 rounded p-2">{notice}</p>}
 
         {/* 미리보기 */}
         <div className="space-y-2">
-          <div className="grid grid-cols-3 gap-1 p-0.5 bg-slate-100 rounded-md text-[11px] font-semibold">
+          <div className="grid grid-cols-4 gap-1 p-0.5 bg-slate-100 rounded-md text-[12px] font-semibold">
             {STYLES.map(s => (
               <button
                 key={s.value}
@@ -171,14 +172,14 @@ export const InfographicPanel: React.FC<Props> = ({ articleTitle, paragraphs, on
                 type="button"
                 disabled={data.items.length >= 8}
                 onClick={() => setData(d => ({ ...d, items: [...d.items, { label: '', value: 0 }] }))}
-                className="flex items-center gap-1 text-blue-600 hover:underline disabled:text-slate-500 cursor-pointer"
+                className="flex items-center gap-1 text-blue-600 hover:underline disabled:text-slate-600 cursor-pointer"
               >
                 <Plus className="w-3 h-3" /> 항목 추가
               </button>
             </div>
             <div className="space-y-1.5">
               {data.items.length === 0 && (
-                <p className="text-[11px] text-slate-600">위 버튼으로 뽑거나 [항목 추가]로 직접 넣어 주세요.</p>
+                <p className="text-[12px] text-slate-600">위 버튼으로 뽑거나 [항목 추가]로 직접 넣어 주세요.</p>
               )}
               {data.items.map((it, i) => (
                 <div key={i} className="flex items-center gap-1.5">
@@ -198,7 +199,7 @@ export const InfographicPanel: React.FC<Props> = ({ articleTitle, paragraphs, on
                   <button
                     type="button"
                     onClick={() => setData(d => ({ ...d, items: d.items.filter((_, k) => k !== i) }))}
-                    className="p-1 text-slate-500 hover:text-rose-600 cursor-pointer"
+                    className="p-1 text-slate-600 hover:text-rose-600 cursor-pointer"
                     title="이 항목 지우기"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -209,7 +210,7 @@ export const InfographicPanel: React.FC<Props> = ({ articleTitle, paragraphs, on
           </div>
         </div>
 
-        <p className="text-[11px] text-slate-600">
+        <p className="text-[12px] text-slate-600">
           ※ AI가 뽑은 숫자는 반드시 기사 내용과 맞는지 확인하세요. 만든 그림은 기사 맨 아래에 사진으로 들어가며, 끌어서 옮길 수 있습니다.
         </p>
       </div>

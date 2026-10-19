@@ -18,30 +18,50 @@ import { AiApiSettingsConfig, AiProvider, User, isDeskUser } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { AiUsageStats } from './AiUsageStats';
 import { GoogleCloudKeyBox } from './GoogleCloudKeyBox';
+import { SttModelBox } from './SttModelBox';
+import { FunctionModelsBox } from './FunctionModelsBox';
 import { getMyAiKeyLast4, saveMyAiKey, clearMyAiKey, maskLast4, testSavedAiKey, getMyAiPrefs, setMyAiPrefs } from '../../services/aiKey';
 
+// 기능별 모델 선택 목록 (한 곳에서만 관리)
+// 2026-10 기준 공식 문서에서 확인한 모델 이름. 새 모델이 나오면 이 두 줄만 고치면 됩니다.
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-4-argon', 'gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.1-pro-preview'];
+const FEATURE_GEMINI_MODELS = GEMINI_MODELS;
+
 export const MODEL_DESCRIPTIONS: Record<string, string> = {
-  'gemini-flash-latest': '기본값 · 공식 권장: Google DeepMind의 최신 Gemini Flash 버전으로 초고속 응답 속도와 첨삭 지능을 제공합니다.',
-  'gemini-3.8-flash': '한국어 문맥 분석 및 사실관계 교차 검증에 최적화된 표준 플래그십 플래시 모델입니다.',
-  'gemini-3.1-pro-preview': '기획 기사의 복합 심층 분석 및 논리 전개 검토용 프로 모델입니다.',
-  'gemini-3.1-flash-lite': '타이핑 중 실시간 문장 진단 및 초저지연 처리에 최적화된 경량 모델입니다.',
+  'gemini-4-argon': '구글 최신 최상위 모델입니다. 가장 정확하지만 비용이 더 듭니다. 복잡한 기획 기사 검토에 알맞습니다.',
+  'gemini-3.8-flash': '기본값 · 한국어 문맥 분석과 사실관계 검증에 알맞은 표준 모델입니다. 속도와 정확도의 균형이 좋습니다.',
+  'gemini-3.6-flash': '이전 세대의 빠른 모델입니다. 3.8이 느리거나 막힐 때 대신 쓰기 좋습니다.',
+  'gemini-3.5-flash-lite': '가볍고 값이 싼 모델입니다. 맞춤법처럼 단순한 검사에 알맞습니다.',
+  'gemini-3.1-flash-lite': '가장 가벼운 모델입니다. 실시간 문장 진단처럼 빠른 응답이 필요할 때 씁니다.',
+  'gemini-3.1-pro-preview': '시험판 프로 모델입니다. 긴 기획 기사의 논리 흐름 검토에 쓰며, 예고 없이 바뀔 수 있습니다.',
+  'gpt-6.1-sol': 'OpenAI 상위 모델입니다. 정확도가 높고 비용도 높습니다.',
+  'gpt-6-sol': 'OpenAI 상위 모델입니다. 복잡한 작업에 알맞습니다.',
+  'gpt-6-luna': '기본값 · OpenAI 효율형 모델입니다. 값이 싸고 빨라서 일상 기사 검토에 알맞습니다.',
+  'gpt-5.6-luna': '비용을 아끼고 싶을 때 쓰는 OpenAI 모델입니다.',
+  'gpt-5.4-mini': '가벼운 OpenAI 모델입니다. 간단한 검사에 알맞습니다.',
+  'gpt-4o': '이전 세대 모델입니다. 새 모델이 안 되는 경우에만 쓰세요.',
+  'gpt-4o-mini': '이전 세대의 가벼운 모델입니다.',
+  'claude-opus-5-5': 'Anthropic이 권하는 기본 모델입니다. 긴 글 분석과 정확한 검토에 강합니다.',
+  'claude-sonnet-5-5': '기본값 · 속도와 정확도의 균형이 좋은 Claude 모델입니다.',
+  'claude-haiku-5-5': '가장 빠르고 값이 싼 Claude 모델입니다. 단순 검사에 알맞습니다.',
+  'claude-fable-5-1': '가장 강력한 Claude 모델입니다. 아주 어려운 분석에만 쓰세요. 비용이 가장 높습니다.',
 };
 
 const PROVIDER_DEFAULTS: Record<AiProvider, { endpoint: string; defaultModel: string; models: string[] }> = {
   'Google Gemini': {
     endpoint: 'Supabase Edge Functions (review-article-content, analyze-media-image)',
     defaultModel: 'gemini-3.8-flash',
-    models: ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro', 'gemini-3.1-pro-preview', 'gemini-3.1-flash-lite'],
+    models: GEMINI_MODELS,
   },
   'OpenAI': {
     endpoint: 'https://api.openai.com/v1',
-    defaultModel: 'gpt-4o',
-    models: ['gpt-4o', 'gpt-4o-mini', 'o3-mini'],
+    defaultModel: 'gpt-6-luna',
+    models: ['gpt-6-luna', 'gpt-6.1-sol', 'gpt-6-sol', 'gpt-5.6-luna', 'gpt-5.4-mini', 'gpt-4o-mini'],
   },
   'Anthropic': {
     endpoint: 'https://api.anthropic.com/v1',
     defaultModel: 'claude-sonnet-5-5',
-    models: ['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-haiku-5-5'],
+    models: ['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-haiku-5-5', 'claude-fable-5-1'],
   },
   'Custom API': {
     endpoint: 'https://api.example.com/v1',
@@ -294,7 +314,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
           <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">
             <Sparkles className="w-5 h-5 text-blue-600" />
             <span>AI 서비스 설정 (AI Service Settings)</span>
-            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="text-[12px] font-mono font-medium px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
               Personal API Key
             </span>
           </h2>
@@ -334,7 +354,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
               Security Architecture
             </span>
           </div>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+          <span className="text-[12px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
             Personal Key · Encrypted
           </span>
         </div>
@@ -343,7 +363,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
           개인 AI 키는 내 계정에 암호화(AES-GCM)되어 서버에 저장되며, 화면과 브라우저로는 다시 돌아오지 않습니다. AI를 부를 때 서버 함수가 내 키를 직접 꺼내 쓰고, 호출 시 클라이언트의 Supabase JWT를 기반으로 <strong className="text-white">can_access_article</strong> 권한을 검증합니다.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-2 text-[11px] font-mono text-slate-400">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-2 text-[12px] font-mono text-slate-400">
           <div className="bg-slate-800/80 p-2 rounded border border-slate-700/60 flex items-center space-x-2">
             <Server className="w-3.5 h-3.5 text-blue-400 shrink-0" />
             <span className="truncate">review-article-content</span>
@@ -369,7 +389,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                 1. 기본 LLM 공급자 및 운영 모델 (Active Model)
               </h3>
             </div>
-            <span className="text-[11px] text-slate-400 font-mono">Google DeepMind</span>
+            <span className="text-[12px] text-slate-400 font-mono">Google DeepMind</span>
           </div>
 
           {/* Provider Selection */}
@@ -398,10 +418,10 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                       <span className="font-semibold">{prov}</span>
                       {isSelected && <Check className="w-3.5 h-3.5 text-blue-600" />}
                     </div>
-                    <span className="text-[10px] text-slate-400 block mt-1">
-                      {prov === 'Google Gemini' && 'Gemini 3.8 Flash (운영중)'}
-                      {prov === 'OpenAI' && 'GPT-4o / o3-mini'}
-                      {prov === 'Anthropic' && 'Claude 3.7 / 3.5 Sonnet'}
+                    <span className="text-[12px] text-slate-400 block mt-1">
+                      {prov === 'Google Gemini' && 'Gemini 3.8 Flash'}
+                      {prov === 'OpenAI' && 'GPT-6 Luna / Sol'}
+                      {prov === 'Anthropic' && 'Claude Sonnet / Opus 5.5'}
                       {prov === 'Custom API' && '사내 LLM 엔드포인트'}
                     </span>
                   </button>
@@ -417,7 +437,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 내 {settings.provider} 키 (API Key)
               </span>
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${myKey ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-900 border-amber-300'}`}>
+              <span className={`text-[12px] font-bold px-2 py-0.5 rounded border ${myKey ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-900 border-amber-300'}`}>
                 {myKey ? `등록됨 (${maskLast4(myKey)})` : '아직 등록 안 됨'}
               </span>
             </div>
@@ -476,7 +496,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                   }`}
                 />
               </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">
+              <span className="text-[12px] text-slate-400 mt-1 block">
                 {settings.provider === 'Custom API'
                   ? '사내 LLM 주소를 https:// 로 입력하세요. OpenAI 방식(/chat/completions)과 호환되어야 하며, 사내망 전용 주소는 서버에서 접근할 수 없습니다.'
                   : '서버 함수(Edge Function)를 통해 로그인·권한을 확인한 뒤 내 키로 안전하게 호출됩니다.'}
@@ -510,7 +530,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                   </select>
                 )}
               </div>
-              <span className="text-[11px] text-blue-700 font-sans mt-1 block">
+              <span className="text-[12px] text-blue-700 font-sans mt-1 block">
                 {MODEL_DESCRIPTIONS[settings.model] || `${settings.provider} 환경에서 기사 검토 및 작업에 사용할 기본 언어 모델입니다.`}
               </span>
             </div>
@@ -538,7 +558,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                 onChange={(e) => setSettings({ ...settings, temperature: parseFloat(e.target.value) })}
                 className="w-full accent-blue-600 cursor-pointer disabled:cursor-not-allowed"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[12px] text-slate-400">
                 <span>0.0 (엄격·정확한 팩트체크 권장)</span>
                 <span>1.0 (창의적 질문)</span>
               </div>
@@ -556,7 +576,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                       type="button"
                       disabled={!isAuthorized}
                       onClick={() => setSettings({ ...settings, maxTokens: tokens })}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-medium transition-colors ${
+                      className={`px-1.5 py-0.5 rounded text-[12px] font-mono font-medium transition-colors ${
                         settings.maxTokens === tokens
                           ? 'bg-blue-600 text-white font-bold'
                           : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50'
@@ -577,132 +597,26 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
                 onChange={(e) => setSettings({ ...settings, maxTokens: parseInt(e.target.value) || 4096 })}
                 className="w-full p-1.5 bg-white border border-slate-300 rounded font-mono text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100"
               />
-              <span className="text-[10px] text-slate-400 block">
+              <span className="text-[12px] text-slate-400 block">
                 장문 기획 취재 원고 분석 시 4096 이상의 토큰 설정이 권장됩니다.
               </span>
             </div>
           </div>
         </div>
 
-        {/* CARD 2: Advanced Settings - AI 기능별 라우팅 (Model Routing) */}
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-blue-600" />
-              <h3 className="text-sm font-bold text-slate-900">
-                2. AI 기능별 Model 매핑 현황 (Model Routing)
-              </h3>
-            </div>
-            <span className="text-[11px] text-slate-400">서버 사이드 파이프라인 동적 라우팅</span>
-          </div>
-
-          <div className="space-y-3">
-            {/* 1. 기사 검수 및 오타/문법 교열 */}
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="flex items-start space-x-2.5">
-                <div className="w-7 h-7 rounded-md bg-blue-100 text-blue-800 flex items-center justify-center shrink-0 mt-0.5">
-                  <FileCheck2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
-                    <span>기사 종합 검수 &amp; 교열</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-100 text-blue-900 font-normal">
-                      Article Review
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    국립국어원 규정 맞춤법, 띄어쓰기, 외래어 표기 및 사실관계 교차 검증 검수
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <select
-                  value={articleReviewModel}
-                  disabled={!isAuthorized}
-                  onChange={(e) => setArticleReviewModel(e.target.value)}
-                  className={`font-mono text-xs font-semibold px-2 py-1 rounded border border-slate-300 ${
-                    !isAuthorized ? 'bg-slate-100 cursor-not-allowed text-slate-500' : 'bg-white text-slate-800'
-                  }`}
-                >
-                  <option value="gemini-3.8-flash">gemini-3.8-flash</option>
-                  <option value="gemini-flash-latest">gemini-flash-latest</option>
-                  <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview</option>
-                  <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
-                </select>
-              </div>
-            </div>
-
-            {/* 2. 보도사진 미디어 비전 분석 */}
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="flex items-start space-x-2.5">
-                <div className="w-7 h-7 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
-                  <ImageIcon className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
-                    <span>보도사진 이미지 분석</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-900 font-normal">
-                      Media Vision Analysis
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    보도사진 피사체 인식, 캡션 제안 및 메타데이터 자동 태깅
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <select
-                  value={mediaAnalysisModel}
-                  disabled={!isAuthorized}
-                  onChange={(e) => setMediaAnalysisModel(e.target.value)}
-                  className={`font-mono text-xs font-semibold px-2 py-1 rounded border border-slate-300 ${
-                    !isAuthorized ? 'bg-slate-100 cursor-not-allowed text-slate-500' : 'bg-white text-slate-800'
-                  }`}
-                >
-                  <option value="gemini-3.8-flash">gemini-3.8-flash</option>
-                  <option value="gemini-flash-latest">gemini-flash-latest</option>
-                  <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview</option>
-                  <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
-                </select>
-              </div>
-            </div>
-
-            {/* 3. 인터뷰 초안 생성 및 로우데이터 요약 */}
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="flex items-start space-x-2.5">
-                <div className="w-7 h-7 rounded-md bg-purple-100 text-purple-800 flex items-center justify-center shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
-                    <span>질문형 인터뷰 초안 생성 &amp; 요약</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-100 text-purple-900 font-normal">
-                      Interview &amp; Draft Generation
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    5W1H 심층 질문자 역할 및 기자가 답한 사실관계 기반 기사 초안 조립
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <select
-                  value={articleGenerationModel}
-                  disabled={!isAuthorized}
-                  onChange={(e) => setArticleGenerationModel(e.target.value)}
-                  className={`font-mono text-xs font-semibold px-2 py-1 rounded border border-slate-300 ${
-                    !isAuthorized ? 'bg-slate-100 cursor-not-allowed text-slate-500' : 'bg-white text-slate-800'
-                  }`}
-                >
-                  <option value="gemini-3.8-flash">gemini-3.8-flash</option>
-                  <option value="gemini-flash-latest">gemini-flash-latest</option>
-                  <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview</option>
-                  <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* CARD 2: 기능별 AI (사람마다 따로 저장, 실제 AI 호출에 반영) */}
+        <FunctionModelsBox
+          modelsByProvider={{
+            'Google Gemini': PROVIDER_DEFAULTS['Google Gemini'].models,
+            'OpenAI': PROVIDER_DEFAULTS['OpenAI'].models,
+            'Anthropic': PROVIDER_DEFAULTS['Anthropic'].models,
+          }}
+          defaultModelByProvider={{
+            'Google Gemini': PROVIDER_DEFAULTS['Google Gemini'].defaultModel,
+            'OpenAI': PROVIDER_DEFAULTS['OpenAI'].defaultModel,
+            'Anthropic': PROVIDER_DEFAULTS['Anthropic'].defaultModel,
+          }}
+        />
 
         {/* Action Button: Save */}
         <div className="flex items-center justify-end space-x-3 pt-1">
@@ -722,6 +636,7 @@ export const AiApiSettings: React.FC<AiApiSettingsProps> = ({ currentUser }) => 
         </div>
       </form>
 
+      <SttModelBox />
       <GoogleCloudKeyBox />
 
       <AiUsageStats />

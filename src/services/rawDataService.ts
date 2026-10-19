@@ -127,6 +127,8 @@ export interface TranscribeOptions {
   mode: SttMode;
   /** 인터뷰에서 말하는 사람 수 (모르면 생략) */
   speakers?: number;
+  /** 받아쓰기 모델 (글쓰기 모델과 따로 고름). 생략하면 서버 기본 모델 */
+  model?: string;
 }
 
 export interface TranscribeResult {
@@ -223,6 +225,7 @@ async function callTranscribe(
       language: opts.language,
       mode: opts.mode,
       speakers: opts.speakers,
+      model: opts.model,
     },
   });
   if (error) throw new Error(await friendlyAiError(error));

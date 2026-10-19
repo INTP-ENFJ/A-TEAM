@@ -125,7 +125,7 @@ export const ArticleStatusBadge: React.FC<ArticleStatusBadgeProps> = ({
 
   const sizeClass =
     size === 'sm'
-      ? 'px-2 py-0.5 text-[10px]'
+      ? 'px-2 py-0.5 text-[12px]'
       : 'px-2.5 py-0.5 text-xs';
 
   let text = config.label;

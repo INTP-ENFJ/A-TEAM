@@ -51,15 +51,15 @@ export const AiUsageStats: React.FC = () => {
         <span className="font-bold text-slate-900 flex items-center gap-1.5 text-xs">
           <BarChart3 className="w-4 h-4 text-blue-600" /> AI 사용 현황 (최근 30일, 팀 전체)
         </span>
-        <button type="button" onClick={load} disabled={busy} className="text-[11px] underline text-slate-700 cursor-pointer disabled:opacity-50 flex items-center gap-1">
+        <button type="button" onClick={load} disabled={busy} className="text-[12px] underline text-slate-700 cursor-pointer disabled:opacity-50 flex items-center gap-1">
           <RefreshCw className={`w-3 h-3 ${busy ? 'animate-spin' : ''}`} /> 새로고침
         </button>
       </div>
-      {err && <p className="text-[11px] text-rose-700">{err}</p>}
-      {rows && rows.length === 0 && <p className="text-[11px] text-slate-700">아직 기록이 없습니다. AI 기능을 쓰면 여기에 쌓입니다.</p>}
+      {err && <p className="text-[12px] text-rose-700">{err}</p>}
+      {rows && rows.length === 0 && <p className="text-[12px] text-slate-700">아직 기록이 없습니다. AI 기능을 쓰면 여기에 쌓입니다.</p>}
       {rows && rows.length > 0 && (
         <div className="overflow-x-auto">
-          <table className="w-full text-[11px] text-slate-800">
+          <table className="w-full text-[12px] text-slate-800">
             <thead>
               <tr className="text-left text-slate-600 border-b border-slate-200">
                 <th className="py-1 pr-2 font-semibold">기능</th>
@@ -85,7 +85,7 @@ export const AiUsageStats: React.FC = () => {
           </table>
         </div>
       )}
-      <p className="text-[10px] text-slate-600">호출 횟수·성공 여부·걸린 시간만 기록하며, 입력한 글이나 사용자 이름은 저장하지 않습니다. 모델을 바꿔 쓰며 성능을 비교할 때 참고하세요.</p>
+      <p className="text-[12px] text-slate-600">호출 횟수·성공 여부·걸린 시간만 기록하며, 입력한 글이나 사용자 이름은 저장하지 않습니다. 모델을 바꿔 쓰며 성능을 비교할 때 참고하세요.</p>
     </div>
   );
 };

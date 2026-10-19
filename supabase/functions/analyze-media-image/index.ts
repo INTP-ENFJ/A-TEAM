@@ -77,6 +77,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 승인 대기 계정은 서버에서 막는다 (본인이 바꿀 수 없는 app_metadata 기준)
+    if ((user.app_metadata as Record<string, unknown> | undefined)?.approval === "pending") {
+      return Response.json(
+        { success: false, error: "인사부 승인 후에 사용할 수 있습니다.", code: "PENDING_APPROVAL" },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
     adminClient = createClient(supabaseUrl, supabaseServiceKey);
 
     // 2. HR 사용자 명시적 차단 (프로필 기반 검증)
@@ -123,7 +131,7 @@ Deno.serve(async (req) => {
     // 개인 AI 설정: 계정에 암호화되어 저장된 공급자·키·모델을 읽는다
     let llmCfg: LlmConfig | null = null;
     try {
-      llmCfg = await loadLlmConfig(adminClient, user.id);
+      llmCfg = await loadLlmConfig(adminClient, user.id, "media");
     } catch (e) {
       const known = llmErrorResponse(e, corsHeaders);
       if (known) return known;
@@ -229,12 +237,12 @@ Deno.serve(async (req) => {
 
     // 사용자가 고른 공급자·모델로 사진 분석 (Gemini / OpenAI / Anthropic / 사내 API)
     const rawContent = await callLlm(llmCfg, {
-      log: { admin: adminClient, userId: user.id, fn: "analyze-media-image" },
       system: systemInstruction,
       user: "",
       image: { mimeType: media.mime_type || "image/jpeg", base64: base64Data },
       maxTokens: 1024,
       temperature: 0.1,
+      log: { admin: adminClient, userId: user.id, fn: "analyze-media-image" },
     });
 
     // 10. Runtime Schema Validation (신뢰할 수 없는 AI 응답 정밀 검증)

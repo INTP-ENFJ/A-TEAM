@@ -99,7 +99,7 @@ export const EditorTopBar: React.FC<EditorTopBarProps> = ({
                 id="select-article-status"
                 value={article.status}
                 onChange={(e) => onStatusChange(e.target.value as ArticleStatus)}
-                className="text-[11px] font-semibold bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors shadow-2xs"
+                className="text-[12px] font-semibold bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors shadow-2xs"
                 title="기사 상태 직접 변경 (초안, 검토 대기, 출고 대기 등 언제든 자유롭게 전환 가능)"
               >
                 <option value="draft">초안</option>
@@ -328,9 +328,10 @@ export const EditorTopBar: React.FC<EditorTopBarProps> = ({
             type="button"
             onClick={onOpenMediaDrawer}
             className="flex items-center space-x-1 px-2.5 py-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded font-medium text-xs transition-colors shadow-2xs whitespace-nowrap shrink-0"
-            title="하단 미디어 라이브러리 펼치기"
+            title="오른쪽 작업 창에서 미디어 라이브러리 열기 (사진·영상을 본문으로 끌어다 놓을 수 있어요)"
           >
             <ImageIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <span>미디어</span>
           </button>
 
           {/* AI 도구 (AI 초안 · 인포그래픽 · 피드백 · AI 검수) 한 버튼으로 묶음 */}
@@ -349,7 +350,7 @@ export const EditorTopBar: React.FC<EditorTopBarProps> = ({
               <Sparkles className={`w-3.5 h-3.5 shrink-0 ${isAiToolsOpen ? 'text-blue-100' : 'text-blue-600'}`} />
               <span className="whitespace-nowrap">AI 도구</span>
               {(unresolvedFeedbackCount + unresolvedAiCount) > 0 && (
-                <span className="px-1.5 rounded-full text-[10px] leading-4 bg-amber-500 text-white font-bold shrink-0">
+                <span className="px-1.5 rounded-full text-[12px] leading-4 bg-amber-500 text-white font-bold shrink-0">
                   {unresolvedFeedbackCount + unresolvedAiCount}
                 </span>
               )}
