@@ -270,7 +270,8 @@ Deno.serve(async (req) => {
 2. 모든 문장과 수치, 인용은 오직 기자의 입력/답변에서 직접 근거를 찾을 수 있어야 한다.
 3. 근거가 없거나 기자가 아직 답하지 않은 필수 취재 요소는 문장으로 날조하지 말고 반드시 "[확인 필요: ○○]" 형태로 남겨라.
 4. 한 번에 너무 많은 질문을 하지 마라. 기자가 답하기 쉽도록 가장 중요한 1~2개의 구체적인 질문만 간결하게 제시하라. 이미 기자가 답변하여 채워진 항목은 다시 묻지 마라.
-5. 어조는 전문적이고 예의 바른 언론사 데스크/취재 파트너 톤(하십시오체/해요체 조화)을 사용하라.
+5. 기자에게 하는 질문과 안내(questions, 대화)는 예의 바른 해요체로 쓰라.
+6. 기사 글(title_candidates, lead_paragraph, body_blocks, rewritten_text)은 어떤 지시를 받아도 신문 기사체("~했다", "~이다", "~한다")로 쓰라. "~합니다", "~해요" 같은 존댓말로 바꾸지 마라.
 [지정된 기사 톤 및 스타일]
 - ${toneGuide}
 
@@ -349,7 +350,7 @@ ${JSON.stringify(draftState, null, 2)}
 
 [지시사항]
 1. 기존에 수집된 draft_state 사실관계 범위 내에서만 해당 섹션을 다시 작성하라.
-2. 기자가 요구한 피드백 방향("더 간결하게", "표현 변경" 등)을 반영하되, 새로운 사실을 임의로 추가하지 마라.
+2. 기자가 요구한 피드백 방향("더 간결하게", "표현 변경" 등)을 반영하되, 새로운 사실을 임의로 추가하지 마라. 문체는 신문 기사체("~했다", "~이다")를 그대로 유지하라.
 3. 사실이 부족하면 반드시 "[확인 필요: ○○]" 표시를 사용하라.
 4. 피드백이 draft_state에 없는 발언·사실·수치·평가(예: "시장이 환영했다는 말을 넣어줘")를 새로 넣어 달라는 요구라면, 그 내용은 문장으로도, "[확인 필요]" 표시로도 넣지 마라. 그 부분은 반영하지 말고 refused_requests에 무엇을 넣지 않았는지 짧게 적어라.
 5. JSON 형식으로 응답하라.
@@ -373,6 +374,7 @@ ${JSON.stringify(draftState, null, 2)}
 [지시사항]
 1. 기자의 지시("전체를 더 짧게", "제목을 덜 자극적으로", "해설 톤으로" 등)를 title_candidates, lead_paragraph, body_blocks 전체에 반영해 다시 작성하라.
 2. draft_state에 이미 있는 사실관계(five_w1h, quotes, key_figures) 범위 안에서만 쓰고, 새로운 사실·수치·인용을 절대 추가하지 마라.
+2-1. "더 쉬운 말로" 같은 지시는 어려운 낱말과 긴 문장만 쉽게 바꾸라는 뜻이다. 문체는 신문 기사체("~했다", "~이다")를 그대로 유지하고 "~합니다"체로 바꾸지 마라.
 3. 사실이 부족한 곳은 기존처럼 "[확인 필요: ○○]" 표시를 그대로 유지하라.
 4. 지시가 draft_state에 없는 발언·사실·수치·평가를 새로 넣어 달라는 요구(예: "시장이 환영했다는 발언도 넣어줘", "수치를 더 넣어줘")라면, 그 내용은 문장으로도, "[확인 필요]" 표시로도 기사에 넣지 마라. 그 요구는 반영하지 말고 refused_requests에 무엇을 넣지 않았는지 짧게 적어라. 같은 지시 안의 다른 요구(길이·어조 등)는 그대로 반영하라.
 5. JSON 형식으로 응답하라.
@@ -470,30 +472,48 @@ JSON 스키마:
     const rawQuestions = Array.isArray(parsed.questions) ? parsed.questions : [];
     const sanitizedQuestions = rawQuestions.map((q: any) => safeSlice(q, 300)).filter(Boolean).slice(0, 2);
 
+    // "...", "확인 필요", "미상" 같은 빈 값은 채워지지 않은 것으로 봅니다(수집 진행률이 처음부터 100%로 보이던 문제).
+    const realValue = (v: unknown, max: number): string | null => {
+      const t = safeSlice(v, max).trim();
+      if (!t) return null;
+      if (/^[.\-·…\s]*$/.test(t)) return null;
+      if (/^(null|none|n\/a|unknown|미상|미정|불명|없음|알 ?수 ?없음|확인 ?필요|미확인|\[?확인 ?필요[^\]]*\]?)$/i.test(t)) return null;
+      return t;
+    };
+    const pickW = (key: keyof FiveW1H, max: number) => {
+      const fromAi = parsed.updated_draft_state?.five_w1h?.[key];
+      if (fromAi === undefined) return draftState.five_w1h[key];
+      return realValue(fromAi, max) ?? (realValue(draftState.five_w1h[key], max));
+    };
+
     const newState: DraftState = {
       topic: safeSlice(parsed.updated_draft_state?.topic || draftState.topic, 200),
       keywords: Array.isArray(parsed.updated_draft_state?.keywords)
         ? parsed.updated_draft_state.keywords.map((k: any) => safeSlice(k, 50)).slice(0, 10)
         : draftState.keywords,
       five_w1h: {
-        who: parsed.updated_draft_state?.five_w1h?.who ? safeSlice(parsed.updated_draft_state.five_w1h.who, 200) : draftState.five_w1h.who,
-        what: parsed.updated_draft_state?.five_w1h?.what ? safeSlice(parsed.updated_draft_state.five_w1h.what, 300) : draftState.five_w1h.what,
-        when: parsed.updated_draft_state?.five_w1h?.when ? safeSlice(parsed.updated_draft_state.five_w1h.when, 200) : draftState.five_w1h.when,
-        where: parsed.updated_draft_state?.five_w1h?.where ? safeSlice(parsed.updated_draft_state.five_w1h.where, 200) : draftState.five_w1h.where,
-        why: parsed.updated_draft_state?.five_w1h?.why ? safeSlice(parsed.updated_draft_state.five_w1h.why, 400) : draftState.five_w1h.why,
-        how: parsed.updated_draft_state?.five_w1h?.how ? safeSlice(parsed.updated_draft_state.five_w1h.how, 400) : draftState.five_w1h.how,
+        who: pickW("who", 200),
+        what: pickW("what", 300),
+        when: pickW("when", 200),
+        where: pickW("where", 200),
+        why: pickW("why", 400),
+        how: pickW("how", 400),
       },
       quotes: Array.isArray(parsed.updated_draft_state?.quotes)
         ? parsed.updated_draft_state.quotes.map((item: any) => ({
             speaker: safeSlice(item?.speaker, 100),
             quote: safeSlice(item?.quote, 500),
-          })).slice(0, 10)
+          }))
+          // 발언 내용이 비었거나 "인용문" 같은 빈칸 자리표시만 있는 조각은 뺍니다.
+          .filter((q: QuoteItem) => q.quote.trim().length >= 2 && !/^(\.\.\.|…|인용문|발언|없음|확인 ?필요)$/.test(q.quote.trim()))
+          .map((q: QuoteItem) => ({ ...q, speaker: q.speaker.trim() || "출처 불명" }))
+          .slice(0, 10)
         : draftState.quotes,
       key_figures: Array.isArray(parsed.updated_draft_state?.key_figures)
         ? parsed.updated_draft_state.key_figures.map((item: any) => ({
             label: safeSlice(item?.label, 100),
             value: safeSlice(item?.value, 100),
-          })).slice(0, 10)
+          })).filter((f: KeyFigureItem) => f.label.trim() && f.value.trim()).slice(0, 10)
         : draftState.key_figures,
       open_gaps: Array.isArray(parsed.updated_draft_state?.open_gaps)
         ? parsed.updated_draft_state.open_gaps.map((g: any) => safeSlice(g, 100)).slice(0, 10)
@@ -515,6 +535,25 @@ JSON 스키마:
       newState.five_w1h = draftState.five_w1h;
       newState.quotes = draftState.quotes;
       newState.key_figures = draftState.key_figures;
+    }
+    // 문단 하나만 다시 쓰기: 고른 문단만 바꾸고 나머지 문단·리드·제목은 그대로 둔다
+    // (AI가 돌려준 전체 초안을 그대로 쓰면 문단 순서가 바뀌는 문제가 있었음)
+    if (action === "regenerate_section") {
+      const rType = body.sectionType || "lead";
+      const rIdx = typeof body.sectionIndex === "number" ? body.sectionIndex : 0;
+      const aiBlocks = Array.isArray(parsed.updated_draft_state?.body_blocks) ? parsed.updated_draft_state.body_blocks : [];
+      const fromAi = typeof parsed.rewritten_text === "string" && parsed.rewritten_text.trim()
+        ? parsed.rewritten_text
+        : rType === "lead"
+        ? parsed.updated_draft_state?.lead_paragraph
+        : aiBlocks[rIdx];
+      newState.title_candidates = draftState.title_candidates;
+      newState.lead_paragraph = draftState.lead_paragraph;
+      newState.body_blocks = [...(draftState.body_blocks || [])];
+      if (typeof fromAi === "string" && fromAi.trim()) {
+        if (rType === "lead") newState.lead_paragraph = safeSlice(fromAi, 2000);
+        else if (rIdx >= 0 && rIdx < newState.body_blocks.length) newState.body_blocks[rIdx] = safeSlice(fromAi, 3000);
+      }
     }
     const refused: string[] = isEdit && Array.isArray(parsed.refused_requests)
       ? parsed.refused_requests.map((r: any) => safeSlice(r, 200)).filter((r: string) => r.trim()).slice(0, 5)

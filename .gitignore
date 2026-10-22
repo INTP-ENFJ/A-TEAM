@@ -11,5 +11,5 @@ coverage/
 _backup_*/
 scratch/
 public/_tmp_test_audio/
-
 supabase/.temp/
+docs/internal/

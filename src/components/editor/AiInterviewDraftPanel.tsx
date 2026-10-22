@@ -41,6 +41,14 @@ export interface FiveW1HState {
   how: string | null;
 }
 
+/** AI가 채운 값이 실제 내용인지("...", "확인 필요", "미상" 같은 빈칸 표시는 제외) */
+function isRealValue(v: unknown): boolean {
+  if (typeof v !== 'string') return false;
+  const t = v.trim();
+  if (!t || /^[.\-·…\s]*$/.test(t)) return false;
+  return !/^(null|none|n\/a|unknown|미상|미정|불명|없음|알 ?수 ?없음|확인 ?필요|미확인|\[?확인 ?필요[^\]]*\]?|인용문)$/i.test(t);
+}
+
 export interface QuoteItem {
   speaker: string;
   quote: string;
@@ -245,8 +253,8 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conversation]);
 
-  // 5W1H 완성도 계산 (0 ~ 100%)
-  const completed5W1HCount = Object.values(draftState.five_w1h).filter(Boolean).length;
+  // 5W1H 완성도 계산 (0 ~ 100%) — "...", "확인 필요" 같은 빈 값은 세지 않습니다.
+  const completed5W1HCount = Object.values(draftState.five_w1h).filter(isRealValue).length;
   const progressPercent = Math.round((completed5W1HCount / 6) * 100);
 
   // Edge Function 호출 공통 헬퍼
@@ -1138,7 +1146,7 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
                   why: '왜 (Why)',
                   how: '어떻게 (How)',
                 };
-                const isFilled = Boolean(val);
+                const isFilled = isRealValue(val);
                 return (
                   <div
                     key={key}
@@ -1298,11 +1306,11 @@ export const AiInterviewDraftPanel: React.FC<AiInterviewDraftPanelProps> = ({
           )}
 
           {/* 5. 인용구 및 주요 수치 보관함 */}
-          {(draftState.quotes.length > 0 || draftState.key_figures.length > 0) && (
+          {(draftState.quotes.some(q => isRealValue(q.quote)) || draftState.key_figures.length > 0) && (
             <div className="space-y-2 pt-2 border-t border-slate-100">
               <span className="text-[12px] font-bold text-slate-600">수집된 취재 팩트 조각:</span>
               <div className="space-y-1">
-                {draftState.quotes.map((q, idx) => (
+                {draftState.quotes.filter(q => isRealValue(q.quote)).map((q, idx) => (
                   <div key={idx} className="p-1.5 rounded bg-slate-100 text-[12px] text-slate-700">
                     <span className="font-bold">"{q.quote}"</span>
                     <span className="text-slate-700 font-medium ml-1">— {q.speaker}</span>
