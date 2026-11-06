@@ -11,6 +11,204 @@
 
 ---
 
+## 발표 자료 (43장)
+
+최종 발표 자료를 장마다 그림으로 넣었습니다. 부(部)를 눌러 펼쳐 보세요. 원본 PDF: [docs/presentation/PRESS-CMS_최종발표자료.pdf](docs/presentation/PRESS-CMS_최종발표자료.pdf)
+
+<details>
+<summary><b>01 기획 및 비전</b> (7장)</summary>
+
+**01 · 표지**
+
+<img src="docs/presentation/slides/01.jpg" width="100%">
+
+**02 · 목차**
+
+<img src="docs/presentation/slides/02.jpg" width="100%">
+
+**03 · 팀과 일정**
+
+<img src="docs/presentation/slides/03.jpg" width="100%">
+
+**04 · 왜 만들었나**
+
+<img src="docs/presentation/slides/04.jpg" width="100%">
+
+**05 · 요구사항 ① 필수 기능**
+
+<img src="docs/presentation/slides/05.jpg" width="100%">
+
+**06 · 요구사항 ② 핵심 기술**
+
+<img src="docs/presentation/slides/06.jpg" width="100%">
+
+**07 · 요구사항 ③ 제약사항**
+
+<img src="docs/presentation/slides/07.jpg" width="100%">
+
+</details>
+
+<details>
+<summary><b>02 서비스 설계</b> (10장)</summary>
+
+**08 · 기사 업무 흐름**
+
+<img src="docs/presentation/slides/08.jpg" width="100%">
+
+**09 · 기능 지도**
+
+<img src="docs/presentation/slides/09.jpg" width="100%">
+
+**10 · 프로그램 구조**
+
+<img src="docs/presentation/slides/10.jpg" width="100%">
+
+**11 · 계층 구조**
+
+<img src="docs/presentation/slides/11.jpg" width="100%">
+
+**12 · ERD ① 기사와 검토**
+
+<img src="docs/presentation/slides/12.jpg" width="100%">
+
+**13 · ERD ② 미디어 · 버전 · AI 대화**
+
+<img src="docs/presentation/slides/13.jpg" width="100%">
+
+**14 · 서버 함수와 DB 함수**
+
+<img src="docs/presentation/slides/14.jpg" width="100%">
+
+**15 · 폴더 구조 ① 전체 지도**
+
+<img src="docs/presentation/slides/15.jpg" width="100%">
+
+**16 · 폴더 구조 ② 화면 · 서비스**
+
+<img src="docs/presentation/slides/16.jpg" width="100%">
+
+**17 · 폴더 구조 ③ 서버 · DB · 문서**
+
+<img src="docs/presentation/slides/17.jpg" width="100%">
+
+</details>
+
+<details>
+<summary><b>03 기술 설계 및 구현</b> (16장)</summary>
+
+**18 · 기술 스택**
+
+<img src="docs/presentation/slides/18.jpg" width="100%">
+
+**19 · AI 처리 과정**
+
+<img src="docs/presentation/slides/19.jpg" width="100%">
+
+**20 · 가입과 승인**
+
+<img src="docs/presentation/slides/20.jpg" width="100%">
+
+**21 · 워드형 편집기**
+
+<img src="docs/presentation/slides/21.jpg" width="100%">
+
+**22 · 미디어 라이브러리**
+
+<img src="docs/presentation/slides/22.jpg" width="100%">
+
+**23 · AI 초안**
+
+<img src="docs/presentation/slides/23.jpg" width="100%">
+
+**24 · AI 검수**
+
+<img src="docs/presentation/slides/24.jpg" width="100%">
+
+**25 · 녹음 받아쓰기**
+
+<img src="docs/presentation/slides/25.jpg" width="100%">
+
+**26 · 인포그래픽**
+
+<img src="docs/presentation/slides/26.jpg" width="100%">
+
+**27 · 사진 · 그림 · 숫자 AI**
+
+<img src="docs/presentation/slides/27.jpg" width="100%">
+
+**28 · AI 키와 모델 설정**
+
+<img src="docs/presentation/slides/28.jpg" width="100%">
+
+**29 · 검토와 피드백**
+
+<img src="docs/presentation/slides/29.jpg" width="100%">
+
+**30 · 출고**
+
+<img src="docs/presentation/slides/30.jpg" width="100%">
+
+**31 · 답글 · 버전 · 알림**
+
+<img src="docs/presentation/slides/31.jpg" width="100%">
+
+**32 · 역할별 권한**
+
+<img src="docs/presentation/slides/32.jpg" width="100%">
+
+**33 · AI 비용**
+
+<img src="docs/presentation/slides/33.jpg" width="100%">
+
+</details>
+
+<details>
+<summary><b>04 검증 및 회고</b> (10장)</summary>
+
+**34 · 시험 결과**
+
+<img src="docs/presentation/slides/34.jpg" width="100%">
+
+**35 · 문제 해결 과정**
+
+<img src="docs/presentation/slides/35.jpg" width="100%">
+
+**36 · 오류 원인 분류**
+
+<img src="docs/presentation/slides/36.jpg" width="100%">
+
+**37 · 받은 피드백과 반영**
+
+<img src="docs/presentation/slides/37.jpg" width="100%">
+
+**38 · 현장 의견 반영**
+
+<img src="docs/presentation/slides/38.jpg" width="100%">
+
+**39 · 성과**
+
+<img src="docs/presentation/slides/39.jpg" width="100%">
+
+**40 · 배운 점**
+
+<img src="docs/presentation/slides/40.jpg" width="100%">
+
+**41 · 아쉬운 점과 다음 계획**
+
+<img src="docs/presentation/slides/41.jpg" width="100%">
+
+**42 · 시연**
+
+<img src="docs/presentation/slides/42.jpg" width="100%">
+
+**43 · 마무리**
+
+<img src="docs/presentation/slides/43.jpg" width="100%">
+
+</details>
+
+---
+
 ## 왜 만들었나
 
 현직 기자 시연(2026.09.30)에서 받은 한마디에서 출발했습니다.
@@ -57,6 +255,9 @@ flowchart LR
 
 ## 주요 기능
 
+<details>
+<summary>기능 11개 설명과 화면 캡처 펼치기</summary>
+
 | 기능 | 설명 | 화면 |
 |---|---|---|
 | 가입과 승인 | Supabase Auth(이메일 + 비밀번호, 회사 도메인만). 가입 신청은 표에만 저장되고, 인사부가 승인할 때 서버가 계정을 만들고 임시 비밀번호를 발급. 승인 전에는 읽기만 가능 (DB 트리거가 쓰기 차단) | ![](docs/images/PRESS-CMS_13_인사부_가입승인_권한배정.png) |
@@ -71,9 +272,14 @@ flowchart LR
 | 버전 기록 · 알림 | 저장할 때마다 버전이 남고 언제든 되돌리기(되돌리기 직전 상태도 자동 백업). 알림은 DB Realtime으로 새로고침 없이 도착 | ![](docs/images/PRESS-CMS_08_기자답글_협업.png) |
 | AI 키와 모델 설정 | 기자마다 자기 AI 키를 등록(AES-GCM 암호화 저장, 화면에는 뒤 4자리만). 기능마다 다른 모델 선택. AI 서버가 붐비면 1.5초 · 4초 쉬고 자동 재시도 | ![](docs/images/PRESS-CMS_14_AI서비스설정_보안구조.png) |
 
+</details>
+
 ---
 
 ## AI 처리 과정 — AI 결과가 기자를 거치지 않고 기사에 들어가는 길은 없습니다
+
+<details>
+<summary>6단계와 예외 처리 6가지 펼치기</summary>
 
 | 단계 | 누가 | 하는 일 |
 |---|---|---|
@@ -95,6 +301,8 @@ flowchart LR
 
 자체 모델 학습은 하지 않았습니다. 기능별 지시문과 결과 형식 검사로 품질을 관리합니다.
 
+</details>
+
 ---
 
 ## 기술 스택
@@ -111,6 +319,9 @@ flowchart LR
 ---
 
 ## 프로그램 구조
+
+<details>
+<summary>4층 구조 · 서버 함수 12개 · DB 함수 · 데이터 구조 펼치기</summary>
 
 네 층으로 나눴고, 위층은 바로 아래층만 부릅니다. **권한 검사와 AI 호출은 서버에서만** 하므로 AI 키가 화면에 내려가지 않습니다.
 
@@ -166,9 +377,14 @@ AI를 부르는 일은 서버 함수, 기사 상태를 바꾸는 일은 DB 함�
 - 보조: `media` · `article_versions` · `ai_draft_sessions` · `notifications` · `user_ai_keys` · `user_ai_prefs` · `ai_call_logs` · `signup_requests` · `audit_logs` · `hr_audit_logs`
 - 표 · 권한 규칙 · DB 함수 변경 기록 46개는 `supabase/migrations/`에 날짜순으로 있어, 차례로 실행하면 같은 DB를 다시 만들 수 있습니다.
 
+</details>
+
 ---
 
 ## 폴더 구조
+
+<details>
+<summary>저장소 폴더 구조 펼치기</summary>
 
 ```text
 A-TEAM/
@@ -200,9 +416,14 @@ A-TEAM/
 └── .env.example · .gitignore     # 비밀값(.env.local)은 저장소에 올리지 않음
 ```
 
+</details>
+
 ---
 
 ## 시험 결과
+
+<details>
+<summary>시험 48건 결과와 AI 비용표 펼치기</summary>
 
 시험표 48개를 만들어 실제 화면(로컬 · 배포 사이트)에서 하나씩 돌렸습니다. 시험 자료는 가상 보도자료 · 가상 녹음만 사용했습니다. 근거: [`docs/deliverables/PRESS-CMS_요구사항분석표_테스트데이터셋.xlsx`](docs/deliverables/PRESS-CMS_요구사항분석표_테스트데이터셋.xlsx)
 
@@ -232,9 +453,14 @@ A-TEAM/
 
 2차 발표 때 가정값 71원 → 10.20 실제 호출 기록으로 다시 계산. 2026.10.13 Google · OpenAI 공식 요금, $1 = 1,400원. 사진 · 음성 · 그림 생성 제외.
 
+</details>
+
 ---
 
 ## 시작하기
+
+<details>
+<summary>설치 · 환경 변수 · 실행 펼치기</summary>
 
 ### 1. 사전 요구사항
 - Node.js 18 이상
@@ -266,9 +492,14 @@ npm run lint       # 타입 검사 (tsc --noEmit)
 
 AI 키(Gemini · OpenAI · Claude)는 코드나 환경 변수가 아니라 **로그인 후 환경설정 > AI 서비스 설정**에서 사용자별로 등록합니다. 암호화되어 `user_ai_keys`에 저장되고, 서버 함수 안에서만 풀립니다.
 
+</details>
+
 ---
 
 ## Supabase 서버 기능 배포
+
+<details>
+<summary>배포 명령 펼치기</summary>
 
 ```bash
 npx supabase login
@@ -287,6 +518,8 @@ done
 
 서버 함수가 쓰는 비밀값(키 암호화용 비밀값 등)은 `npx supabase secrets set`으로 등록합니다.
 
+</details>
+
 ---
 
 ## 문서
@@ -304,6 +537,9 @@ done
 
 ## 아쉬운 점과 다음 계획
 
+<details>
+<summary>펼치기</summary>
+
 | 아쉬운 점 | 원인 | 보완 방향 |
 |---|---|---|
 | 개발이 한 사람에게 몰림 | 조장이 09.28~10.15 부상으로 원격 참여 | 역할을 기능 단위로 나누고, 기획 · 검증도 결과물로 남기기 |
@@ -312,6 +548,8 @@ done
 | 시간 단축 효과 미측정 | 기자 사용 시험을 일정 안에 못 함 | 같은 기사로 사용 전후 클릭 수 · 시간 측정 |
 
 다음 계획: ① 구글 받아쓰기 시험 4건 ② AI 호출별 비용 기록 → 설정 화면에 기능별 비용 표시 ③ 기자 사용 시험 ④ 근거 찾기 AI — 주장을 고르면 관련 자료 · 근거 구절을 옆에 보여 주기 (현장 요청에서 나온 제안)
+
+</details>
 
 ---
 
